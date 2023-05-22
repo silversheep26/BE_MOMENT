@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/moment
+    destination: /home/ubuntu/moments
 permissions:
-  - object: /home/ubuntu/moment/
+  - object: /home/ubuntu/moments/
     owner: ubuntu
     group: ubuntu
 hooks:

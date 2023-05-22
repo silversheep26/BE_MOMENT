@@ -1,8 +1,8 @@
 
-REPOSITORY=/home/ubuntu/moment
+REPOSITORY=/home/ubuntu/moments
 cd $REPOSITORY
 
-APP_NAME=moment
+APP_NAME=moments
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
