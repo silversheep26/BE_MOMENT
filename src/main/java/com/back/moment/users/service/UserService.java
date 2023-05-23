@@ -38,7 +38,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public ResponseEntity<Void> signup(SignupRequestDto requestDto, MultipartFile profileImg) {
+    public ResponseEntity<Void> signup(SignupRequestDto requestDto, MultipartFile profileImg) throws IOException {
         if (requestDto.getEmail() == null ||
             requestDto.getPassword() == null ||
             requestDto.getNickName() == null
@@ -63,13 +63,18 @@ public class UserService {
         users.saveUsers(requestDto, password, sex, role);
 
         // 프로필 이미지 처리
+//        if(!profileImg.isEmpty()) {
+//            try {
+//                String imgPath = s3Uploader.upload(profileImg);
+//                users.setProfileImg(imgPath);
+//            } catch (IOException e) {
+//                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//            }
+//        }
+
         if(!profileImg.isEmpty()) {
-            try {
-                String imgPath = s3Uploader.upload(profileImg);
-                users.setProfileImg(imgPath);
-            } catch (IOException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
+            String imgPath = s3Uploader.upload(profileImg);
+            users.setProfileImg(imgPath);
         }
         userRepository.save(users);
         return new ResponseEntity<>(HttpStatus.OK);

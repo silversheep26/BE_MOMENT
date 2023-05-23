@@ -8,6 +8,8 @@ import com.back.moment.boards.entity.Tag_Board;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.boards.repository.LocationTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
+import com.back.moment.exception.ApiException;
+import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UserRepository;

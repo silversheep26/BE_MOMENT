@@ -14,6 +14,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -21,7 +23,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(value = "/signup", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> signup(@Valid @RequestPart(value = "signup") SignupRequestDto requestDto, @RequestPart(value = "profile") MultipartFile profileImg, BindingResult bindingResult) {
+    public ResponseEntity<Void> signup(@Valid @RequestPart(value = "signup") SignupRequestDto requestDto,
+                                       @RequestPart(value = "profile", required = false) MultipartFile profileImg,
+                                       BindingResult bindingResult) throws IOException {
         if (bindingResult.hasErrors()) {
             StringBuilder stringBuilder = new StringBuilder();
             for (FieldError fieldError : bindingResult.getFieldErrors()) {

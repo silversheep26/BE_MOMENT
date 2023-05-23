@@ -28,4 +28,10 @@ public class BoardController {
                                             @RequestPart MultipartFile boardImg){
         return boardService.createBoard(boardRequestDto, userDetails.getUsers(), boardImg);
     }
+
+    @GetMapping("") //게시글 전체 조회
+    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                   @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return boardService.getAllBoards(userDetails.getUsers(), pageable);
+    }
 }
