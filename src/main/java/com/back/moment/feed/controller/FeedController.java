@@ -2,9 +2,11 @@ package com.back.moment.feed.controller;
 
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.entity.Users;
+import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -21,7 +23,7 @@ public class FeedController {
     private final FeedService feedService;
 
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadImages(@RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile) throws IOException {
-        return feedService.uploadImages(imageFile, new Users());
+    public ResponseEntity<Void> uploadImages(@RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return feedService.uploadImages(imageFile, userDetails.getUsers());
     }
 }
