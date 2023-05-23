@@ -8,6 +8,16 @@ spring:
         show_sql: true
         hbm2ddl:
           auto: create
+
+cloud:
+  aws:
+    s3:
+      bucket: moment-photo
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+
 logging.level:
   org.hibernate.SQL: debug
 

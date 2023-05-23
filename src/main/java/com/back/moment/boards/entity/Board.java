@@ -1,5 +1,6 @@
 package com.back.moment.boards.entity;
 
+import com.back.moment.boards.dto.BoardRequestDto;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -31,5 +32,15 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
 
+    private Board(Users users, String title, String contents) {
+        this.users = users;
+        this.title = title;
+        this.contents = contents;
+    }
 
+    public void saveBoard(BoardRequestDto boardRequestDto, Users users){
+        this.users = users;
+        this.title = boardRequestDto.getTitle();
+        this.contents = boardRequestDto.getContents();
+    }
 }
