@@ -1,3 +1,4 @@
+
 spring:
   profiles:
     include: secret
@@ -8,6 +9,9 @@ spring:
         show_sql: true
         hbm2ddl:
           auto: create
+  h2:
+    console:
+      enabled: true
 
 cloud:
   aws:
