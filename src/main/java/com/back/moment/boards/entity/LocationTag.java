@@ -20,7 +20,7 @@ public class LocationTag {
     @Column(nullable = false)
     private String location;
 
-    @OneToMany(mappedBy = "hashTag", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "locationTag", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
 
     public LocationTag(String location){
