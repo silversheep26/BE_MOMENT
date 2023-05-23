@@ -17,9 +17,7 @@ cloud:
       auto: false
     region:
       static: ap-northeast-2
-    credentials:
-      access-key: AKIA2S26HGZEXEBJBWND
-      secret-key: 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
+
 logging.level:
   org.hibernate.SQL: debug
 
