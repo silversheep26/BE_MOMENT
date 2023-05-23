@@ -47,14 +47,11 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Board> boardList = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
     private List<Recommend> recommenderList = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
     private List<Recommend> recommendedList = new ArrayList<>();
-
 
     private Users(String email, String nickName, String password, SexEnum sex, String profileImg, RoleEnum role){
         this.email = email;
