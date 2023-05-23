@@ -21,7 +21,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;  // 이메일
 
     @Column(nullable = false)
@@ -62,9 +62,9 @@ public class Users {
         this.role = role;
     }
 
-    public void saveUsers(SignupRequestDto requestDto, SexEnum sex, RoleEnum role) {
+    public void saveUsers(SignupRequestDto requestDto, String password, SexEnum sex, RoleEnum role) {
         this.email = requestDto.getEmail();
-        this.password = requestDto.getPassword();
+        this.password = password;
         this.nickName = requestDto.getNickName();
         this.sex = sex;
         this.role = role;
