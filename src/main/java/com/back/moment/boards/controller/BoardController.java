@@ -1,5 +1,6 @@
 package com.back.moment.boards.controller;
 
+import com.back.moment.boards.dto.BoardDetailResponseDto;
 import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.BoardRequestDto;
 import com.back.moment.boards.service.BoardService;
@@ -33,5 +34,26 @@ public class BoardController {
     public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                    @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return boardService.getAllBoards(userDetails.getUsers(), pageable);
+    }
+
+//    @GetMapping("/boards")
+//    public ResponseEntity<Page<BoardListResponseDto>> getBoardsByPage(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "5") int size) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+//        return boardService.getAllBoards(userDetails.getUsers(), pageable);
+//    }
+
+    // 게시글 상세 조회
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardDetailResponseDto> getBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.getBoard(boardId, userDetails.getUsers());
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.deleteBoard(boardId, userDetails.getUsers());
     }
 }
