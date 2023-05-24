@@ -15,6 +15,7 @@ public enum ExceptionEnum {
     NOT_MATCH_TOKEN(HttpStatus.BAD_REQUEST,"400_2", "토큰값이 일치하지 않습니다."),
 
     RUNTIME_EXCEPTION(HttpStatus.BAD_REQUEST,"400_3","전달 값이 잘못 되었습니다"),
+    NOT_MATCH_USERS(HttpStatus.BAD_REQUEST,"400_4","유저가 일치하지 않습니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),

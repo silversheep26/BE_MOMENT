@@ -48,7 +48,7 @@ public class Users {
     private List<Board> boardList = new ArrayList<>();
 
     @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
-    private List<Recommend> recommenderList = new ArrayList<>();  // 추천 하는 사람 -> 추천 두번 누르면 취소 돼야 하지 않을까?
+    private List<Recommend> recommenderList = new ArrayList<>();  // 추천 하는 사람
 
     @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
     private List<Recommend> recommendedList = new ArrayList<>();  // 추천 받은 사람
