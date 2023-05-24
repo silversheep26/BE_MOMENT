@@ -2,7 +2,7 @@ package com.back.moment.users.jwt;
 
 import com.back.moment.users.dto.SecurityExceptionDto;
 import com.back.moment.users.entity.Users;
-import com.back.moment.users.repository.UserRepository;
+import com.back.moment.users.repository.UsersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +28,7 @@ import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
 
     //필터체인 : 필터가 체인형식으로 묶여있어 필터끼리 이동이 가능
     @Override
@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
                 // 리프레시 토큰으로 username, Member DB에서 username을 가진 member 가져오기
                 String email = jwtUtil.getUserInfoFromToken(refresh_token);
-                Users users = userRepository.findByEmail(email).get();
+                Users users = usersRepository.findByEmail(email).get();
                 // 새로운 액세스 토큰 발급
                 String newAccessToken = jwtUtil.createToken(email, users.getRole(), "Access");
                 // 헤더에 액세스 토큰 추가

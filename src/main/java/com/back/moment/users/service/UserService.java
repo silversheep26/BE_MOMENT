@@ -10,7 +10,7 @@ import com.back.moment.users.entity.SexEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.RefreshTokenRepository;
-import com.back.moment.users.repository.UserRepository;
+import com.back.moment.users.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     public static final String BEARER_PREFIX = "Bearer ";
     private final S3Uploader s3Uploader;
@@ -45,7 +45,7 @@ public class UserService {
             ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Optional<Users> findEmail = userRepository.findByEmail(requestDto.getEmail());
+        Optional<Users> findEmail = usersRepository.findByEmail(requestDto.getEmail());
         if (findEmail.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다");
         }
@@ -76,7 +76,7 @@ public class UserService {
             String imgPath = s3Uploader.upload(profileImg);
             users.setProfileImg(imgPath);
         }
-        userRepository.save(users);
+        usersRepository.save(users);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -85,7 +85,7 @@ public class UserService {
         String password = loginRequestDto.getPassword();
 
         try {
-            Users users = userRepository.findByEmail(email).orElseThrow(
+            Users users = usersRepository.findByEmail(email).orElseThrow(
                     () -> new IllegalArgumentException("없는 이메일 입니다.")
             );
             if (!passwordEncoder.matches(password, users.getPassword())) {

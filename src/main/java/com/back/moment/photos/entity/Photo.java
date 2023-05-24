@@ -6,12 +6,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Photo {
     @Id
@@ -28,6 +31,9 @@ public class Photo {
 
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
     private List<Love> loveList = new ArrayList<>();
+
+    @ColumnDefault("0")
+    private int loveCnt;
 
     public Photo(Users users, String imagUrl) {
         this.users = users;

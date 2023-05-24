@@ -23,4 +23,9 @@ public class Recommend {
     @JoinColumn(name = "recommended_id")
     @JsonIgnore
     private Users recommended;
+
+    public Recommend(Users recommender, Users recommended) {
+        this.recommender = recommender;
+        this.recommended = recommended;
+    }
 }

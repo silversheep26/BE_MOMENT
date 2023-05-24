@@ -58,4 +58,13 @@ public class Board extends TimeStamped {
         }
         return tagList;
     }
+
+    public List<String> getTagListWithWell(){
+        List<String> tagList = new ArrayList<>();
+        for(Tag_Board tag_board : tag_boardList){
+            String tag = tag_board.getLocationTag().getLocation();
+            tagList.add("#" + tag);
+        }
+        return tagList;
+    }
 }

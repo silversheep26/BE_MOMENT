@@ -42,7 +42,7 @@ public class Users {
     private RoleEnum role;  // 모델 또는 작가
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private List<Love> loveList = new ArrayList<>();  //좋아요
+    private List<Love> loveList = new ArrayList<>();  //좋아요(내가 좋아요 누른 사진 목록)
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Board> boardList = new ArrayList<>();
