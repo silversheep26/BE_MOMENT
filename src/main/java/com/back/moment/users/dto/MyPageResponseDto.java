@@ -1,7 +1,7 @@
 package com.back.moment.users.dto;
 
 import com.back.moment.boards.dto.BoardListResponseDto;
-import com.back.moment.photos.dto.PhotoMyPageResponseDto;
+import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import lombok.Getter;
@@ -19,9 +19,9 @@ public class MyPageResponseDto {
     private int boardCnt;
     private int recommendCnt;
     private List<BoardListResponseDto> boardList;
-    private List<PhotoMyPageResponseDto> photoList;
+    private List<OnlyPhotoResponseDto> photoList;
 
-    public MyPageResponseDto(Users users, List<BoardListResponseDto> boardList, List<PhotoMyPageResponseDto> photoList){
+    public MyPageResponseDto(Users users, List<BoardListResponseDto> boardList, List<OnlyPhotoResponseDto> photoList){
         this.profileUrl = users.getProfileImg();
         this.nickName = users.getNickName();
         this.hostId = users.getId();

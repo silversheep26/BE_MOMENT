@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers("/users/signup", "/users/login").permitAll()
+                .requestMatchers("/users/signup", "/users/login", "/main").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
@@ -78,8 +78,6 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // 사전에 약속된 출처를 명시
-        config.addAllowedOrigin("https://instagramcloneproject-e9ql872wc-ringkoo.vercel.app");
-        config.addAllowedOrigin("https://instagramcloneproject.vercel.app");
         config.addAllowedOrigin("http://localhost:3000");
 
 

@@ -23,4 +23,6 @@ public class MyPageController {
     public ResponseEntity<String> deletePhoto(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return myPageService.deletePhoto(photoId, userDetails.getUsers());
     }
+
+    // 마이페이지 수정 구상 중
 }

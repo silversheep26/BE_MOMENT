@@ -4,9 +4,10 @@ import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-import com.back.moment.photos.dto.PhotoMyPageResponseDto;
+import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
+import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -27,6 +28,7 @@ public class MyPageService {
 
     private final UsersRepository usersRepository;
     private final PhotoRepository photoRepository;
+    private final S3Uploader s3Uploader;
 
     // 마이페이지 조회
     @Transactional(readOnly = true)
@@ -42,9 +44,9 @@ public class MyPageService {
             boardList.add(new BoardListResponseDto(board));
         }
         
-        List<PhotoMyPageResponseDto> photoList = photoRepository.getAllOnlyPhoto();
+        List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
         photoList = photoList.stream()
-                .sorted(Comparator.comparingInt(PhotoMyPageResponseDto::getLoveCnt).reversed())
+                .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())
                 .toList();
 
         return new ResponseEntity<>(new MyPageResponseDto(host, boardList, photoList), HttpStatus.OK);
@@ -63,6 +65,7 @@ public class MyPageService {
         if(!Objects.equals(users.getId(), photo.getUsers().getId())){
             return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
         }
+        s3Uploader.delete(photo.getImagUrl());
         photoRepository.delete(photo);
 
         return ResponseEntity.ok(null);
