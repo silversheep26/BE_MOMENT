@@ -2,12 +2,14 @@ package com.back.moment.users.entity;
 
 import com.back.moment.boards.entity.Board;
 import com.back.moment.love.entity.Love;
+import com.back.moment.photos.entity.Photo;
 import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,9 @@ public class Users {
     private RoleEnum role;  // 모델 또는 작가
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Photo> photoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Love> loveList = new ArrayList<>();  //좋아요(내가 좋아요 누른 사진 목록)
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
@@ -52,6 +57,9 @@ public class Users {
 
     @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
     private List<Recommend> recommendedList = new ArrayList<>();  // 추천 받은 사람
+
+    @ColumnDefault("0")
+    private int recommendCnt;
 
     private Users(String email, String nickName, String password, SexEnum sex, String profileImg, RoleEnum role){
         this.email = email;

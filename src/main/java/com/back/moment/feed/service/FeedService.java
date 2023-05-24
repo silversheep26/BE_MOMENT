@@ -88,6 +88,9 @@ public class FeedService {
             recommendRepository.save(recommend);
             message = "추천 등록";
         }
+        int recommendCnt = recommendRepository.countByRecommendedId(recommendedUser.getId());
+        recommendedUser.setRecommendCnt(recommendCnt);
+        usersRepository.save(recommendedUser);
 
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

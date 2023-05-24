@@ -11,4 +11,6 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     Recommend existRecommend(@Param("recommendNickName") String recommendNickName, @Param("recommendedNickName") String recommendedNickName);
 
     boolean existsByRecommendedIdAndRecommenderId(Long recommendedId, Long recommenderId);
+
+    int countByRecommendedId(Long recommendedId);
 }
