@@ -5,6 +5,7 @@ import com.back.moment.love.entity.Love;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.SignupRequestDto;
+import com.back.moment.users.dto.UpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -76,6 +77,12 @@ public class Users {
         this.nickName = requestDto.getNickName();
         this.sex = sex;
         this.role = role;
+    }
+
+    public void updateUsers(String nickName, String profileUrl, String password){
+        this.nickName = nickName;
+        this.profileImg = profileUrl;
+        this.password = password;
     }
 
 }
