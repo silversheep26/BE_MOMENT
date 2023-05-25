@@ -90,10 +90,11 @@ public class Users {
         this.role = role;
     }
 
-    public void updateUsers(String nickName, String profileUrl, String password){
+    public void updateUsers(String nickName, String profileUrl, String password, RoleEnum role){
         this.nickName = nickName;
         this.profileImg = profileUrl;
         this.password = password;
+        this.role = role;
     }
 
     public Users kakaoIdUpdate(Long kakaoId){

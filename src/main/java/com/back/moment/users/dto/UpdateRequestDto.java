@@ -1,5 +1,6 @@
 package com.back.moment.users.dto;
 
+import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,4 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpdateRequestDto {
     private String nickName;
     private String password;
+    private RoleEnum role;
 }

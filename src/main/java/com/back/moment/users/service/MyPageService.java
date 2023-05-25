@@ -10,6 +10,7 @@ import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
 import com.back.moment.users.dto.UpdateRequestDto;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,17 +69,20 @@ public class MyPageService {
         String changeNickName = null;
         String password = null;
         String profileUrl = null;
+        RoleEnum role = null;
         if(updateRequestDto.getNickName() != null) {
             changeNickName = updateRequestDto.getNickName();
         }
         if(updateRequestDto.getPassword() != null) {
             password = passwordEncoder.encode(updateRequestDto.getPassword());
         }
-
+        if(updateRequestDto.getRole() != null){
+            role = updateRequestDto.getRole();
+        }
         if(!profileImg.isEmpty()) {
             profileUrl = s3Uploader.upload(profileImg);
         }
-        users.updateUsers(changeNickName, profileUrl, password);
+        users.updateUsers(changeNickName, profileUrl, password, role);
         usersRepository.save(users);
 
         return ResponseEntity.ok(null);
