@@ -36,10 +36,13 @@ public class FeedService {
 
     @Transactional
     public ResponseEntity<Void> uploadImages(FeedRequestDto feedRequestDto, List<MultipartFile> imageList, Users users) throws IOException {
-        String contents = feedRequestDto.getContents();
+
         for(MultipartFile image : imageList){
+            Photo photo = new Photo();
             String imageUrl = s3Uploader.upload(image);
-            Photo photo = new Photo(users, contents, imageUrl);
+            if(feedRequestDto != null)
+                photo.updateContents(feedRequestDto.getContents());
+            photo = new Photo(users, imageUrl);
             photoRepository.save(photo);
         }
         return ResponseEntity.ok(null);
@@ -121,7 +124,8 @@ public class FeedService {
 
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getImagUrl(),
                                                                                 photo.getUsers().getProfileImg(),
-                                                                                photo.getUsers().getNickName());
+                                                                                photo.getUsers().getNickName(),
+                                                                                photo.getContents());
 
         if(loveRepository.existsByIdAndUsersId(photoId, users.getId())) feedDetailResponseDto.setCheckLove(true);
         if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);

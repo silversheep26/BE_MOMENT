@@ -65,9 +65,16 @@ public class MyPageService {
         if(findNickName.isPresent()){
             throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
         }
-        String changeNickName = updateRequestDto.getNickName();
-        String password = passwordEncoder.encode(updateRequestDto.getPassword());
+        String changeNickName = null;
+        String password = null;
         String profileUrl = null;
+        if(updateRequestDto.getNickName() != null) {
+            changeNickName = updateRequestDto.getNickName();
+        }
+        if(updateRequestDto.getPassword() != null) {
+            password = passwordEncoder.encode(updateRequestDto.getPassword());
+        }
+
         if(!profileImg.isEmpty()) {
             profileUrl = s3Uploader.upload(profileImg);
         }
