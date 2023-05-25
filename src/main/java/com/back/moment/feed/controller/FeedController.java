@@ -3,6 +3,7 @@ package com.back.moment.feed.controller;
 import com.amazonaws.Response;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
+import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.security.UserDetailsImpl;
@@ -51,6 +52,14 @@ public class FeedController {
     @GetMapping("/{photoId}")
     public ResponseEntity<FeedDetailResponseDto> getFeed(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return feedService.getFeed(photoId, userDetails.getUsers());
+    }
+
+    // feed 내용 작성
+    @PutMapping("/{photoId}")
+    public ResponseEntity<Void> writeContents(@PathVariable Long photoId,
+                                              @RequestBody FeedRequestDto feedRequestDto,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return feedService.writeContents(photoId, feedRequestDto, userDetails.getUsers());
     }
 
 }

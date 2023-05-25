@@ -19,9 +19,9 @@ import java.io.IOException;
 public class MyPageController {
     private final MyPageService myPageService;
 
-    @GetMapping("/{nickName}")
-    public ResponseEntity<MyPageResponseDto> getMyPage(@PathVariable String nickName, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return myPageService.getMyPage(nickName, userDetails.getUsers());
+    @GetMapping("/{hostId}")
+    public ResponseEntity<MyPageResponseDto> getMyPage(@PathVariable Long hostId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return myPageService.getMyPage(hostId, userDetails.getUsers());
     }
 
     @DeleteMapping("/{photoId}")
