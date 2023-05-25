@@ -26,8 +26,10 @@ public class FeedController {
 
     // feed 업로드
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadImages(@RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return feedService.uploadImages(imageFile, userDetails.getUsers());
+    public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents") FeedRequestDto feedRequestDto,
+                                             @RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return feedService.uploadImages(feedRequestDto, imageFile, userDetails.getUsers());
     }
 
     // Feed 에서 photo 좋아요
