@@ -77,7 +77,8 @@ public class MyPageService {
             password = passwordEncoder.encode(updateRequestDto.getPassword());
         }
         if(updateRequestDto.getRole() != null){
-            role = updateRequestDto.getRole();
+            if(users.getRole() == null)
+                role = updateRequestDto.getRole();
         }
         if(!profileImg.isEmpty()) {
             profileUrl = s3Uploader.upload(profileImg);

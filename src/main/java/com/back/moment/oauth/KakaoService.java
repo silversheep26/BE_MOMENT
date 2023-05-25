@@ -5,7 +5,7 @@ import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.entity.RefreshToken;
-import com.back.moment.users.entity.SexEnum;
+import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.RefreshTokenRepository;
@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,7 +55,7 @@ public class KakaoService {
         Users kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. JWT 토큰 반환
-        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), kakaoUser.getRole(), "Access");
+        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), "Access");
         //Token 생성
         TokenDto tokenDto = jwtUtil.createAllToken(kakaoUser.getEmail(), kakaoUser.getRole());
         //RefreshToken 있는지 확인
@@ -172,9 +171,9 @@ public class KakaoService {
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
-                SexEnum gender = SexEnum.MALE;
+                GenderEnum gender = GenderEnum.MALE;
                 if(kakaoUserInfo.getGender().equals("female"))
-                    gender = SexEnum.FEMALE;
+                    gender = GenderEnum.FEMALE;
 
 
 
