@@ -8,6 +8,7 @@ import com.back.moment.users.entity.Users;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -30,20 +31,20 @@ public class BoardController {
         return boardService.createBoard(boardRequestDto, userDetails.getUsers(), boardImg);
     }
 
-    @GetMapping("") //게시글 전체 조회
-    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                                   @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return boardService.getAllBoards(userDetails.getUsers(), pageable);
-    }
-
-//    @GetMapping("/boards")
-//    public ResponseEntity<Page<BoardListResponseDto>> getBoardsByPage(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "5") int size) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+//    @GetMapping("") //게시글 전체 조회
+//    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                                                   @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 //        return boardService.getAllBoards(userDetails.getUsers(), pageable);
 //    }
+
+    @GetMapping("")
+    public ResponseEntity<Page<BoardListResponseDto>> getBoardsByPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return boardService.getAllBoards(userDetails.getUsers(), pageable);
+    }
 
     // 게시글 상세 조회
     @GetMapping("/{boardId}")

@@ -29,6 +29,7 @@ public enum ExceptionEnum {
 
     // 409 Conflict
     DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "409", "중복된 이메일이 존재합니다."),
+    DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "409", "중복된 닉네임이 존재합니다."),
 
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "서버에러");

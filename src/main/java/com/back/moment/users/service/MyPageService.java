@@ -9,18 +9,19 @@ import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
+import com.back.moment.users.dto.UpdateRequestDto;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,13 +29,14 @@ public class MyPageService {
 
     private final UsersRepository usersRepository;
     private final PhotoRepository photoRepository;
+    private final PasswordEncoder passwordEncoder;
     private final S3Uploader s3Uploader;
 
     // 마이페이지 조회
     @Transactional(readOnly = true)
-    public ResponseEntity<MyPageResponseDto> getMyPage(String nickName, Users users){
+    public ResponseEntity<MyPageResponseDto> getMyPage(Long hostId, Users users){
         existUser(users.getEmail());
-        Users host = usersRepository.findByNickName(nickName).orElseThrow(
+        Users host = usersRepository.findById(hostId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
         );
 
@@ -53,6 +55,27 @@ public class MyPageService {
     }
     
     // 마이페이지 수정
+    @Transactional
+    public ResponseEntity<Void> updateMyPage(Long hostId, UpdateRequestDto updateRequestDto, Users users, MultipartFile profileImg) throws IOException {
+        if(!Objects.equals(hostId, users.getId())){
+            throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
+        }
+
+        Optional<Users> findNickName = usersRepository.findByNickName(updateRequestDto.getNickName());
+        if(findNickName.isPresent()){
+            throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
+        }
+        String changeNickName = updateRequestDto.getNickName();
+        String password = passwordEncoder.encode(updateRequestDto.getPassword());
+        String profileUrl = null;
+        if(!profileImg.isEmpty()) {
+            profileUrl = s3Uploader.upload(profileImg);
+        }
+        users.updateUsers(changeNickName, profileUrl, password);
+        usersRepository.save(users);
+
+        return ResponseEntity.ok(null);
+    }
     
     // 마이페이지 사진 삭제 
     @Transactional

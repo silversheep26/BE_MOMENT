@@ -16,6 +16,7 @@ import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,26 +75,26 @@ public class BoardService {
     }
 
     // 게시글 전체 조회
-    @Transactional(readOnly = true)
-    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable){
-        existUser(users.getEmail());
-        Page<BoardListResponseDto> boardList = boardRepository.selectAllBoard(pageable);
-        return new ResponseEntity<>(boardList, HttpStatus.OK);
-    }
-
 //    @Transactional(readOnly = true)
-//    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable) {
+//    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable){
 //        existUser(users.getEmail());
 //        Page<BoardListResponseDto> boardList = boardRepository.selectAllBoard(pageable);
-//
-//        if (boardList.hasNext()) {
-//            boardList = new PageImpl<>(boardList.getContent(), pageable, boardList.getTotalElements());
-//        } else {
-//            boardList = Page.empty(pageable);
-//        }
-//
 //        return new ResponseEntity<>(boardList, HttpStatus.OK);
 //    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable) {
+        existUser(users.getEmail());
+        Page<BoardListResponseDto> boardList = boardRepository.selectAllBoard(pageable);
+
+        if (boardList.hasNext()) {
+            boardList = new PageImpl<>(boardList.getContent(), pageable, boardList.getTotalElements());
+        } else {
+            boardList = Page.empty(pageable);
+        }
+
+        return new ResponseEntity<>(boardList, HttpStatus.OK);
+    }
 
     // 게시글 상세 조회
     @Transactional(readOnly = true)

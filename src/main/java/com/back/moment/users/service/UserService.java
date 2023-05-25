@@ -1,5 +1,7 @@
 package com.back.moment.users.service;
 
+import com.back.moment.exception.ApiException;
+import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -47,7 +49,7 @@ public class UserService {
         }
         Optional<Users> findEmail = usersRepository.findByEmail(requestDto.getEmail());
         if (findEmail.isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다");
+            throw new ApiException(ExceptionEnum.DUPLICATED_USER_NAME);
         }
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());

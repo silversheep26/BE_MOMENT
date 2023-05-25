@@ -4,6 +4,7 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
+import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -22,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,10 +34,12 @@ public class FeedService {
     private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
 
-    public ResponseEntity<Void> uploadImages(List<MultipartFile> imageList, Users users) throws IOException {
+    @Transactional
+    public ResponseEntity<Void> uploadImages(FeedRequestDto feedRequestDto, List<MultipartFile> imageList, Users users) throws IOException {
+        String contents = feedRequestDto.getContents();
         for(MultipartFile image : imageList){
             String imageUrl = s3Uploader.upload(image);
-            Photo photo = new Photo(users, imageUrl);
+            Photo photo = new Photo(users, contents, imageUrl);
             photoRepository.save(photo);
         }
         return ResponseEntity.ok(null);
@@ -127,6 +127,20 @@ public class FeedService {
         if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
 
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Void> writeContents(Long photoId, FeedRequestDto feedRequestDto, Users users){
+        Photo photo = photoRepository.findById(photoId).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
+        );
+        if(!Objects.equals(photo.getUsers().getId(), users.getId()))
+            throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
+
+        photo.updateContents(feedRequestDto.getContents());
+        photoRepository.save(photo);
+
+        return ResponseEntity.ok(null);
     }
 
 
