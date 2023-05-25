@@ -26,7 +26,7 @@ public class FeedController {
 
     // feed 업로드
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents") FeedRequestDto feedRequestDto,
+    public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents",required = false) FeedRequestDto feedRequestDto,
                                              @RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return feedService.uploadImages(feedRequestDto, imageFile, userDetails.getUsers());
