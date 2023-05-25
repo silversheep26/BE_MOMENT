@@ -64,7 +64,8 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers("/users/signup", "/users/login", "/main").permitAll()
+                .requestMatchers("/users/signup", "/users/login").permitAll()
+                .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
