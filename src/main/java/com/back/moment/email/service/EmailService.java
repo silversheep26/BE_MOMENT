@@ -7,6 +7,7 @@ import com.back.moment.email.entity.Email;
 import com.back.moment.email.repository.EmailRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
+import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 import java.util.Random;
 
 @PropertySource("classpath:application-secret.yml")
@@ -77,7 +79,8 @@ public class EmailService {
         bean으로 등록해둔 javaMailSender 객체를 사용하여 이메일 send
      */
     public ResponseEntity<Void> sendMessage(EmailRequestDto emailRequestDto) {
-        usersRepository.findByEmail(emailRequestDto.getEmail()).orElseThrow(() -> new ApiException(ExceptionEnum.EXIST_MAIL));
+        Optional<Users> findEmail = usersRepository.findByEmail(emailRequestDto.getEmail());
+        if(findEmail.isPresent()) throw new ApiException(ExceptionEnum.EXIST_MAIL);
         String code = createKey(); // 인증코드 생성
         Email email = Email.saveEmail(emailRequestDto); // 이메일 객체 생성
         MimeMessage message = null;
