@@ -24,6 +24,9 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long kakaoId;
+
     @Column(nullable = false, unique = true)
     private String email;  // 이메일
 
@@ -40,7 +43,7 @@ public class Users {
     @Column
     private String profileImg;  // 프로필 사진
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(value = EnumType.STRING)
     private RoleEnum role;  // 모델 또는 작가
 
@@ -71,6 +74,14 @@ public class Users {
         this.role = role;
     }
 
+    public Users(String email, String nickName, String password, SexEnum sex, String profileImg){
+        this.email = email;
+        this.nickName = nickName;
+        this.password = password;
+        this.sex = sex;
+        this.profileImg = profileImg;
+    }
+
     public void saveUsers(SignupRequestDto requestDto, String password, SexEnum sex, RoleEnum role) {
         this.email = requestDto.getEmail();
         this.password = password;
@@ -83,6 +94,11 @@ public class Users {
         this.nickName = nickName;
         this.profileImg = profileUrl;
         this.password = password;
+    }
+
+    public Users kakaoIdUpdate(Long kakaoId){
+        this.kakaoId=kakaoId;
+        return this;
     }
 
 }
