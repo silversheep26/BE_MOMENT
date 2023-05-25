@@ -1,6 +1,6 @@
 package com.back.moment.users.entity;
 
-public enum SexEnum {
+public enum GenderEnum {
     MALE,
     FEMALE
 }

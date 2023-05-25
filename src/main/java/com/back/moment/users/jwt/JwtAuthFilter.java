@@ -51,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String email = jwtUtil.getUserInfoFromToken(refresh_token);
                 Users users = usersRepository.findByEmail(email).get();
                 // 새로운 액세스 토큰 발급
-                String newAccessToken = jwtUtil.createToken(email, users.getRole(), "Access");
+                String newAccessToken = jwtUtil.createToken(email, "Access");
                 // 헤더에 액세스 토큰 추가
                 jwtUtil.setHeaderAccessToken(response, newAccessToken);
                 // Security context에 인증 정보 넣기

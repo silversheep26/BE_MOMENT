@@ -22,7 +22,7 @@ public class SignupRequestDto {
 
     private String nickName;
 
-    private boolean sex = false; // false : 남, true : 여
+    private boolean gender = false; // false : 남, true : 여
 
     private boolean role = false;  // false : 모델, true : 작가
 

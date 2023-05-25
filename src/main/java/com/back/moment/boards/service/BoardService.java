@@ -40,35 +40,39 @@ public class BoardService {
     @Transactional
     public ResponseEntity<Void> createBoard(BoardRequestDto boardRequestDto, Users users, MultipartFile boardImg){
         Board board = new Board();
-        board.saveBoard(boardRequestDto, users);
-        if(!boardImg.isEmpty()) {
-            try {
-                String imgPath = s3Uploader.upload(boardImg);
-                board.setBoardImgUrl(imgPath);
-            } catch (IOException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        boardRepository.save(board);
-
-        if(boardRequestDto.getLocationTags() != null){
-            // 첫번째 문자에 #이 있는지 확인하는 메서드 호출
-            boardRequestDto.setLocationTags(boardRequestDto.getLocationTags());
-
-            for(String locationTag : boardRequestDto.getLocationTags()){
-                String locationTagString = locationTag.substring(1);
-                LocationTag existTag = locationTagRepository.findByLocation(locationTagString);
-                if(existTag != null){
-                    Tag_Board tag_board = new Tag_Board(existTag, board);
-                    tag_boardRepository.save(tag_board);
-                } else{
-                    LocationTag locationTagTable = new LocationTag(locationTagString);
-                    locationTagRepository.save(locationTagTable);
-                    Tag_Board tag_board = new Tag_Board(locationTagTable, board);
-                    tag_boardRepository.save(tag_board);
+        if(users.getRole() != null) {
+            board.saveBoard(boardRequestDto, users);
+            if (!boardImg.isEmpty()) {
+                try {
+                    String imgPath = s3Uploader.upload(boardImg);
+                    board.setBoardImgUrl(imgPath);
+                } catch (IOException e) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             }
+
+            boardRepository.save(board);
+
+            if (boardRequestDto.getLocationTags() != null) {
+                // 첫번째 문자에 #이 있는지 확인하는 메서드 호출
+                boardRequestDto.setLocationTags(boardRequestDto.getLocationTags());
+
+                for (String locationTag : boardRequestDto.getLocationTags()) {
+                    String locationTagString = locationTag.substring(1);
+                    LocationTag existTag = locationTagRepository.findByLocation(locationTagString);
+                    if (existTag != null) {
+                        Tag_Board tag_board = new Tag_Board(existTag, board);
+                        tag_boardRepository.save(tag_board);
+                    } else {
+                        LocationTag locationTagTable = new LocationTag(locationTagString);
+                        locationTagRepository.save(locationTagTable);
+                        Tag_Board tag_board = new Tag_Board(locationTagTable, board);
+                        tag_boardRepository.save(tag_board);
+                    }
+                }
+            }
+        } else {
+            throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
 
         return ResponseEntity.ok(null);

@@ -5,7 +5,6 @@ import com.back.moment.love.entity.Love;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.SignupRequestDto;
-import com.back.moment.users.dto.UpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,7 @@ public class Users {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private SexEnum sex;  // 성별
+    private GenderEnum gender;  // 성별
 
     @Column
     private String profileImg;  // 프로필 사진
@@ -65,28 +64,28 @@ public class Users {
     @ColumnDefault("0")
     private int recommendCnt;
 
-    private Users(String email, String nickName, String password, SexEnum sex, String profileImg, RoleEnum role){
+    private Users(String email, String nickName, String password, GenderEnum gender, String profileImg, RoleEnum role){
         this.email = email;
         this.nickName = nickName;
         this.password = password;
-        this.sex = sex;
+        this.gender = gender;
         this.profileImg = profileImg;
         this.role = role;
     }
 
-    public Users(String email, String nickName, String password, SexEnum sex, String profileImg){
+    public Users(String email, String nickName, String password, GenderEnum gender, String profileImg){
         this.email = email;
         this.nickName = nickName;
         this.password = password;
-        this.sex = sex;
+        this.gender = gender;
         this.profileImg = profileImg;
     }
 
-    public void saveUsers(SignupRequestDto requestDto, String password, SexEnum sex, RoleEnum role) {
+    public void saveUsers(SignupRequestDto requestDto, String password, GenderEnum gender, RoleEnum role) {
         this.email = requestDto.getEmail();
         this.password = password;
         this.nickName = requestDto.getNickName();
-        this.sex = sex;
+        this.gender = gender;
         this.role = role;
     }
 

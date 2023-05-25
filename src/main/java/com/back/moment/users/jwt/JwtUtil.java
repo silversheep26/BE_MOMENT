@@ -62,7 +62,7 @@ public class JwtUtil {
 
     // 액세스 토큰 및 리프레시 토큰 생성
     public TokenDto createAllToken(String userId, RoleEnum role) {
-        return new TokenDto(createToken(userId, role, "Access"), createToken(userId, role, "Refresh"));
+        return new TokenDto(createToken(userId, "Access"), createToken(userId, "Refresh"));
     }
 
     // Request Header 에서 토큰 가져오기
@@ -76,7 +76,7 @@ public class JwtUtil {
     }
 
     // JWT 생성하기
-    public String createToken(String userId, RoleEnum role, String type) {
+    public String createToken(String userId, String type) {
         Date date = new Date();
         long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
@@ -84,7 +84,6 @@ public class JwtUtil {
                 + Jwts.builder()
                 .setSubject(userId)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
-                .claim("role", role)
                 .setIssuedAt(date)
                 .setExpiration(new Date(date.getTime() + time))
                 .compact();

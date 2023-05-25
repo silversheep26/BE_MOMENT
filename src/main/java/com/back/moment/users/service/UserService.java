@@ -8,7 +8,7 @@ import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
-import com.back.moment.users.entity.SexEnum;
+import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.RefreshTokenRepository;
@@ -53,9 +53,9 @@ public class UserService {
         }
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        SexEnum sex = SexEnum.FEMALE;
-        if(requestDto.isSex()){
-            sex = SexEnum.MALE;
+        GenderEnum sex = GenderEnum.FEMALE;
+        if(requestDto.isGender()){
+            sex = GenderEnum.MALE;
         }
         RoleEnum role = RoleEnum.MODEL;
         if(requestDto.isRole()){

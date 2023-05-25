@@ -28,6 +28,7 @@ public enum ExceptionEnum {
     NOT_FOUND_PHOTO(HttpStatus.NOT_FOUND, "404_2", "사진이 존재하지 않습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "404_3", "사용자가 존재하지 않습니다."),
     NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "404_4", "리프레시 토큰이 없습니다."),
+    NOT_FOUND_ROLE(HttpStatus.NOT_FOUND, "404_5", "Role이 결정되지 않았습니다."),
 
     // 409 Conflict
     DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "409", "중복된 이메일이 존재합니다."),
