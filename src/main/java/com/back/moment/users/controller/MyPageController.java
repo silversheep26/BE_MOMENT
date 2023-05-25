@@ -32,7 +32,7 @@ public class MyPageController {
     // 마이페이지 수정 구상 중
     @PutMapping(value = "/{hostId}", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updatePage(@PathVariable Long hostId,
-                                           @RequestPart(value = "update") UpdateRequestDto updateRequestDto,
+                                           @RequestPart(value = "update", required = false) UpdateRequestDto updateRequestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @RequestPart(value = "profile", required = false) MultipartFile profileImg) throws IOException {
         return myPageService.updateMyPage(hostId, updateRequestDto, userDetails.getUsers(), profileImg);

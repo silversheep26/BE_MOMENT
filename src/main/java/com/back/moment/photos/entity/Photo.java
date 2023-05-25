@@ -32,15 +32,14 @@ public class Photo {
     @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
     private List<Love> loveList = new ArrayList<>();
 
-    @ColumnDefault("사진 한줄 요약")
-    private String contents;
+    @Column
+    private String contents = "사진 한줄 요약";
 
     @ColumnDefault("0")
     private int loveCnt;
 
-    public Photo(Users users, String contents, String imagUrl) {
+    public Photo(Users users, String imagUrl) {
         this.users = users;
-        this.contents = contents;
         this.imagUrl = imagUrl;
     }
 
