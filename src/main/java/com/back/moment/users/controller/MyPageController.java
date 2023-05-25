@@ -29,7 +29,6 @@ public class MyPageController {
         return myPageService.deletePhoto(photoId, userDetails.getUsers());
     }
 
-    // 마이페이지 수정 구상 중
     @PutMapping(value = "/{hostId}", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updatePage(@PathVariable Long hostId,
                                            @RequestPart(value = "update", required = false) UpdateRequestDto updateRequestDto,

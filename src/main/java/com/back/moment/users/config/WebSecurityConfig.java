@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 
 
         http.authorizeRequests()
-                .requestMatchers("/users/signup", "/users/login").permitAll()
+                .requestMatchers("/users/signup", "/users/login", "/users/kakao").permitAll()
                 .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .anyRequest().authenticated()

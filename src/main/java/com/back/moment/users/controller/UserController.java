@@ -1,8 +1,12 @@
 package com.back.moment.users.controller;
 
+import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
+import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import java.io.IOException;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final KakaoService kakaoService;
 
     @PostMapping(value = "/signup", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> signup(@Valid @RequestPart(value = "signup") SignupRequestDto requestDto,
@@ -39,5 +44,17 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return userService.login(loginRequestDto, response);
+    }
+
+    @GetMapping("/kakao")
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        ResponseEntity<Void> result = kakaoService.kakaoLogin(code, response);
+        
+        String createToken = response.getHeader(JwtUtil.ACCESS_KEY);
+        Cookie cookie = new Cookie(JwtUtil.ACCESS_KEY, createToken.substring(7));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/main";
     }
 }
