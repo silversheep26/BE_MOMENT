@@ -173,7 +173,7 @@ public class KakaoService {
                 String email = kakaoUserInfo.getEmail();
                 String gender = "MALE";
                 if(kakaoUserInfo.getGender().equals("female"))
-                    gender = GenderEnum.FEMALE;
+                    gender = "FEMALE";
 
 
 

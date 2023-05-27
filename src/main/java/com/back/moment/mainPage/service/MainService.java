@@ -44,7 +44,7 @@ public class MainService {
             List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer("PHOTOGRAPHER", pageable);
             return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
         }
-        List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
+        List<ForMainResponseDto> top3Models = usersRepository.findTop3Model("MODEL", pageable);
         return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
     }
 }
