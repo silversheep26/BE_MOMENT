@@ -59,7 +59,7 @@ public class UserService {
         users.saveUsers(requestDto, password, gender, role);
 
         // 프로필 이미지 처리
-        if(!profileImg.isEmpty()) {
+        if(profileImg != null) {
             try {
                 String imgPath = s3Uploader.upload(profileImg);
                 users.setProfileImg(imgPath);

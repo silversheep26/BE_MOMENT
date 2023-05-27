@@ -13,4 +13,5 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     boolean existsByRecommendedIdAndRecommenderId(Long recommendedId, Long recommenderId);
 
     int countByRecommendedId(Long recommendedId);
+
 }
