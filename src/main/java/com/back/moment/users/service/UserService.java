@@ -53,8 +53,8 @@ public class UserService {
         }
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        GenderEnum gender = requestDto.getGender();
-        RoleEnum role = requestDto.getRole();
+        String gender = requestDto.getGender();
+        String role = requestDto.getRole();
 
         users.saveUsers(requestDto, password, gender, role);
 

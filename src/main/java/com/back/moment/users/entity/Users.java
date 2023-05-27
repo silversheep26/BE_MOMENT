@@ -36,8 +36,8 @@ public class Users {
     private String password;  // 비밀번호
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private GenderEnum gender;  // 성별
+    //@Enumerated(value = EnumType.STRING)
+    private String gender;  // 성별
 
     @Column
     private String profileImg;  // 프로필 사진
@@ -64,7 +64,7 @@ public class Users {
     @ColumnDefault("0")
     private int recommendCnt;
 
-    private Users(String email, String nickName, String password, GenderEnum gender, String profileImg, RoleEnum role){
+    private Users(String email, String nickName, String password, String gender, String profileImg, String role){
         this.email = email;
         this.nickName = nickName;
         this.password = password;
@@ -73,7 +73,7 @@ public class Users {
         this.role = role;
     }
 
-    public Users(String email, String nickName, String password, GenderEnum gender, String profileImg){
+    public Users(String email, String nickName, String password, String gender, String profileImg){
         this.email = email;
         this.nickName = nickName;
         this.password = password;
@@ -89,7 +89,7 @@ public class Users {
         this.role = role;
     }
 
-    public void updateUsers(String nickName, String profileUrl, String password, RoleEnum role){
+    public void updateUsers(String nickName, String profileUrl, String password, String role){
         this.nickName = nickName;
         this.profileImg = profileUrl;
         this.password = password;
