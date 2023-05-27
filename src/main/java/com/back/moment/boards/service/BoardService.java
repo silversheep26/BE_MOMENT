@@ -108,11 +108,6 @@ public class BoardService {
         return new ResponseEntity<>(new BoardDetailResponseDto(board), HttpStatus.OK);
     }
 
-
-    // 유저 존재 확인
-
-
-    // 게시글 삭제 : 잘 되는지 모르겠씀다
     @Transactional
     public ResponseEntity<Void> deleteBoard(Long boardId, Users users) {
         Board board = existBoard(boardId);
@@ -125,6 +120,7 @@ public class BoardService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 유저 존재 확인
     public void existUser(String email){
         usersRepository.findByEmail(email).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)

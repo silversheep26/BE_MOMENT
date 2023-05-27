@@ -11,11 +11,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class ForMainResponseDto {
+    private Long userId;
     private String nickName;
     private String profileUrl;
     private List<OnlyPhotoResponseDto> photoList;
 
     public ForMainResponseDto(Users users) {
+        this.userId = users.getId();
         this.nickName = users.getNickName();
         this.profileUrl = users.getProfileImg();
         this.photoList = users.getPhotoList().stream()
