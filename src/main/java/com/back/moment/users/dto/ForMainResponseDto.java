@@ -21,6 +21,7 @@ public class ForMainResponseDto {
     public ForMainResponseDto(Users users) {
         this.userId = users.getId();
         this.nickName = users.getNickName();
+        this.role = users.getRole();
         this.profileUrl = users.getProfileImg();
         this.photoList = users.getPhotoList().stream()
                 .map(OnlyPhotoResponseDto::new)

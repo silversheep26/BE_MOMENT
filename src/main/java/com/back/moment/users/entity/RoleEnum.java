@@ -20,5 +20,6 @@ public enum RoleEnum {
     public static class Authority{
         public static final String MODEL = "MODEL";
         public static final String PHOTOGRAPHER = "PHOTOGRAPHER";
+        public static final String NONE = "NONE";
     }
 }

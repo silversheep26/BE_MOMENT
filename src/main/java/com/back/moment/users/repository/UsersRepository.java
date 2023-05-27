@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByEmail(String email);
     Optional<Users> findByNickName(String nickName);
-
+    Optional<Users> findByKakaoId(Long id);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u where u.role = :role ORDER BY u.recommendCnt DESC")
     List<ForMainResponseDto> findTop3Photographer(@Param("role") RoleEnum role, Pageable pageable);
