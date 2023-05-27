@@ -40,7 +40,7 @@ public class MainService {
     @Transactional(readOnly = true)
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users){
         Pageable pageable = PageRequest.of(0, 3);
-        if(users.getRole() == RoleEnum.MODEL){
+        if(users.getRole().equals("MODEL")){
             List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
             return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
         }
