@@ -69,7 +69,7 @@ public class MyPageService {
         String changeNickName = null;
         String password = null;
         String profileUrl = null;
-        RoleEnum role = null;
+        String role = null;
         if(updateRequestDto.getNickName() != null) {
             changeNickName = updateRequestDto.getNickName();
         }

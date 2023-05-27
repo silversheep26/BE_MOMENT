@@ -10,5 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpdateRequestDto {
     private String nickName;
     private String password;
-    private RoleEnum role;
+    private String role;
 }
