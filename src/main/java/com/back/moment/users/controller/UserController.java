@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping(value = "/signup", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> signup(@Valid @RequestPart(value = "signup") SignupRequestDto requestDto,
                                        @RequestPart(value = "profile", required = false) MultipartFile profileImg,
-                                       BindingResult bindingResult) throws IOException {
+                                       BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder stringBuilder = new StringBuilder();
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
