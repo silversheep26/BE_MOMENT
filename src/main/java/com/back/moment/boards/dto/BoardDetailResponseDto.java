@@ -14,7 +14,7 @@ public class BoardDetailResponseDto {
     private String nickName;
     private String title;
     private String contents;
-    private RoleEnum role;
+    private String role;
     private List<String> tag_boardList;
 
     public BoardDetailResponseDto(Board board){
