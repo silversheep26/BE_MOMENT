@@ -43,8 +43,8 @@ public class Users {
     private String profileImg;  // 프로필 사진
 
     @Column
-    @Enumerated(value = EnumType.STRING)
-    private RoleEnum role;  // 모델 또는 작가
+    //@Enumerated(value = EnumType.STRING)
+    private String role;  // 모델 또는 작가
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Photo> photoList = new ArrayList<>();
@@ -81,7 +81,7 @@ public class Users {
         this.profileImg = profileImg;
     }
 
-    public void saveUsers(SignupRequestDto requestDto, String password, GenderEnum gender, RoleEnum role) {
+    public void saveUsers(SignupRequestDto requestDto, String password, String gender, String role) {
         this.email = requestDto.getEmail();
         this.password = password;
         this.nickName = requestDto.getNickName();

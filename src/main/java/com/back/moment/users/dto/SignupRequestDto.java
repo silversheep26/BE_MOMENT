@@ -24,8 +24,8 @@ public class SignupRequestDto {
 
     private String nickName;
 
-    private GenderEnum gender; // false : 남, true : 여
+    private String gender;
 
-    private RoleEnum role;  // false : 모델, true : 작가
+    private String role;
 
 }
