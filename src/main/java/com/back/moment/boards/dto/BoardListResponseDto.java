@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardListResponseDto {
     private  String title;
-    private  RoleEnum role;
+    private  String role;
     private  String nickName;
     private  String boardImgUrl;
     private  LocalDate createdTime;
