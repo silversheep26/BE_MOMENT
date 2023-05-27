@@ -61,7 +61,7 @@ public class JwtUtil {
     }
 
     // 액세스 토큰 및 리프레시 토큰 생성
-    public TokenDto createAllToken(String userId, String role) {
+    public TokenDto createAllToken(String userId, RoleEnum role) {
         return new TokenDto(createToken(userId, "Access"), createToken(userId, "Refresh"));
     }
 

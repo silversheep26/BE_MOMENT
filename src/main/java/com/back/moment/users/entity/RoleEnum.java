@@ -2,7 +2,10 @@ package com.back.moment.users.entity;
 
 public enum RoleEnum {
     MODEL(Authority.MODEL),
-    PHOTOGRAPHER(Authority.PHOTOGRAPHER);
+    PHOTOGRAPHER(Authority.PHOTOGRAPHER),
+
+    NONE(Authority.NONE);
+
 
     private final String authority;
 
@@ -17,5 +20,6 @@ public enum RoleEnum {
     public static class Authority{
         public static final String MODEL = "MODEL";
         public static final String PHOTOGRAPHER = "PHOTOGRAPHER";
+        public static final String NONE = "NONE";
     }
 }

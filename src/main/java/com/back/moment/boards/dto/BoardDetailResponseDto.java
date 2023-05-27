@@ -5,6 +5,7 @@ import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.management.relation.Role;
 import java.util.List;
 
 @Getter
@@ -14,7 +15,7 @@ public class BoardDetailResponseDto {
     private String nickName;
     private String title;
     private String contents;
-    private String role;
+    private RoleEnum role;
     private List<String> tag_boardList;
 
     public BoardDetailResponseDto(Board board){
