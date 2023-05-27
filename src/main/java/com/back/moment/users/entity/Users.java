@@ -44,7 +44,7 @@ public class Users {
 
     @Column
     //@Enumerated(value = EnumType.STRING)
-    private String role;  // 모델 또는 작가
+    private RoleEnum role;  // 모델 또는 작가
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Photo> photoList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class Users {
     @ColumnDefault("0")
     private int recommendCnt;
 
-    private Users(String email, String nickName, String password, String gender, String profileImg, String role){
+    private Users(String email, String nickName, String password, String gender, String profileImg, RoleEnum role){
         this.email = email;
         this.nickName = nickName;
         this.password = password;
@@ -81,7 +81,7 @@ public class Users {
         this.profileImg = profileImg;
     }
 
-    public void saveUsers(SignupRequestDto requestDto, String password, String gender, String role) {
+    public void saveUsers(SignupRequestDto requestDto, String password, String gender, RoleEnum role) {
         this.email = requestDto.getEmail();
         this.password = password;
         this.nickName = requestDto.getNickName();
@@ -89,7 +89,7 @@ public class Users {
         this.role = role;
     }
 
-    public void updateUsers(String nickName, String profileUrl, String password, String role){
+    public void updateUsers(String nickName, String profileUrl, String password, RoleEnum role){
         this.nickName = nickName;
         this.profileImg = profileUrl;
         this.password = password;

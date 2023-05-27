@@ -26,6 +26,6 @@ public class SignupRequestDto {
 
     private String gender;
 
-    private String role;
+    private RoleEnum role;
 
 }

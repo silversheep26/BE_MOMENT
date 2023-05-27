@@ -15,7 +15,7 @@ public class MyPageResponseDto {
     private String profileUrl;
     private String nickName;
     private Long hostId;
-    private String role;
+    private RoleEnum role;
     private int boardCnt;
     private int recommendCnt;
     private List<BoardListResponseDto> boardList;

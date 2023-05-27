@@ -1,6 +1,7 @@
 package com.back.moment.users.dto;
 
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ForMainResponseDto {
     private Long userId;
     private String nickName;
+    private RoleEnum role;
     private String profileUrl;
     private List<OnlyPhotoResponseDto> photoList;
 

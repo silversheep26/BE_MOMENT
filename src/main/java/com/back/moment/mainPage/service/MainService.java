@@ -43,8 +43,11 @@ public class MainService {
         if(users.getRole().equals("MODEL")){
             List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer("PHOTOGRAPHER", pageable);
             return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
+        }else if(users.getRole() == RoleEnum.PHOTOGRAPHER) {
+            List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(users.getRole(), pageable);
+            return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
         }
-        List<ForMainResponseDto> top3Models = usersRepository.findTop3Model("MODEL", pageable);
-        return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
+        List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
+        return new ResponseEntity<>(new AfterLogInResponseDto(top3), HttpStatus.OK);
     }
 }

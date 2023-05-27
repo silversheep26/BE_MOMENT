@@ -2,7 +2,10 @@ package com.back.moment.users.entity;
 
 public enum RoleEnum {
     MODEL(Authority.MODEL),
-    PHOTOGRAPHER(Authority.PHOTOGRAPHER);
+    PHOTOGRAPHER(Authority.PHOTOGRAPHER),
+
+    NONE(Authority.NONE);
+
 
     private final String authority;
 
