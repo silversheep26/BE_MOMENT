@@ -80,7 +80,7 @@ public class MyPageService {
             if(users.getRole() == null)
                 role = updateRequestDto.getRole();
         }
-        if(!profileImg.isEmpty()) {
+        if(profileImg != null) {
             profileUrl = s3Uploader.upload(profileImg);
         }
         users.updateUsers(changeNickName, profileUrl, password, role);
