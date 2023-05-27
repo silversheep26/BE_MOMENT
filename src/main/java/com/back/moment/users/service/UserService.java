@@ -53,16 +53,10 @@ public class UserService {
         }
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        GenderEnum sex = GenderEnum.FEMALE;
-        if(requestDto.isGender()){
-            sex = GenderEnum.MALE;
-        }
-        RoleEnum role = RoleEnum.MODEL;
-        if(requestDto.isRole()){
-            role = RoleEnum.PHOTOGRAPHER;
-        }
+        GenderEnum gender = requestDto.getGender();
+        RoleEnum role = requestDto.getRole();
 
-        users.saveUsers(requestDto, password, sex, role);
+        users.saveUsers(requestDto, password, gender, role);
 
         // 프로필 이미지 처리
         if(!profileImg.isEmpty()) {

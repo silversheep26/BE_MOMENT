@@ -1,5 +1,7 @@
 package com.back.moment.users.dto;
 
+import com.back.moment.users.entity.GenderEnum;
+import com.back.moment.users.entity.RoleEnum;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -22,8 +24,8 @@ public class SignupRequestDto {
 
     private String nickName;
 
-    private boolean gender = false; // false : 남, true : 여
+    private GenderEnum gender; // false : 남, true : 여
 
-    private boolean role = false;  // false : 모델, true : 작가
+    private RoleEnum role;  // false : 모델, true : 작가
 
 }
