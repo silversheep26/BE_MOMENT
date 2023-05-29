@@ -32,9 +32,15 @@ public class ChatRoom{
     }
 
     public void updateCanUserOneSee(){
-        this.canUserOneSee = false;
+        this.canUserOneSee = true;
     }
     public void updateCanUserTwoSee(){
+        this.canUserTwoSee = true;
+    }
+    public void updateCanNotUserOneSee(){
+        this.canUserOneSee = false;
+    }
+    public void updateCanNotUserTwoSee(){
         this.canUserTwoSee = false;
     }
     public void updateLastMessageAt(LocalDateTime localDateTime){
