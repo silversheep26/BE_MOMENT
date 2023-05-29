@@ -87,6 +87,7 @@ public class UserService {
             if (!passwordEncoder.matches(password, users.getPassword())) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+            jwtUtil.init();
             // 토큰에 모델인지 작가인지 판단하는 role 입력
             TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail(), users.getRole());
 
