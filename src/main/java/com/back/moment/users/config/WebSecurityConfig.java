@@ -57,8 +57,8 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .cors().disable()
+        http.cors().and()
+                .csrf().disable()
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -78,10 +78,11 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
 
-        CorsConfiguration config = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
 
         // 사전에 약속된 출처를 명시
         config.addAllowedOriginPattern("*");
+
 
 
         // 특정 헤더를 클라이언트 측에서 사용할 수 있게 지정
