@@ -57,14 +57,12 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().and()
+        http.cors().disable()
                 .csrf().disable()
                 .httpBasic().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-
-        http.authorizeRequests()
-                .requestMatchers("/users/signup", "/users/login", "/users/kakao").permitAll()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeHttpRequests()
+                .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers("/emails/**").permitAll()
                 .requestMatchers("/main").permitAll()
