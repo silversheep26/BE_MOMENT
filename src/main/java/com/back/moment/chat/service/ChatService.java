@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,11 +59,12 @@ public class ChatService {
             List<ChatResponseDto> chatResponseDtoList;
             if(isUserOne){
                 chatResponseDtoList = chatRepository.findByChatRoomIdAndUserOneCanSeeTrueOrderByCreatedAt(chatRoomByUsers.get().getId()).stream().map(c -> ChatResponseDto.from(c)).collect(Collectors.toList());
+                return ResponseEntity.ok(new ChatRoomResponseDto(chatRoomByUsers.get().getId(),chatResponseDtoList,userTwo.getProfileImg(),userTwoId,userTwo.getNickName(),false));
             }
             chatResponseDtoList = chatRepository.findByChatRoomIdAndUserTwoCanSeeTrueOrderByCreatedAt(chatRoomByUsers.get().getId()).stream().map(c -> ChatResponseDto.from(c)).collect(Collectors.toList());
-            return ResponseEntity.ok(new ChatRoomResponseDto(chatRoomByUsers.get().getId(),chatResponseDtoList,userTwo.getProfileImg(),userTwoId,userTwo.getNickName()));
+            return ResponseEntity.ok(new ChatRoomResponseDto(chatRoomByUsers.get().getId(),chatResponseDtoList,userOne.getProfileImg(),userOneId,userOne.getNickName(),false));
         }
-        return ResponseEntity.ok(new ChatRoomResponseDto(null,null,userTwo.getProfileImg(),userTwoId,userTwo.getNickName()));
+        return ResponseEntity.ok(new ChatRoomResponseDto(null,null,userTwo.getProfileImg(),userTwoId,userTwo.getNickName(),false));
     }
     /*
     방을 생성하는 로직이다.
@@ -79,10 +81,13 @@ public class ChatService {
     채팅 내용을 저장한다.
     채팅은 MongoDB에 저장한다.
      */
-    public void saveChat(ChatRequestDto chatRequestDto,Long chatRoomId){
+    public ChatResponseDto saveChat(ChatRequestDto chatRequestDto,Long chatRoomId){
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.RUNTIME_EXCEPTION));
-        chatRepository.save(ChatRequestDto.toEntity(chatRequestDto, LocalDateTime.now()));
+        chatRoom.updateCanUserOneSee();
+        chatRoom.updateCanUserTwoSee();
+        Chat chat = chatRepository.save(ChatRequestDto.toEntity(chatRequestDto, LocalDateTime.now()));
         chatRoom.updateLastMessageAt(LocalDateTime.now());
+        return ChatResponseDto.from(chat);
     }
     /*
     모든 채팅방을 모두 가져온다.
@@ -94,18 +99,58 @@ public class ChatService {
         ArrayList<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByUserOneOrUserTwoOrderByLastMessageAtDesc(user, user);
         for (ChatRoom chatRoom : chatRoomList) {
+            boolean existReadStatusIsFalse;
             if(chatRoom.getUserOne().getId().equals(user.getId())){
                 Users userTwo = chatRoom.getUserTwo();
                 if(chatRoom.getCanUserOneSee()){
-                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userTwo.getProfileImg(),userTwo.getId(),userTwo.getNickName()));
+                    existReadStatusIsFalse = chatRepository.existsChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
+                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userTwo.getProfileImg(),userTwo.getId(),userTwo.getNickName(),existReadStatusIsFalse));
                 }
             }else{
                 Users userOne = chatRoom.getUserOne();
                 if(chatRoom.getCanUserOneSee()){
-                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userOne.getProfileImg(),userOne.getId(),userOne.getNickName()));
+                    existReadStatusIsFalse = chatRepository.existsChatRoomIdAndUserTwoSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
+                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userOne.getProfileImg(),userOne.getId(),userOne.getNickName(),existReadStatusIsFalse));
                 }
             }
         }
         return ResponseEntity.ok(chatRoomResponseDtoList);
     }
+    /*
+    유저가 채팅방을 삭제하면 , 삭제를 하지않고,
+    해당 유저에게 채팅방을 보이지 않게함.
+     */
+    public ResponseEntity<String> deleteChatRoom(Users user,Long chatRoomId){
+        ChatRoom findChatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_CHATROOM));
+        if(findChatRoom.getUserOne().getId().equals(user.getId())){
+            findChatRoom.updateCanNotUserOneSee();
+            deleteChat(chatRoomId,true);
+        }else{
+            findChatRoom.updateCanNotUserTwoSee();
+            deleteChat(chatRoomId,false);
+        }
+        return ResponseEntity.ok("success");
+    }
+    /*
+    채팅을 보이지 않게 update하는것은 비동기적으로 처리해주고 싶어서
+    @Async 어노테이션을 붙이고 deleteChatRoom에서 deleteChat
+    메서드를 사용했다.
+     */
+    @Async
+    public void deleteChat(Long chatRoomId,boolean isUserOne){
+        List<Chat> chatList = chatRepository.findByChatRoomId(chatRoomId);
+        Query query = new Query();
+        Update update=null;
+        query.addCriteria(new Criteria().andOperator(
+                Criteria.where("chatRoomId").is(chatRoomId)
+        ));
+        if(isUserOne){
+             update=Update.update("userOneCanSee", false);
+        }else{
+            update=Update.update("userTwoCanSee",false);
+        }
+        mongoTemplate.updateMulti(query,update,Chat.class);
+    }
+
+
 }
