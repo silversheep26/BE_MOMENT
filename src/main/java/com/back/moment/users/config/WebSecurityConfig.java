@@ -112,6 +112,20 @@ public class WebSecurityConfig {
 //
 //        return source;
 //    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+
+        // 사전에 약속된 출처를 명시
+        config.addAllowedOrigin("http://localhost:3000");
+
+
+
+        // 특정 헤더를 클라이언트 측에서 사용할 수 있게 지정
+        // 만약 지정하지 않는다면, Authorization 헤더 내의 토큰 값을 사용할 수 없음
+        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -120,7 +134,7 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry){
                 registry.addMapping("/**")
                     .allowedOrigins("*")
-                    .allowedOrigins("http://localhost:8080", "http://localhost:3000", "http://13.124.152.254",
+                    .allowedOrigins("http://localhost:8080", "http://localhost:3000",
                         "http://moment-photo.ap-northeast-2.amazonaws.com",  // s3
                         "http://moment.cadbf9mahvf5.ap-northeast-2.rds.amazonaws.com")    // db(rds)
 //                        .allowedOriginPatterns("*")
