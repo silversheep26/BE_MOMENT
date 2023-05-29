@@ -1,14 +1,10 @@
 package com.back.moment.feed.controller;
 
-import com.amazonaws.Response;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.service.FeedService;
-import com.back.moment.users.entity.Users;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,10 +22,10 @@ public class FeedController {
 
     // feed 업로드
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents",required = false) FeedRequestDto feedRequestDto,
+    public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents",required = false) String content,
                                              @RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return feedService.uploadImages(feedRequestDto, imageFile, userDetails.getUsers());
+        return feedService.uploadImages(content, imageFile, userDetails.getUsers());
     }
 
     // Feed 에서 photo 좋아요
@@ -59,9 +55,9 @@ public class FeedController {
     // feed 내용 작성
     @PutMapping("/{photoId}")
     public ResponseEntity<Void> writeContents(@PathVariable Long photoId,
-                                              @RequestBody FeedRequestDto feedRequestDto,
+                                              @RequestBody String content,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return feedService.writeContents(photoId, feedRequestDto, userDetails.getUsers());
+        return feedService.writeContents(photoId, content, userDetails.getUsers());
     }
 
 }

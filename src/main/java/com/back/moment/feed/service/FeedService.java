@@ -4,7 +4,6 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -35,14 +34,14 @@ public class FeedService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ResponseEntity<Void> uploadImages(FeedRequestDto feedRequestDto, List<MultipartFile> imageList, Users users) throws IOException {
+    public ResponseEntity<Void> uploadImages(String content, List<MultipartFile> imageList, Users users) throws IOException {
 
         for(MultipartFile image : imageList){
             Photo photo = new Photo();
             String imageUrl = s3Uploader.upload(image);
             photo = new Photo(users, imageUrl);
-            if(feedRequestDto != null)
-                photo.updateContents(feedRequestDto.getContents());
+            if(content != null)
+                photo.updateContents(content);
             photoRepository.save(photo);
         }
         return ResponseEntity.ok(null);
@@ -134,14 +133,14 @@ public class FeedService {
     }
 
     @Transactional
-    public ResponseEntity<Void> writeContents(Long photoId, FeedRequestDto feedRequestDto, Users users){
+    public ResponseEntity<Void> writeContents(Long photoId, String content, Users users){
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
         if(!Objects.equals(photo.getUsers().getId(), users.getId()))
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
 
-        photo.updateContents(feedRequestDto.getContents());
+        photo.updateContents(content);
         photoRepository.save(photo);
 
         return ResponseEntity.ok(null);
