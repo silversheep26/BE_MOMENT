@@ -11,5 +11,6 @@ public class ChatRoomResponseDto {
     private List<ChatResponseDto> chatList;
     private String receiverProfileImg;
     private Long receiverId;
-    private String recieverNickName;
+    private String receiverNickName;
+    private boolean existReadStatusIsFalse;
 }
