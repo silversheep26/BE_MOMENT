@@ -12,6 +12,7 @@ import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.s3.S3Uploader;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class BoardService {
     @Transactional
     public ResponseEntity<Void> createBoard(BoardRequestDto boardRequestDto, Users users, MultipartFile boardImg){
         Board board = new Board();
-        if(users.getRole() != null) {
+        if(users.getRole() != RoleEnum.NONE) {
             board.saveBoard(boardRequestDto, users);
             if (!boardImg.isEmpty()) {
                 try {
@@ -114,6 +116,9 @@ public class BoardService {
 
         existUser(users.getEmail());
 
+        if(!Objects.equals(users.getId(), board.getUsers().getId())) {
+            throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
+        }
         s3Uploader.delete(board.getBoardImgUrl());
         boardRepository.deleteById(boardId);
 
