@@ -19,6 +19,7 @@ public enum ExceptionEnum {
     FAIL_LOGIN(HttpStatus.BAD_REQUEST, "400_5", "로그인에 실패하였습니다."),
     FAIL_MAIL_SEND(HttpStatus.BAD_REQUEST,"400_6","메일 전송에 실패하였습니다."),
     EXIST_MAIL(HttpStatus.BAD_REQUEST,"400_7","이미 존재하는 메일입니다."),
+    NOT_FOUND_CHATROOM(HttpStatus.BAD_REQUEST,"400_8","채팅방을 찾을수 없습니다."),
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),
     LOGIN(HttpStatus.UNAUTHORIZED, "401_1", "로그인 후 이용가능합니다."),
