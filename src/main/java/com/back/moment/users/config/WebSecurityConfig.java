@@ -76,11 +76,11 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
 
-        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
+        CorsConfiguration config = new CorsConfiguration();
         config.applyPermitDefaultValues();
 
         // 사전에 약속된 출처를 명시
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOrigin("http://localhost:3000");
 
 
 
