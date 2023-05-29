@@ -20,15 +20,15 @@ public class Chat {
     private Boolean userOneCanSee = true; // 유저1이 볼 수 있는지 판별 , 예를들어 유저1이 채팅목록에서 삭제했는지 여부
     private Boolean userTwoCanSee = true; // 유저2가 볼 수 있는지 판별 , 예를들어 유저1이 채팅목록에서 삭제했는지 여부
 
-    private Chat(String message, Long senderId, Long roomId, LocalDateTime createdAt) {
+    private Chat(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt) {
         this.message = message;
         this.senderId = senderId;
-        this.chatRoomId = roomId;
+        this.chatRoomId = chatRoomId;
         this.createdAt = createdAt;
     }
 
-    public static Chat of(String message, Long senderId, Long roomId, LocalDateTime createdAt){
-        return new Chat(message,senderId,roomId,createdAt);
+    public static Chat of(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt){
+        return new Chat(message,senderId,chatRoomId,createdAt);
     }
     public void updateReadStatus(){
         this.readStatus = true;
