@@ -103,13 +103,13 @@ public class ChatService {
             if(chatRoom.getUserOne().getId().equals(user.getId())){
                 Users userTwo = chatRoom.getUserTwo();
                 if(chatRoom.getCanUserOneSee()){
-                    existReadStatusIsFalse = chatRepository.existsChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
+                    existReadStatusIsFalse = chatRepository.existsByChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
                     chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userTwo.getProfileImg(),userTwo.getId(),userTwo.getNickName(),existReadStatusIsFalse));
                 }
             }else{
                 Users userOne = chatRoom.getUserOne();
                 if(chatRoom.getCanUserOneSee()){
-                    existReadStatusIsFalse = chatRepository.existsChatRoomIdAndUserTwoSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
+                    existReadStatusIsFalse = chatRepository.existsByChatRoomIdAndUserTwoCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
                     chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userOne.getProfileImg(),userOne.getId(),userOne.getNickName(),existReadStatusIsFalse));
                 }
             }

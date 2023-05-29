@@ -8,8 +8,8 @@ import java.util.List;
 public interface ChatRepository extends MongoRepository<Chat,String> {
     List<Chat> findByChatRoomIdAndUserOneCanSeeTrueOrderByCreatedAt(Long chatRoomId);
     List<Chat> findByChatRoomIdAndUserTwoCanSeeTrueOrderByCreatedAt(Long chatRoomId);
-    boolean existsChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(Long chatRoomId,Long receiverId);
-    boolean existsChatRoomIdAndUserTwoSeeTrueAndReadStatusFalseAndReceiverId(Long chatRoomId,Long receiverId);
+    boolean existsByChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(Long chatRoomId,Long receiverId);
+    boolean existsByChatRoomIdAndUserTwoCanSeeTrueAndReadStatusFalseAndReceiverId(Long chatRoomId,Long receiverId);
     List<Chat> findByChatRoomId(Long chatRoomId);
 
 }
