@@ -40,9 +40,9 @@ public class FeedService {
         for(MultipartFile image : imageList){
             Photo photo = new Photo();
             String imageUrl = s3Uploader.upload(image);
+            photo = new Photo(users, imageUrl);
             if(feedRequestDto != null)
                 photo.updateContents(feedRequestDto.getContents());
-            photo = new Photo(users, imageUrl);
             photoRepository.save(photo);
         }
         return ResponseEntity.ok(null);
