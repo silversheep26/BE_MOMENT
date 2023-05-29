@@ -1,10 +1,7 @@
 package com.back.moment.feed.service;
 
-import com.back.moment.exception.ApiException;
-import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
@@ -12,9 +9,7 @@ import com.back.moment.recommend.repository.RecommendRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,15 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -55,7 +47,7 @@ class FeedServiceTest {
     @Test
     void uploadImages() throws IOException {
         // Given
-        FeedRequestDto feedRequestDto = new FeedRequestDto();
+        String content = "테스트용";
         MockMultipartFile mockFile = new MockMultipartFile(
                 "mockFile",
                 "test.jpg",
@@ -73,7 +65,7 @@ class FeedServiceTest {
         when(s3Uploader.upload(imageList.get(0))).thenReturn(imageUrl);
 
         // When
-        ResponseEntity<Void> responseEntity = feedService.uploadImages(feedRequestDto, imageList, users);
+        ResponseEntity<Void> responseEntity = feedService.uploadImages(content, imageList, users);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -159,7 +151,7 @@ class FeedServiceTest {
     void writeContents() {
         // Given
         Long photoId = 1L;
-        FeedRequestDto feedRequestDto = new FeedRequestDto();
+        String content = "테스트용";
         Users users = new Users();
         users.setId(1L);
         Photo photo = new Photo();
@@ -172,7 +164,7 @@ class FeedServiceTest {
 
 
         // When
-        ResponseEntity<Void> responseEntity = feedService.writeContents(photoId, feedRequestDto, users);
+        ResponseEntity<Void> responseEntity = feedService.writeContents(photoId, content, users);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
