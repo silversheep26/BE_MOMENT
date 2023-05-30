@@ -31,7 +31,7 @@ public class MainService {
 
         List<OnlyPhotoResponseDto> topSixPhotos = photoList.stream()
                 .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())
-                .limit(6)
+                .limit(9)
                 .toList();
 
         return new ResponseEntity<>(new BeforeLogInResponseDto(topSixPhotos), HttpStatus.OK);
@@ -40,12 +40,16 @@ public class MainService {
     @Transactional(readOnly = true)
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users){
         Pageable pageable = PageRequest.of(0, 3);
-        if(users.getRole() == RoleEnum.MODEL){
-            List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(users.getRole(), pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
-        }else if(users.getRole() == RoleEnum.PHOTOGRAPHER) {
-            List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(users.getRole(), pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
+        if (users != null) {
+            if (users.getRole() == RoleEnum.MODEL) {
+                List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
+                return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
+            } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
+                List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
+                return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
+            }
+            List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
+            return new ResponseEntity<>(new AfterLogInResponseDto(top3), HttpStatus.OK);
         }
         List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
         return new ResponseEntity<>(new AfterLogInResponseDto(top3), HttpStatus.OK);
