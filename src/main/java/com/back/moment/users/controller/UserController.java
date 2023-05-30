@@ -3,6 +3,7 @@ package com.back.moment.users.controller;
 import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<UserInfoResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return userService.login(loginRequestDto, response);
     }
 

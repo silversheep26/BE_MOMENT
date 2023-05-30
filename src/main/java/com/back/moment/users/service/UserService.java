@@ -6,6 +6,7 @@ import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.TokenDto;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.GenderEnum;
@@ -13,9 +14,12 @@ import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.RefreshTokenRepository;
 import com.back.moment.users.repository.UsersRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +35,8 @@ import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    @Value("${jwt.secret.key}")
+    private String secretKey; // 암호화/복호화에 필요
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
@@ -76,7 +82,7 @@ public class UserService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<UserInfoResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
@@ -89,7 +95,7 @@ public class UserService {
             }
             jwtUtil.init();
             // 토큰에 모델인지 작가인지 판단하는 role 입력
-            TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail(), users.getRole());
+            TokenDto tokenDto = jwtUtil.createAllToken(users, users.getRole());
 
             Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
 
@@ -101,11 +107,16 @@ public class UserService {
                 RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken().substring(7), email);
                 refreshTokenRepository.save(newToken);
             }
-
+            Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
+            Long userId = claim.get("userId", Long.class);
+            String nickName = claim.get("nickName", String.class);
+            String profileImg = claim.get("profileImg", String.class);
+            String role = claim.get("role", String.class);
+            UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(userId, nickName, profileImg, role);
             //응답 헤더에 토큰 추가
             setHeader(response, tokenDto);
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok(userInfoResponseDto);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
