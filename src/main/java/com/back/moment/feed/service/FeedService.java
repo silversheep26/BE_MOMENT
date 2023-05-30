@@ -98,7 +98,7 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(Users users){
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(){
         List<PhotoFeedResponseDto> photoList = photoRepository.getAllPhoto();
 
         List<PhotoFeedResponseDto> topThreePhotos = photoList.stream()

@@ -111,13 +111,11 @@ class FeedServiceTest {
 
     @Test
     void getAllFeeds() {
-        // Given
-        Users users = new Users();
 
         // 의존성과 그 동작을 모킹한다
 
         // When
-        ResponseEntity<FeedListResponseDto> responseEntity = feedService.getAllFeeds(users);
+        ResponseEntity<FeedListResponseDto> responseEntity = feedService.getAllFeeds();
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
