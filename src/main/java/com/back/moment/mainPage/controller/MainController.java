@@ -3,6 +3,7 @@ package com.back.moment.mainPage.controller;
 import com.back.moment.mainPage.dto.AfterLogInResponseDto;
 import com.back.moment.mainPage.dto.BeforeLogInResponseDto;
 import com.back.moment.mainPage.service.MainService;
+import com.back.moment.users.entity.Users;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,8 @@ public class MainController {
 
     @GetMapping("home")
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mainService.getHomePageSource(userDetails.getUsers());
+        Users users = userDetails != null ? userDetails.getUsers() : null;
+        return mainService.getHomePageSource(users);
     }
 
 }
