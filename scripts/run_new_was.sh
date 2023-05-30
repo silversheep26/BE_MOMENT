@@ -29,6 +29,7 @@ if [ ! -z ${TARGET_PID} ]; then
 fi
 
 # 타켓 포트에 jar파일을 이용해 새로운 서버 실행
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${TARGET_PORT}
 nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_FILE} > /home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
