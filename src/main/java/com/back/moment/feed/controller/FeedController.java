@@ -21,7 +21,7 @@ public class FeedController {
     private final FeedService feedService;
 
     // feed 업로드
-    @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> uploadImages(@RequestPart(value = "contents",required = false) String content,
                                              @RequestPart(value = "imageFile", required = false) List<MultipartFile> imageFile,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
@@ -42,8 +42,8 @@ public class FeedController {
 
     // feed 전체 조회
     @GetMapping("")
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return feedService.getAllFeeds(userDetails.getUsers());
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(){
+        return feedService.getAllFeeds();
     }
 
     // Feed 상세 조회
