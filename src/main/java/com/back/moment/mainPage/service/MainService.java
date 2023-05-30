@@ -1,5 +1,7 @@
 package com.back.moment.mainPage.service;
 
+import com.back.moment.boards.dto.BoardListResponseDto;
+import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.mainPage.dto.AfterLogInResponseDto;
 import com.back.moment.mainPage.dto.BeforeLogInResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
@@ -24,6 +26,7 @@ import java.util.List;
 public class MainService {
     private final PhotoRepository photoRepository;
     private final UsersRepository usersRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional(readOnly = true)
     public ResponseEntity<BeforeLogInResponseDto> getMainPageSource(){
@@ -40,18 +43,20 @@ public class MainService {
     @Transactional(readOnly = true)
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users){
         Pageable pageable = PageRequest.of(0, 3);
+        List<BoardListResponseDto> boardList = boardRepository.selectAllBoardList();
+        List<BoardListResponseDto> topSixBoard = boardList.stream().limit(6).toList();
         if (users != null) {
             if (users.getRole() == RoleEnum.MODEL) {
                 List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
-                return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers), HttpStatus.OK);
+                return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers, topSixBoard), HttpStatus.OK);
             } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
                 List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
-                return new ResponseEntity<>(new AfterLogInResponseDto(top3Models), HttpStatus.OK);
+                return new ResponseEntity<>(new AfterLogInResponseDto(top3Models, topSixBoard), HttpStatus.OK);
             }
             List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3), HttpStatus.OK);
+            return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
         }
         List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
-        return new ResponseEntity<>(new AfterLogInResponseDto(top3), HttpStatus.OK);
+        return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
     }
 }
