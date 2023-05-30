@@ -55,9 +55,9 @@ public class KakaoService {
         Users kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. JWT 토큰 반환
-        String createToken = jwtUtil.createToken(kakaoUser.getEmail(), "Access");
+        String createToken = jwtUtil.createToken(kakaoUser, "Access");
         //Token 생성
-        TokenDto tokenDto = jwtUtil.createAllToken(kakaoUser.getEmail(), kakaoUser.getRole());
+        TokenDto tokenDto = jwtUtil.createAllToken(kakaoUser, kakaoUser.getRole());
         //RefreshToken 있는지 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(kakaoUser.getEmail());
         // 있으면 새 토큰 발급 후 업데이트

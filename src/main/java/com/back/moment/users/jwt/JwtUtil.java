@@ -3,6 +3,7 @@ package com.back.moment.users.jwt;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
+import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.RefreshTokenRepository;
 
 
@@ -61,8 +62,8 @@ public class JwtUtil {
     }
 
     // 액세스 토큰 및 리프레시 토큰 생성
-    public TokenDto createAllToken(String userId, RoleEnum role) {
-        return new TokenDto(createToken(userId, "Access"), createToken(userId, "Refresh"));
+    public TokenDto createAllToken(Users user, RoleEnum role) {
+        return new TokenDto(createToken(user, "Access"), createToken(user, "Refresh"));
     }
 
     // Request Header 에서 토큰 가져오기
@@ -76,13 +77,25 @@ public class JwtUtil {
     }
 
     // JWT 생성하기
-    public String createToken(String userId, String type) {
+    public String createToken(Users users, String type) {
         Date date = new Date();
         long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
-
+        if(type.equals("Access")){
+            return BEARER_PREFIX
+                    + Jwts.builder()
+                    .setSubject(users.getEmail())
+                    .claim("userId",users.getId())
+                    .claim("profileImg",users.getProfileImg())
+                    .claim("nickName",users.getNickName())
+                    .claim("role",users.getRole())
+                    .signWith(SignatureAlgorithm.HS256, secretKey)
+                    .setIssuedAt(date)
+                    .setExpiration(new Date(date.getTime() + time))
+                    .compact();
+        }
         return BEARER_PREFIX
                 + Jwts.builder()
-                .setSubject(userId)
+                .setSubject(users.getEmail())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .setIssuedAt(date)
                 .setExpiration(new Date(date.getTime() + time))
