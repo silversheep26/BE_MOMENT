@@ -1,12 +1,14 @@
 package com.back.moment.users.jwt;
 
+import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.TokenDto;
-import com.back.moment.users.entity.RefreshToken;
+//import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
-import com.back.moment.users.repository.RefreshTokenRepository;
+//import com.back.moment.users.repository.RefreshTokenRepository;
 
 
+//import com.back.moment.users.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -48,7 +50,8 @@ public class JwtUtil {
     private static final long REFRESH_TIME = 24 * 60 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -131,14 +134,18 @@ public class JwtUtil {
     }
 
     //리프레시 토큰 검증
-    public Boolean refreshTokenValidation(String token) {
-        // 1차 토큰 검증
-        if (!validateToken(token)) return false;
+//    public Boolean refreshTokenValidation(String token) {
+//        // 1차 토큰 검증
+//        if (!validateToken(token)) return false;
+//
+//        // DB에 저장한 토큰 비교
+//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
+//
+//        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+//    }
 
-        // DB에 저장한 토큰 비교
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
-
-        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+    public boolean existsRefreshToken(String userEmail) {
+        return redisService.getValues(userEmail) != null;
     }
 
     //액세스 토큰 헤더 설정

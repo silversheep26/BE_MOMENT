@@ -2,14 +2,14 @@ package com.back.moment.oauth;
 
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-//import com.back.moment.global.service.RedisService;
+import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
-import com.back.moment.users.entity.RefreshToken;
+//import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
-import com.back.moment.users.repository.RefreshTokenRepository;
+//import com.back.moment.users.repository.RefreshTokenRepository;
 import com.back.moment.users.repository.UsersRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,8 +34,8 @@ import java.util.UUID;
 public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-//    private final RedisService redisService;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
     private final JwtUtil jwtUtil;
     @Value("${kakao.client.id}")
     private String client_id;
@@ -56,27 +56,28 @@ public class KakaoService {
         // 3. 필요시에 회원가입
         Users kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        // 4. JWT 토큰 반환
-        String createToken = jwtUtil.createToken(kakaoUser, "Access");
-        String createRefreshToken = jwtUtil.createToken(kakaoUser, "Refresh");
-
         //Token 생성
         TokenDto tokenDto = jwtUtil.createAllToken(kakaoUser, kakaoUser.getRole());
         //RefreshToken 있는지 확인
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(kakaoUser.getEmail());
+//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(kakaoUser.getEmail());
+
         // 있으면 새 토큰 발급 후 업데이트
         // 없으면 새로 만들고 DB에 저장
-        if (refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-        } else {
-            refreshTokenRepository.saveAndFlush(new RefreshToken(tokenDto.getRefreshToken(), kakaoUser.getEmail()));
+//        if (refreshToken.isPresent()) {
+//            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+//        } else {
+//            refreshTokenRepository.saveAndFlush(new RefreshToken(tokenDto.getRefreshToken(), kakaoUser.getEmail()));
+//        }
+
+        String refreshRedis = redisService.getValues(kakaoUser.getEmail());
+        if(refreshRedis == null){
+            String redisKey = tokenDto.getRefreshToken().substring(7);
+
+            redisService.setValues(kakaoUser.getEmail(), redisKey);
         }
-//        String redisKey = tokenDto.getRefreshToken().substring(7);
-//
-//        redisService.setValues(kakaoUser.getEmail(), redisKey);
 
         //header에 accesstoken, refreshtoken 추가
-        response.addHeader(JwtUtil.ACCESS_KEY, createToken);
+        response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 
         return ResponseEntity.ok(null);
     }
