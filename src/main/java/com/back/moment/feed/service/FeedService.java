@@ -121,7 +121,8 @@ public class FeedService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
 
-        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getImagUrl(),
+        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
+                                                                                photo.getImagUrl(),
                                                                                 photo.getUsers().getProfileImg(),
                                                                                 photo.getUsers().getNickName(),
                                                                                 photo.getUsers().getRole(),
