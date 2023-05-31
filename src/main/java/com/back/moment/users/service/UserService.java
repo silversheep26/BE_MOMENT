@@ -2,7 +2,7 @@ package com.back.moment.users.service;
 
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-import com.back.moment.global.service.RedisService;
+//import com.back.moment.global.service.RedisService;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -45,7 +45,7 @@ public class UserService {
     private final S3Uploader s3Uploader;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final RedisService redisService;
+//    private final RedisService redisService;
 
     @Transactional
     public ResponseEntity<Void> signup(SignupRequestDto requestDto, MultipartFile profileImg) {
@@ -110,9 +110,9 @@ public class UserService {
                 refreshTokenRepository.save(newToken);
             }
 
-            String redisKey = tokenDto.getRefreshToken().substring(7);
-
-            redisService.setValues(users.getEmail(), redisKey);
+//            String redisKey = tokenDto.getRefreshToken().substring(7);
+//
+//            redisService.setValues(users.getEmail(), redisKey);
 
             Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
             Long userId = claim.get("userId", Long.class);
