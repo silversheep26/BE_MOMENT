@@ -33,7 +33,7 @@ public class BoardController {
 
 //    @GetMapping("") //게시글 전체 조회
 //    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
-//                                                                   @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+//                                                                   @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 //        return boardService.getAllBoards(userDetails.getUsers(), pageable);
 //    }
 
@@ -41,7 +41,7 @@ public class BoardController {
     public ResponseEntity<Page<BoardListResponseDto>> getBoardsByPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return boardService.getAllBoards(userDetails.getUsers(), pageable);
     }

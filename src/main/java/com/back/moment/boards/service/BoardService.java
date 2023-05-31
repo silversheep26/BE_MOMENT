@@ -96,7 +96,7 @@ public class BoardService {
         if (boardList.hasNext()) {
             boardList = new PageImpl<>(boardList.getContent(), pageable, boardList.getTotalElements());
         } else {
-            boardList = Page.empty(pageable);
+            boardList = boardRepository.selectAllBoard(pageable);
         }
 
         return new ResponseEntity<>(boardList, HttpStatus.OK);
