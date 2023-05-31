@@ -2,18 +2,17 @@ package com.back.moment.users.service;
 
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-//import com.back.moment.global.service.RedisService;
+import com.back.moment.global.service.RedisService;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
-import com.back.moment.users.entity.RefreshToken;
+//import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
-import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
-import com.back.moment.users.repository.RefreshTokenRepository;
+//import com.back.moment.users.repository.RefreshTokenRepository;
 import com.back.moment.users.repository.UsersRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -44,8 +43,8 @@ public class UserService {
     public static final String BEARER_PREFIX = "Bearer ";
     private final S3Uploader s3Uploader;
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
-//    private final RedisService redisService;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @Transactional
     public ResponseEntity<Void> signup(SignupRequestDto requestDto, MultipartFile profileImg) {
@@ -99,20 +98,23 @@ public class UserService {
             // 토큰에 모델인지 작가인지 판단하는 role 입력
             TokenDto tokenDto = jwtUtil.createAllToken(users, users.getRole());
 
-            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-
-            if (refreshToken.isPresent()) {
-                RefreshToken savedRefreshToken = refreshToken.get();
-                RefreshToken updateToken = savedRefreshToken.updateToken(tokenDto.getRefreshToken().substring(7));
-                refreshTokenRepository.save(updateToken);
-            } else {
-                RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken().substring(7), email);
-                refreshTokenRepository.save(newToken);
-            }
-
-//            String redisKey = tokenDto.getRefreshToken().substring(7);
+//            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
 //
-//            redisService.setValues(users.getEmail(), redisKey);
+//            if (refreshToken.isPresent()) {
+//                RefreshToken savedRefreshToken = refreshToken.get();
+//                RefreshToken updateToken = savedRefreshToken.updateToken(tokenDto.getRefreshToken().substring(7));
+//                refreshTokenRepository.save(updateToken);
+//            } else {
+//                RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken().substring(7), email);
+//                refreshTokenRepository.save(newToken);
+//            }
+
+            String refreshRedis = redisService.getValues(users.getEmail());
+            if(refreshRedis == null){
+                String redisKey = tokenDto.getRefreshToken().substring(7);
+
+                redisService.setValues(users.getEmail(), redisKey);
+            }
 
             Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
             Long userId = claim.get("userId", Long.class);
