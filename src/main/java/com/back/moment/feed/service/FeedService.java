@@ -124,6 +124,7 @@ public class FeedService {
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getImagUrl(),
                                                                                 photo.getUsers().getProfileImg(),
                                                                                 photo.getUsers().getNickName(),
+                                                                                photo.getUsers().getRole(),
                                                                                 photo.getContents());
 
         if(loveRepository.existsByIdAndUsersId(photoId, users.getId())) feedDetailResponseDto.setCheckLove(true);
