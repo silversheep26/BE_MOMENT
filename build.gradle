@@ -65,6 +65,8 @@ dependencies {
     runtimeOnly 'com.amazonaws:aws-lambda-java-log4j2:1.5.1'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
+    //redis 적용
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 //tasks.named('test') {
