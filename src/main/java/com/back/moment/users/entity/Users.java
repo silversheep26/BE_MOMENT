@@ -3,7 +3,7 @@ package com.back.moment.users.entity;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.love.entity.Love;
 import com.back.moment.photos.entity.Photo;
-import com.back.moment.recommend.entity.Recommend;
+//import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -42,6 +42,9 @@ public class Users {
     @Column
     private String profileImg;  // 프로필 사진
 
+    @ColumnDefault("0")
+    private int totalLoveCnt;
+
     @Column
     //@Enumerated(value = EnumType.STRING)
     private RoleEnum role;  // 모델 또는 작가
@@ -55,14 +58,14 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Board> boardList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
-    private List<Recommend> recommenderList = new ArrayList<>();  // 추천 하는 사람
-
-    @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
-    private List<Recommend> recommendedList = new ArrayList<>();  // 추천 받은 사람
-
-    @ColumnDefault("0")
-    private int recommendCnt;
+//    @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
+//    private List<Recommend> recommenderList = new ArrayList<>();  // 추천 하는 사람
+//
+//    @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
+//    private List<Recommend> recommendedList = new ArrayList<>();  // 추천 받은 사람
+//
+//    @ColumnDefault("0")
+//    private int recommendCnt;
 
     private Users(String email, String nickName, String password, String gender, String profileImg, RoleEnum role){
         this.email = email;

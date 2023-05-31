@@ -9,8 +9,8 @@ import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
-import com.back.moment.recommend.entity.Recommend;
-import com.back.moment.recommend.repository.RecommendRepository;
+//import com.back.moment.recommend.entity.Recommend;
+//import com.back.moment.recommend.repository.RecommendRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -30,7 +30,7 @@ public class FeedService {
     private final S3Uploader s3Uploader;
     private final PhotoRepository photoRepository;
     private final LoveRepository loveRepository;
-    private final RecommendRepository recommendRepository;
+//    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
 
     @Transactional
@@ -61,9 +61,11 @@ public class FeedService {
         if(existLove != null){
             loveRepository.delete(existLove);
             message = "좋아요 취소";
+            photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() - 1);
         }else {
             loveRepository.save(love);
             message = "좋아요 등록";
+            photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() + 1);
         }
         int loveCnt = loveRepository.findCntByPhotoId(photoId);
         photo.setLoveCnt(loveCnt);
@@ -72,30 +74,30 @@ public class FeedService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @Transactional
-    public ResponseEntity<String> recommendUser(String nickName, Users users){
-        Users recommendedUser = usersRepository.findByNickName(nickName).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
-        );
-
-        Recommend recommend = new Recommend(users, recommendedUser);
-        Recommend existRecommend = recommendRepository.existRecommend(users.getNickName(), nickName);
-
-        String message;
-
-        if(existRecommend != null){
-            recommendRepository.delete(existRecommend);
-            message = "추천 취소";
-        } else{
-            recommendRepository.save(recommend);
-            message = "추천 등록";
-        }
-        int recommendCnt = recommendRepository.countByRecommendedId(recommendedUser.getId());
-        recommendedUser.setRecommendCnt(recommendCnt);
-        usersRepository.save(recommendedUser);
-
-        return new ResponseEntity<>(message, HttpStatus.OK);
-    }
+//    @Transactional
+//    public ResponseEntity<String> recommendUser(String nickName, Users users){
+//        Users recommendedUser = usersRepository.findByNickName(nickName).orElseThrow(
+//                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
+//        );
+//
+//        Recommend recommend = new Recommend(users, recommendedUser);
+//        Recommend existRecommend = recommendRepository.existRecommend(users.getNickName(), nickName);
+//
+//        String message;
+//
+//        if(existRecommend != null){
+//            recommendRepository.delete(existRecommend);
+//            message = "추천 취소";
+//        } else{
+//            recommendRepository.save(recommend);
+//            message = "추천 등록";
+//        }
+//        int recommendCnt = recommendRepository.countByRecommendedId(recommendedUser.getId());
+//        recommendedUser.setRecommendCnt(recommendCnt);
+//        usersRepository.save(recommendedUser);
+//
+//        return new ResponseEntity<>(message, HttpStatus.OK);
+//    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(){
@@ -123,13 +125,14 @@ public class FeedService {
 
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
                                                                                 photo.getImagUrl(),
+                                                                                photo.getLoveCnt(),
                                                                                 photo.getUsers().getProfileImg(),
                                                                                 photo.getUsers().getNickName(),
                                                                                 photo.getUsers().getRole(),
                                                                                 photo.getContents());
 
         if(loveRepository.existsByIdAndUsersId(photoId, users.getId())) feedDetailResponseDto.setCheckLove(true);
-        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
+//        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
 
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
     }

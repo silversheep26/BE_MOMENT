@@ -13,16 +13,18 @@ import javax.management.relation.Role;
 public class FeedDetailResponseDto {
     private Long hostId;
     private String photoUrl;
+    private int photoLoveCnt;
     private String profileUrl;
     private String nickName;
     private String contents;
     private RoleEnum role;
     private boolean checkLove;
-    private boolean checkRecommend;
+//    private boolean checkRecommend;
 
-    public FeedDetailResponseDto(Long id, String photoUrl, String profileUrl, String nickName, RoleEnum role, String contents) {
+    public FeedDetailResponseDto(Long id, String photoUrl, int loveCnt, String profileUrl, String nickName, RoleEnum role, String contents) {
         this.hostId = id;
         this.photoUrl = photoUrl;
+        this.photoLoveCnt = loveCnt;
         this.profileUrl = profileUrl;
         this.nickName = nickName;
         this.role = role;

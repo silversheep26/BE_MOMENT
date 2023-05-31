@@ -5,7 +5,7 @@ import com.back.moment.feed.dto.FeedListResponseDto;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
-import com.back.moment.recommend.repository.RecommendRepository;
+//import com.back.moment.recommend.repository.RecommendRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -35,8 +35,8 @@ class FeedServiceTest {
     @MockBean
     private LoveRepository loveRepository;
 
-    @MockBean
-    private RecommendRepository recommendRepository;
+//    @MockBean
+//    private RecommendRepository recommendRepository;
 
     @MockBean
     private UsersRepository usersRepository;
@@ -91,23 +91,23 @@ class FeedServiceTest {
         // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
     }
 
-    @Test
-    void recommendUser() {
-        // Given
-        String nickName = "user1";
-        Users users = new Users();
-        users.setNickName("user1");
-        when(usersRepository.findByNickName(nickName)).thenReturn(Optional.of(users));
-
-        // 의존성과 그 동작을 모킹한다
-
-        // When
-        ResponseEntity<String> responseEntity = feedService.recommendUser(nickName, users);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
-    }
+//    @Test
+//    void recommendUser() {
+//        // Given
+//        String nickName = "user1";
+//        Users users = new Users();
+//        users.setNickName("user1");
+//        when(usersRepository.findByNickName(nickName)).thenReturn(Optional.of(users));
+//
+//        // 의존성과 그 동작을 모킹한다
+//
+//        // When
+//        ResponseEntity<String> responseEntity = feedService.recommendUser(nickName, users);
+//
+//        // Then
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
+//    }
 
     @Test
     void getAllFeeds() {
