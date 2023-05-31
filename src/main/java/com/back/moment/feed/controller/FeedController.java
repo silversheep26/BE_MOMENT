@@ -35,10 +35,10 @@ public class FeedController {
     }
 
     // feed 에서 회원 추천
-    @PostMapping("/recommend/{nickName}")
-    public ResponseEntity<String> recommendUser(@PathVariable String nickName, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return feedService.recommendUser(nickName, userDetails.getUsers());
-    }
+//    @PostMapping("/recommend/{nickName}")
+//    public ResponseEntity<String> recommendUser(@PathVariable String nickName, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return feedService.recommendUser(nickName, userDetails.getUsers());
+//    }
 
     // feed 전체 조회
     @GetMapping("")
