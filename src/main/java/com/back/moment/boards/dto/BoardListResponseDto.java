@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class BoardListResponseDto {
+    private Long boardId;
     private  String title;
     private  RoleEnum role;
     private  String nickName;
@@ -22,6 +23,7 @@ public class BoardListResponseDto {
     private  List<String> tag_boardList;
 
     public BoardListResponseDto(Board board) {
+        this.boardId = board.getId();
         this.title = board.getTitle();
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
