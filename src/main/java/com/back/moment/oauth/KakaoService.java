@@ -2,7 +2,7 @@ package com.back.moment.oauth;
 
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-import com.back.moment.global.service.RedisService;
+//import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.entity.RefreshToken;
@@ -35,7 +35,7 @@ public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final RedisService redisService;
+//    private final RedisService redisService;
     private final JwtUtil jwtUtil;
     @Value("${kakao.client.id}")
     private String client_id;
@@ -71,9 +71,9 @@ public class KakaoService {
         } else {
             refreshTokenRepository.saveAndFlush(new RefreshToken(tokenDto.getRefreshToken(), kakaoUser.getEmail()));
         }
-        String redisKey = tokenDto.getRefreshToken().substring(7);
-
-        redisService.setValues(kakaoUser.getEmail(), redisKey);
+//        String redisKey = tokenDto.getRefreshToken().substring(7);
+//
+//        redisService.setValues(kakaoUser.getEmail(), redisKey);
 
         //header에 accesstoken, refreshtoken 추가
         response.addHeader(JwtUtil.ACCESS_KEY, createToken);
