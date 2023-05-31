@@ -11,7 +11,7 @@ import javax.management.relation.Role;
 @Setter
 @NoArgsConstructor
 public class FeedDetailResponseDto {
-    private Long id;
+    private Long hostId;
     private String photoUrl;
     private String profileUrl;
     private String nickName;
@@ -21,7 +21,7 @@ public class FeedDetailResponseDto {
     private boolean checkRecommend;
 
     public FeedDetailResponseDto(Long id, String photoUrl, String profileUrl, String nickName, RoleEnum role, String contents) {
-        this.id = id;
+        this.hostId = id;
         this.photoUrl = photoUrl;
         this.profileUrl = profileUrl;
         this.nickName = nickName;
