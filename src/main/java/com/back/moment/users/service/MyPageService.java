@@ -62,16 +62,18 @@ public class MyPageService {
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
         }
 
-        if(updateRequestDto.getNickName() != null) {
+        if(!updateRequestDto.getNickName().isEmpty()) {
             String changeNickName = updateRequestDto.getNickName();
+
             Optional<Users> findNickName = usersRepository.findByNickName(changeNickName);
-            if(findNickName.isPresent()){
+            if (findNickName.isPresent()) {
                 throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
             }
             users.setNickName(changeNickName);
         }
-        if(updateRequestDto.getPassword() != null) {
+        if(!updateRequestDto.getPassword().isEmpty()) {
             String password = passwordEncoder.encode(updateRequestDto.getPassword());
+
             users.setPassword(password);
         }
         if(updateRequestDto.getRole() != null){
