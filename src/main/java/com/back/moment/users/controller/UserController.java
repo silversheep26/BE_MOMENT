@@ -52,14 +52,7 @@ public class UserController {
 
     @GetMapping("/kakao")
     public ResponseEntity<Void> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        ResponseEntity<Void> result = kakaoService.kakaoLogin(code, response);
-        
-        String createToken = response.getHeader(JwtUtil.ACCESS_KEY);
-        Cookie cookie = new Cookie(JwtUtil.ACCESS_KEY, createToken.substring(7));
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        return result;
+        return kakaoService.kakaoLogin(code, response);
     }
 
     @GetMapping("/logout")
