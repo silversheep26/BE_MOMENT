@@ -18,10 +18,10 @@ public class FeedDetailResponseDto {
     private String nickName;
     private String contents;
     private RoleEnum role;
-    private boolean checkLove;
+    private boolean checkLove = false;
 //    private boolean checkRecommend;
 
-    public FeedDetailResponseDto(Long id, String photoUrl, int loveCnt, String profileUrl, String nickName, RoleEnum role, String contents) {
+    public FeedDetailResponseDto(Long id, String photoUrl, int loveCnt, String profileUrl, String nickName, RoleEnum role, String contents, boolean checkLove) {
         this.hostId = id;
         this.photoUrl = photoUrl;
         this.photoLoveCnt = loveCnt;
@@ -29,5 +29,6 @@ public class FeedDetailResponseDto {
         this.nickName = nickName;
         this.role = role;
         this.contents = contents;
+        this.checkLove = checkLove;
     }
 }

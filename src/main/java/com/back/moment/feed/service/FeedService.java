@@ -122,6 +122,7 @@ public class FeedService {
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
+        boolean checkLove = loveRepository.existsByIdAndUsersId(photoId, users.getId());
 
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
                                                                                 photo.getImagUrl(),
@@ -129,9 +130,8 @@ public class FeedService {
                                                                                 photo.getUsers().getProfileImg(),
                                                                                 photo.getUsers().getNickName(),
                                                                                 photo.getUsers().getRole(),
-                                                                                photo.getContents());
+                                                                                photo.getContents(), checkLove);
 
-        if(loveRepository.existsByIdAndUsersId(photoId, users.getId())) feedDetailResponseDto.setCheckLove(true);
 //        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
 
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
