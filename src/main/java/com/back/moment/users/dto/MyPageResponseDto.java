@@ -17,6 +17,7 @@ public class MyPageResponseDto {
     private Long hostId;
     private RoleEnum role;
     private int boardCnt;
+    private int totalPhotoLoveCnt;
 //    private int recommendCnt;
     private List<BoardListResponseDto> boardList;
     private List<OnlyPhotoResponseDto> photoList;
@@ -27,6 +28,7 @@ public class MyPageResponseDto {
         this.hostId = users.getId();
         this.role = users.getRole();
         this.boardCnt = users.getBoardList().size();
+        this.totalPhotoLoveCnt = users.getTotalLoveCnt();
 //        this.recommendCnt = users.getRecommendedList().size();
         this.boardList = boardList;
         this.photoList = photoList;
