@@ -98,7 +98,8 @@ public class KakaoService {
     }
 
     @Transactional
-    public ResponseEntity<Void> saveRole(Users users, RoleEnum roleEnum){
+    public ResponseEntity<Void> saveRole(Users users, String role){
+        RoleEnum roleEnum = RoleEnum.valueOf(role.toUpperCase());
         users.setRole(roleEnum);
         return ResponseEntity.ok(null);
     }

@@ -57,8 +57,8 @@ public class UserController {
         return kakaoService.kakaoLogin(code, response);
     }
 
-    @PostMapping("/kako/role")
-    public ResponseEntity<Void> kakoRole(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody RoleEnum role){
+    @PostMapping("/kakao/role") //?role=MODEL
+    public ResponseEntity<Void> kakaoRole(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String role){
         return kakaoService.saveRole(userDetails.getUsers(),role);
     }
 
