@@ -14,12 +14,12 @@ public class Tag_Board {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "locationTag_id")
+    @JoinColumn(name = "location_tag_id")
     @JsonIgnore
     private LocationTag locationTag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Board_id")
+    @JoinColumn(name = "board_id")
     @JsonIgnore
     private Board board;
 
