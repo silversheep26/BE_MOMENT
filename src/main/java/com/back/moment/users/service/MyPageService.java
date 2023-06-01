@@ -66,10 +66,10 @@ public class MyPageService {
         if(findNickName.isPresent()){
             throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
         }
-        String changeNickName = null;
-        String password = null;
-        String profileUrl = null;
-        RoleEnum role = null;
+        String changeNickName = users.getNickName();
+        String password = users.getPassword();
+        String profileUrl = users.getProfileImg();
+        RoleEnum role = users.getRole();
         if(updateRequestDto.getNickName() != null) {
             changeNickName = updateRequestDto.getNickName();
         }
@@ -77,7 +77,7 @@ public class MyPageService {
             password = passwordEncoder.encode(updateRequestDto.getPassword());
         }
         if(updateRequestDto.getRole() != null){
-            if(users.getRole() == null)
+            if(users.getRole() == RoleEnum.NONE)
                 role = updateRequestDto.getRole();
         }
         if(profileImg != null) {
