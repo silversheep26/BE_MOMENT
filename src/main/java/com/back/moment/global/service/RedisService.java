@@ -13,9 +13,14 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void setValues(String key, String userId) {
+    public void setRefreshValues(String key, String userId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, userId, Duration.ofDays(2L));
+    }
+
+    public void setCodeValues(String key, String userId) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, userId, Duration.ofMinutes(10L));
     }
 
     public String getValues(String key) {

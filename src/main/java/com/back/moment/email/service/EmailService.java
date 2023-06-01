@@ -96,7 +96,7 @@ public class EmailService {
         } catch (MailException es) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
-        redisService.setValues(code, emailRequestDto.getEmail());
+        redisService.setCodeValues(code, emailRequestDto.getEmail());
 
         log.info("인증 코드 : " + code);
         return ResponseEntity.ok(null);
@@ -112,6 +112,8 @@ public class EmailService {
         if(redisCode == null) {
             throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         }
+        if(!redisCode.equals(codeRequestDto.getCode()))
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         redisService.deleteValues(codeRequestDto.getCode());
 
 //        Email email = emailRepository.findById(codeRequestDto.getEmail()).orElseThrow(() -> new ApiException(ExceptionEnum.FAIL_MAIL_SEND));
