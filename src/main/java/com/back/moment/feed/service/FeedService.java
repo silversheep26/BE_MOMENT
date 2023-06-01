@@ -131,7 +131,8 @@ public class FeedService {
                                                                                 photo.getUsers().getProfileImg(),
                                                                                 photo.getUsers().getNickName(),
                                                                                 photo.getUsers().getRole(),
-                                                                                photo.getContents(), checkLove);
+                                                                                photo.getContents());
+        feedDetailResponseDto.setCheckLove(loveRepository.checkLove(photo.getId(), users.getId()));
 
 //        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
 
