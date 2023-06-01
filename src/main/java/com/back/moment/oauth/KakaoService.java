@@ -28,6 +28,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
+import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
+
 import java.util.Optional;
 import java.util.UUID;
 
