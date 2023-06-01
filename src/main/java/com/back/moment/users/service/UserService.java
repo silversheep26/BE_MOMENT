@@ -133,17 +133,17 @@ public class UserService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<Void> logout(HttpServletRequest request){
-        String refreshToken = request.getHeader(REFRESH_KEY).substring(7);
-
-        if(!refreshToken.isEmpty() && redisService.getValues(refreshToken) != null){
-            redisService.deleteValues(refreshToken);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(null);
-    }
+//    @Transactional(readOnly = true)
+//    public ResponseEntity<Void> logout(HttpServletRequest request){
+//        String refreshToken = request.getHeader(REFRESH_KEY).substring(7);
+//
+//        if(!refreshToken.isEmpty() && redisService.getValues(refreshToken) != null){
+//            redisService.deleteValues(refreshToken);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//        return ResponseEntity.ok(null);
+//    }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());
