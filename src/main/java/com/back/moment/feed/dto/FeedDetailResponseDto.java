@@ -19,7 +19,6 @@ public class FeedDetailResponseDto {
     private String contents;
     private RoleEnum role;
     private boolean checkLove = false;
-//    private boolean checkRecommend;
 
     public FeedDetailResponseDto(Long id, String photoUrl, int loveCnt, String profileUrl, String nickName, RoleEnum role, String contents, boolean checkLove) {
         this.hostId = id;
