@@ -93,14 +93,14 @@ public class KakaoService {
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(userId, nickName, profileImg, role);
         //응답 헤더에 토큰 추가
         setHeader(response, tokenDto);
-
         return ResponseEntity.ok(userInfoResponseDto);
     }
 
     @Transactional
     public ResponseEntity<Void> saveRole(Users users, String role){
-        RoleEnum roleEnum = RoleEnum.valueOf(role.toUpperCase());
-        users.setRole(roleEnum);
+        Users findUser = usersRepository.findById(users.getId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+        RoleEnum roleEnum = RoleEnum.valueOf(role);
+        findUser.setRole(roleEnum);
         return ResponseEntity.ok(null);
     }
 
