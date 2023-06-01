@@ -15,8 +15,6 @@ public interface LoveRepository extends JpaRepository<Love, Long> {
 
     boolean existsByPhotoIdAndUsersId(Long photoId, Long usersId);
 
-    Love findByPhotoIdAndUsersId(Long photoId, Long usersId);
-
     @Query("select case when (count(l) > 0) then true else false end from Love l where l.photo.id = :photoId and l.users.id = :usersId")
     boolean checkLove(@Param("photoId") Long photoId, @Param("usersId") Long usersId);
 
