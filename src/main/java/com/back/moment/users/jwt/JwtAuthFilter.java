@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 setAuthentication(jwtUtil.getUserInfoFromToken(access_token));
             }
             // 액세스 토큰 만료 && 리프레시 토큰이 존재 -> 리프레시 토큰 검증(유효성, DB 존재 여부 확인
-            else if (refresh_token != null && jwtUtil.existsRefreshToken(jwtUtil.getUserInfoFromToken(refresh_token))) {
+            else if (refresh_token != null && jwtUtil.existsRefreshToken(refresh_token)) {
                 // 리프레시 토큰으로 username, Member DB에서 username을 가진 member 가져오기
                 String email = jwtUtil.getUserInfoFromToken(refresh_token);
                 Users users = usersRepository.findByEmail(email).get();

@@ -13,19 +13,19 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void setValues(String userId, String token) {
+    public void setValues(String key, String userId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(userId, token, Duration.ofDays(2L));
+        values.set(key, userId, Duration.ofDays(2L));
     }
 
-    public String getValues(String userId) {
+    public String getValues(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        return values.get(userId);
+        return values.get(key);
     }
 
-    public void deleteValues(String token){
-        System.out.println(token);
+    public void deleteValues(String key){
+        System.out.println(key);
 
-        redisTemplate.delete(token);
+        redisTemplate.delete(key);
     }
 }

@@ -3,10 +3,11 @@ package com.back.moment.email.service;
 
 import com.back.moment.email.dto.CodeRequestDto;
 import com.back.moment.email.dto.EmailRequestDto;
-import com.back.moment.email.entity.Email;
-import com.back.moment.email.repository.EmailRepository;
+//import com.back.moment.email.entity.Email;
+//import com.back.moment.email.repository.EmailRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
+import com.back.moment.global.service.RedisService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import jakarta.mail.MessagingException;
@@ -34,8 +35,9 @@ import java.util.Random;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-    private final EmailRepository emailRepository;
+//    private final EmailRepository emailRepository;
     private final UsersRepository usersRepository;
+    private final RedisService redisService;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -82,13 +84,11 @@ public class EmailService {
         Optional<Users> findEmail = usersRepository.findByEmail(emailRequestDto.getEmail());
         if(findEmail.isPresent()) throw new ApiException(ExceptionEnum.EXIST_MAIL);
         String code = createKey(); // 인증코드 생성
-        Email email = Email.saveEmail(emailRequestDto); // 이메일 객체 생성
+//        Email email = Email.saveEmail(emailRequestDto); // 이메일 객체 생성
         MimeMessage message = null;
         try {
-            message = createMessage(email.getEmail(), code); // 전송 메시지 삭성 메서드 호출
-        } catch (MessagingException e) {
-            throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
-        } catch (UnsupportedEncodingException e) {
+            message = createMessage(emailRequestDto.getEmail(), code); // 전송 메시지 삭성 메서드 호출
+        } catch (MessagingException | UnsupportedEncodingException e) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
         try {
@@ -96,8 +96,8 @@ public class EmailService {
         } catch (MailException es) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
-        Email.updateCode(email, code);
-        emailRepository.save(email);
+        redisService.setValues(code, emailRequestDto.getEmail());
+
         log.info("인증 코드 : " + code);
         return ResponseEntity.ok(null);
     }
@@ -107,11 +107,18 @@ public class EmailService {
         일치여부와 상관없이 해당 레코드는 무조건 삭제
      */
     public ResponseEntity<Void> codeCheck(CodeRequestDto codeRequestDto) {
-        Email email = emailRepository.findById(codeRequestDto.getEmail()).orElseThrow(() -> new ApiException(ExceptionEnum.FAIL_MAIL_SEND));
-        emailRepository.deleteById(codeRequestDto.getEmail());
-        if (!email.getCode().equals(codeRequestDto.getCode())) {
+
+        String redisCode = redisService.getValues(codeRequestDto.getCode());
+        if(redisCode == null) {
             throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         }
+        redisService.deleteValues(codeRequestDto.getCode());
+
+//        Email email = emailRepository.findById(codeRequestDto.getEmail()).orElseThrow(() -> new ApiException(ExceptionEnum.FAIL_MAIL_SEND));
+//        emailRepository.deleteById(codeRequestDto.getEmail());
+//        if (!email.getCode().equals(codeRequestDto.getCode())) {
+//            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
+//        }
         return ResponseEntity.ok(null);
     }
 }

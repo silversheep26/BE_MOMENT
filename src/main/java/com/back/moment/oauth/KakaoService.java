@@ -72,10 +72,10 @@ public class KakaoService {
 //            refreshTokenRepository.saveAndFlush(new RefreshToken(tokenDto.getRefreshToken(), kakaoUser.getEmail()));
 //        }
 
-        String refreshRedis = redisService.getValues(kakaoUser.getEmail());
+        String redisKey = tokenDto.getRefreshToken().substring(7);
+        String refreshRedis = redisService.getValues(redisKey);
         if(refreshRedis == null){
-            String redisKey = tokenDto.getRefreshToken().substring(7);
-            redisService.setValues(kakaoUser.getEmail(), redisKey);
+            redisService.setValues(redisKey, kakaoUser.getEmail());
         }
         setHeader(response,tokenDto);
         return ResponseEntity.ok(null);
