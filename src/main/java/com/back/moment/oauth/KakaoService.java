@@ -6,6 +6,7 @@ import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 //import com.back.moment.users.entity.RefreshToken;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
@@ -14,6 +15,8 @@ import com.back.moment.users.repository.UsersRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +31,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
-import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
+    @Value("${jwt.secret.key}")
+    private String secretKey; // 암호화/복호화에 필요
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
     private final RedisService redisService;
@@ -48,7 +50,7 @@ public class KakaoService {
     private String redirect_uri;
 
 
-    public ResponseEntity<Void> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<UserInfoResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -77,8 +79,17 @@ public class KakaoService {
         if(refreshRedis == null){
             redisService.setValues(redisKey, kakaoUser.getEmail());
         }
-        setHeader(response,tokenDto);
-        return ResponseEntity.ok(null);
+
+        Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
+        Long userId = claim.get("userId", Long.class);
+        String nickName = claim.get("nickName", String.class);
+        String profileImg = claim.get("profileImg", String.class);
+        String role = claim.get("role", String.class);
+        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(userId, nickName, profileImg, role);
+        //응답 헤더에 토큰 추가
+        setHeader(response, tokenDto);
+
+        return ResponseEntity.ok(userInfoResponseDto);
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -194,4 +205,3 @@ public class KakaoService {
         response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
 }
-
