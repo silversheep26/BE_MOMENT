@@ -66,24 +66,24 @@ public class MyPageService {
         if(findNickName.isPresent()){
             throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
         }
-        String changeNickName = users.getNickName();
-        String password = users.getPassword();
-        String profileUrl = users.getProfileImg();
-        RoleEnum role = users.getRole();
+
         if(updateRequestDto.getNickName() != null) {
-            changeNickName = updateRequestDto.getNickName();
+            String changeNickName = updateRequestDto.getNickName();
+            users.setNickName(changeNickName);
         }
         if(updateRequestDto.getPassword() != null) {
-            password = passwordEncoder.encode(updateRequestDto.getPassword());
+            String password = passwordEncoder.encode(updateRequestDto.getPassword());
+            users.setPassword(password);
         }
         if(updateRequestDto.getRole() != null){
-            if(users.getRole() == RoleEnum.NONE)
-                role = updateRequestDto.getRole();
+            RoleEnum role = updateRequestDto.getRole();
+            users.setRole(role);
         }
         if(profileImg != null) {
-            profileUrl = s3Uploader.upload(profileImg);
+            String profileUrl = s3Uploader.upload(profileImg);
+            users.setProfileImg(profileUrl);
         }
-        users.updateUsers(changeNickName, profileUrl, password, role);
+
         usersRepository.save(users);
 
         return ResponseEntity.ok(null);
