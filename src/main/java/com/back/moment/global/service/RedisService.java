@@ -11,7 +11,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class RedisService {
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public void setValues(String userId, String token) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
@@ -21,5 +21,11 @@ public class RedisService {
     public String getValues(String userId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(userId);
+    }
+
+    public void deleteValues(String token){
+        System.out.println(token);
+
+        redisTemplate.delete(token);
     }
 }

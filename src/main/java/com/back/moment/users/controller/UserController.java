@@ -5,9 +5,11 @@ import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.jwt.JwtUtil;
+import com.back.moment.users.security.UserDetailsImpl;
 import com.back.moment.users.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -61,8 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/main"; //주소 요청으로 변경
+    public ResponseEntity<Void> logout(HttpServletRequest request, UserDetailsImpl userDetails) {
+        return userService.logout(request, userDetails.getUsers());
     }
 }

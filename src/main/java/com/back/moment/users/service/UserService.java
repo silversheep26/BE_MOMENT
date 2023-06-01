@@ -16,14 +16,16 @@ import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -83,6 +85,7 @@ public class UserService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<UserInfoResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
@@ -129,6 +132,20 @@ public class UserService {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Void> logout(HttpServletRequest request, Users users){
+        String refreshToken = request.getHeader(REFRESH_KEY).substring(7);
+
+        if(!refreshToken.isEmpty()){
+            if(redisService.getValues(users.getEmail()) != null){
+                redisService.deleteValues(refreshToken);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        return ResponseEntity.ok(null);
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
