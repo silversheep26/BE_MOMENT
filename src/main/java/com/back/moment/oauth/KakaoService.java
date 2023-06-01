@@ -6,6 +6,7 @@ import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 //import com.back.moment.users.entity.RefreshToken;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
@@ -14,6 +15,8 @@ import com.back.moment.users.repository.UsersRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,20 +35,22 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
+    @Value("${jwt.secret.key}")
+    private String secretKey; // 암호화/복호화에 필요
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
-//    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     @Value("${kakao.client.id}")
     private String client_id;
+
     @Value("${kakao.client.secret}")
     private String client_secret;
     @Value("${kakao.redirect.uri}")
     private String redirect_uri;
 
 
-    public ResponseEntity<Void> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<UserInfoResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -75,33 +80,38 @@ public class KakaoService {
             redisService.setValues(redisKey, kakaoUser.getEmail());
         }
 
-        //header에 accesstoken, refreshtoken 추가
-        response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+        Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
+        Long userId = claim.get("userId", Long.class);
+        String nickName = claim.get("nickName", String.class);
+        String profileImg = claim.get("profileImg", String.class);
+        String role = claim.get("role", String.class);
+        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(userId, nickName, profileImg, role);
+        //응답 헤더에 토큰 추가
+        setHeader(response, tokenDto);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(userInfoResponseDto);
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청
     private String getToken(String code) throws JsonProcessingException {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
-        body.add("client_Secret", client_secret);
+        body.add("client_secret",client_secret);
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
-
+        System.out.println("code = "+code);
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange(
+        ResponseEntity<String> response = rt.postForEntity(
                 "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
                 kakaoTokenRequest,
                 String.class
         );
@@ -109,7 +119,6 @@ public class KakaoService {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new ApiException(ExceptionEnum.FAIL_LOGIN);
         }
-
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -146,11 +155,10 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        String gender = jsonNode.get("gender")
-                        .get("gender").asText();
-        String profileImg = jsonNode.get("profile_image")
-                .get("profileImg").asText();
-
+        String gender = jsonNode.get("kakao_account")
+                .get("gender").asText();
+        String profileImg = jsonNode.get("properties")
+                .get("profile_image").asText();
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, email, nickname, gender, profileImg);
     }
@@ -191,5 +199,9 @@ public class KakaoService {
         }
         return kakaoUser;
     }
-}
 
+    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+        response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());
+        response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
+    }
+}
