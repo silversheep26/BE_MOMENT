@@ -65,6 +65,7 @@ public class FeedService {
         }else {
             loveRepository.save(love);
             message = "좋아요 등록";
+            love.updateLoveCheck(true);
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() + 1);
         }
         int loveCnt = loveRepository.findCntByPhotoId(photoId);
@@ -122,7 +123,9 @@ public class FeedService {
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
-        boolean checkLove = loveRepository.checkLove(photoId, users.getId());
+
+        Love love = loveRepository.findByPhotoIdAndUsersId(photoId, users.getId());
+        boolean checkLove = love != null;
 
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
                                                                                 photo.getImagUrl(),
