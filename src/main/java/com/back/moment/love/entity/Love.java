@@ -21,7 +21,6 @@ public class Love {
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
     @JsonIgnore
     private Photo photo;
 
