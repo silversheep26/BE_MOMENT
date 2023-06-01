@@ -76,9 +76,11 @@ public class MyPageService {
 
             users.setPassword(password);
         }
-        if(!updateRequestDto.getRole().name().isEmpty()){
+        if(updateRequestDto.getRole() != null && !updateRequestDto.getRole().name().isEmpty()){
             RoleEnum role = updateRequestDto.getRole();
             users.setRole(role);
+        } else {
+            users.setRole(users.getRole());
         }
         if(profileImg != null) {
             String profileUrl = s3Uploader.upload(profileImg);
