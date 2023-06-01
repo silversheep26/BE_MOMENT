@@ -8,6 +8,7 @@ import com.back.moment.users.dto.TokenDto;
 //import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.GenderEnum;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 //import com.back.moment.users.repository.RefreshTokenRepository;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -93,6 +95,12 @@ public class KakaoService {
         setHeader(response, tokenDto);
 
         return ResponseEntity.ok(userInfoResponseDto);
+    }
+
+    @Transactional
+    public ResponseEntity<Void> saveRole(Users users, RoleEnum roleEnum){
+        users.setRole(roleEnum);
+        return ResponseEntity.ok(null);
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -202,6 +210,7 @@ public class KakaoService {
         }
         return kakaoUser;
     }
+
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());

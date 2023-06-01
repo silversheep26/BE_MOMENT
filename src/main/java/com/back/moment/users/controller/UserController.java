@@ -4,6 +4,7 @@ import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.security.UserDetailsImpl;
 import com.back.moment.users.service.UserService;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +55,11 @@ public class UserController {
     @GetMapping("/kakao")
     public ResponseEntity<UserInfoResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoService.kakaoLogin(code, response);
+    }
+
+    @PostMapping("/kako/role")
+    public ResponseEntity<Void> kakoRole(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody RoleEnum role){
+        return kakaoService.saveRole(userDetails.getUsers(),role);
     }
 
     @GetMapping("/logout")
