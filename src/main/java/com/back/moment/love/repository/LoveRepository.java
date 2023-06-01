@@ -13,5 +13,5 @@ public interface LoveRepository extends JpaRepository<Love, Long> {
     @Query("select count(l) from Love l where l.photo.id = :photoId")
     int findCntByPhotoId(@Param("photoId") Long photoId);
 
-    boolean existsByIdAndUsersId(Long photoId, Long usersId);
+    boolean existsByPhotoIdAndUsersId(Long photoId, Long usersId);
 }

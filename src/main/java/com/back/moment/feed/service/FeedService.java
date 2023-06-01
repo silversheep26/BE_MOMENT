@@ -122,7 +122,7 @@ public class FeedService {
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
-        boolean checkLove = loveRepository.existsByIdAndUsersId(photoId, users.getId());
+        boolean checkLove = loveRepository.existsByPhotoIdAndUsersId(photoId, users.getId());
 
         FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
                                                                                 photo.getImagUrl(),
