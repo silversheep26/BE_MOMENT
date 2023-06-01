@@ -26,8 +26,15 @@ public class Love {
     @JsonIgnore
     private Photo photo;
 
+    @Column
+    private boolean loveChk;
+
     public Love(Users users, Photo photo) {
         this.users = users;
         this.photo = photo;
+    }
+
+    public void updateLoveCheck(boolean loveChk){
+        this.loveChk = loveChk;
     }
 }
