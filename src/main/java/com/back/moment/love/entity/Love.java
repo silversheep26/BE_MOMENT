@@ -1,6 +1,5 @@
 package com.back.moment.love.entity;
 
-import com.back.moment.boards.entity.Board;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,7 +21,7 @@ public class Love {
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "photo_id")
+    @JoinColumn(name = "board_id")
     @JsonIgnore
     private Photo photo;
 
