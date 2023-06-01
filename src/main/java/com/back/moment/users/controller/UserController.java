@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request, UserDetailsImpl userDetails) {
-        return userService.logout(request, userDetails.getUsers());
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        return userService.logout(request);
     }
 }

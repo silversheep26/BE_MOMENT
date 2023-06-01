@@ -112,11 +112,10 @@ public class UserService {
 //                refreshTokenRepository.save(newToken);
 //            }
 
-            String refreshRedis = redisService.getValues(users.getEmail());
+            String redisKey = tokenDto.getRefreshToken().substring(7);
+            String refreshRedis = redisService.getValues(redisKey);
             if(refreshRedis == null){
-                String redisKey = tokenDto.getRefreshToken().substring(7);
-
-                redisService.setValues(users.getEmail(), redisKey);
+                redisService.setValues(redisKey, users.getEmail());
             }
 
             Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
@@ -135,15 +134,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Void> logout(HttpServletRequest request, Users users){
+    public ResponseEntity<Void> logout(HttpServletRequest request){
         String refreshToken = request.getHeader(REFRESH_KEY).substring(7);
 
-        if(!refreshToken.isEmpty()){
-            if(redisService.getValues(users.getEmail()) != null){
-                redisService.deleteValues(refreshToken);
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
+        if(!refreshToken.isEmpty() && redisService.getValues(refreshToken) != null){
+            redisService.deleteValues(refreshToken);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(null);
     }
