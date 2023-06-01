@@ -76,7 +76,7 @@ public class MyPageService {
 
             users.setPassword(password);
         }
-        if(updateRequestDto.getRole() != null){
+        if(!updateRequestDto.getRole().name().isEmpty()){
             RoleEnum role = updateRequestDto.getRole();
             users.setRole(role);
         }
