@@ -22,7 +22,7 @@ public class Love {
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "photo_id")
     @JsonIgnore
     private Photo photo;
 
