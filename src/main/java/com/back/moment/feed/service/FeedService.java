@@ -63,9 +63,9 @@ public class FeedService {
             message = "좋아요 취소";
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() - 1);
         }else {
-            loveRepository.save(love);
             message = "좋아요 등록";
             love.updateLoveCheck(true);
+            loveRepository.save(love);
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() + 1);
         }
         int loveCnt = loveRepository.findCntByPhotoId(photoId);

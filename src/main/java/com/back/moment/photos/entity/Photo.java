@@ -38,6 +38,10 @@ public class Photo {
     @ColumnDefault("0")
     private int loveCnt;
 
+//    @Column
+//    private boolean loveChk;
+
+
     public Photo(Users users, String imagUrl) {
         this.users = users;
         this.imagUrl = imagUrl;
