@@ -15,7 +15,7 @@ public class RedisService {
 
     public void setValues(String userId, String token) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(userId, token, Duration.ofDays(1L));
+        values.set(userId, token, Duration.ofDays(2L));
     }
 
     public String getValues(String userId) {
