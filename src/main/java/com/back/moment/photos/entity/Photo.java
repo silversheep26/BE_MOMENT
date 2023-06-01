@@ -29,7 +29,7 @@ public class Photo {
     @Column(nullable = false)
     private String imagUrl;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
     private List<Love> loveList = new ArrayList<>();
 
     @Column
