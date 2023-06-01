@@ -28,20 +28,17 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
-import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     @Value("${kakao.client.id}")
     private String client_id;
-
     @Value("${kakao.client.secret}")
     private String client_secret;
     @Value("${kakao.redirect.uri}")
@@ -77,7 +74,10 @@ public class KakaoService {
         if(refreshRedis == null){
             redisService.setValues(redisKey, kakaoUser.getEmail());
         }
-        setHeader(response,tokenDto);
+
+        //header에 accesstoken, refreshtoken 추가
+        response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+
         return ResponseEntity.ok(null);
     }
 
@@ -85,22 +85,23 @@ public class KakaoService {
     private String getToken(String code) throws JsonProcessingException {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
-        body.add("client_secret",client_secret);
+        body.add("client_Secret", client_secret);
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
-        System.out.println("code = "+code);
+
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.postForEntity(
+        ResponseEntity<String> response = rt.exchange(
                 "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
                 kakaoTokenRequest,
                 String.class
         );
@@ -108,6 +109,7 @@ public class KakaoService {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new ApiException(ExceptionEnum.FAIL_LOGIN);
         }
+
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -144,10 +146,11 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        String gender = jsonNode.get("kakao_account")
-                .get("gender").asText();
-        String profileImg = jsonNode.get("properties")
-                .get("profile_image").asText();
+        String gender = jsonNode.get("gender")
+                        .get("gender").asText();
+        String profileImg = jsonNode.get("profile_image")
+                .get("profileImg").asText();
+
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, email, nickname, gender, profileImg);
     }
@@ -187,11 +190,6 @@ public class KakaoService {
             usersRepository.save(kakaoUser);
         }
         return kakaoUser;
-    }
-
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());
-        response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
 }
 
