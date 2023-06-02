@@ -161,7 +161,7 @@ public class UserService {
     // 회원 탈퇴(hard) : 영구 삭제
     public ResponseEntity<Void> deleteUsersHard(String password, Users users) {
 
-        if(!users.getPassword().equals(passwordEncoder.encode(password)))
+        if(!passwordEncoder.matches(password, users.getPassword()))
             throw new ApiException(ExceptionEnum.NOT_MATCH_PASSWORD);
         // 유저 영구 삭제
         usersRepository.deleteById(users.getId());
