@@ -15,7 +15,7 @@ public class RedisService {
 
     public void setRefreshValues(String key, String userId) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(key, userId, Duration.ofDays(2L));
+        values.set(key, userId, Duration.ofMinutes(24*60L));
     }
 
     public void setCodeValues(String key, String userId) {
