@@ -5,6 +5,7 @@ import com.back.moment.mainPage.dto.BeforeLogInResponseDto;
 import com.back.moment.mainPage.service.MainService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,7 +20,8 @@ public class MainController {
     private final MainService mainService;
 
     @GetMapping("main")
-    public ResponseEntity<BeforeLogInResponseDto> getMainPageSource(){
+    public ResponseEntity<BeforeLogInResponseDto> getMainPageSource(HttpServletResponse response){
+        response.setHeader("Cache-Control", "no-store");
         return mainService.getMainPageSource();
     }
 
