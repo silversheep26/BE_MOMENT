@@ -3,6 +3,7 @@ package com.back.moment.feed.dto;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -10,8 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 public class FeedListResponseDto {
     private List<PhotoFeedResponseDto> photoList;
+    private boolean hasMorePages;
 
-    public FeedListResponseDto(List<PhotoFeedResponseDto> photoList) {
+    public FeedListResponseDto(List<PhotoFeedResponseDto> photoList, boolean hasMorePages) {
         this.photoList = photoList;
+        this.hasMorePages = hasMorePages;
     }
 }

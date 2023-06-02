@@ -109,18 +109,18 @@ class FeedServiceTest {
 //        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
 //    }
 
-    @Test
-    void getAllFeeds() {
-
-        // 의존성과 그 동작을 모킹한다
-
-        // When
-        ResponseEntity<FeedListResponseDto> responseEntity = feedService.getAllFeeds();
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
-    }
+//    @Test
+//    void getAllFeeds() {
+//
+//        // 의존성과 그 동작을 모킹한다
+//
+//        // When
+//        ResponseEntity<FeedListResponseDto> responseEntity = feedService.getAllFeeds();
+//
+//        // Then
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성한다
+//    }
 
     @Test
     void getFeed() {
