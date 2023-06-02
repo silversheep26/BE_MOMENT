@@ -5,6 +5,9 @@ import com.back.moment.feed.dto.FeedListResponseDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,8 +45,10 @@ public class FeedController {
 
     // feed 전체 조회
     @GetMapping("")
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(){
-        return feedService.getAllFeeds();
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "15") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return feedService.getAllFeeds(pageable);
     }
 
     // Feed 상세 조회

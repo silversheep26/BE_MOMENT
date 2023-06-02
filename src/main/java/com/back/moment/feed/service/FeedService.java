@@ -15,6 +15,9 @@ import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -100,21 +104,26 @@ public class FeedService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(){
-        List<PhotoFeedResponseDto> photoList = photoRepository.getAllPhoto();
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable){
+        Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
 
-        List<PhotoFeedResponseDto> topThreePhotos = photoList.stream()
+        List<PhotoFeedResponseDto> topThreePhotos = photoPage.getContent().stream()
                 .sorted(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed())
                 .limit(3)
                 .toList();
 
-        photoList.removeAll(topThreePhotos);
-        Collections.shuffle(photoList);
+        List<PhotoFeedResponseDto> remainingPhotos = photoPage.getContent().stream()
+                .filter(photo -> !topThreePhotos.contains(photo))
+                .collect(Collectors.toList());
+
+        Collections.shuffle(remainingPhotos);
 
         List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(topThreePhotos);
-        responsePhotoList.addAll(photoList);
+        responsePhotoList.addAll(remainingPhotos);
 
-        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList), HttpStatus.OK);
+        boolean hasMorePages = photoPage.hasNext();
+
+        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages), HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
