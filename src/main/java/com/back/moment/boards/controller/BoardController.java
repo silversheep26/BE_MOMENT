@@ -58,3 +58,7 @@ public class BoardController {
         return boardService.deleteBoard(boardId, userDetails.getUsers());
     }
 }
+
+/*
+test
+ */
