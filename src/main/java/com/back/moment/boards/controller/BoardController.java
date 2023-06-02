@@ -38,7 +38,7 @@ public class BoardController {
 //    }
 
     @GetMapping("")
-    public ResponseEntity<Page<BoardListResponseDto>> getBoardsByPage(
+    public ResponseEntity<BoardListResponseDto> getBoardsByPage(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

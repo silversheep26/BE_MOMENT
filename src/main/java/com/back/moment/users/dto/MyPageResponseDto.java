@@ -1,6 +1,7 @@
 package com.back.moment.users.dto;
 
 import com.back.moment.boards.dto.BoardListResponseDto;
+import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
@@ -19,10 +20,10 @@ public class MyPageResponseDto {
     private int boardCnt;
     private int totalPhotoLoveCnt;
 //    private int recommendCnt;
-    private List<BoardListResponseDto> boardList;
+    private List<MyPageBoardListResponseDto> boardList;
     private List<OnlyPhotoResponseDto> photoList;
 
-    public MyPageResponseDto(Users users, List<BoardListResponseDto> boardList, List<OnlyPhotoResponseDto> photoList){
+    public MyPageResponseDto(Users users, List<MyPageBoardListResponseDto> boardList, List<OnlyPhotoResponseDto> photoList){
         this.profileUrl = users.getProfileImg();
         this.nickName = users.getNickName();
         this.hostId = users.getId();

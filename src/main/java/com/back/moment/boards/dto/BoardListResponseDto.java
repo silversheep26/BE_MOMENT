@@ -6,6 +6,7 @@ import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,21 +15,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class BoardListResponseDto {
-    private Long boardId;
-    private  String title;
-    private  RoleEnum role;
-    private  String nickName;
-    private  String boardImgUrl;
-    private  LocalDate createdTime;
-    private  List<String> tag_boardList;
+    Page<ModelBoardListResponseDto> modelBoard;
+    Page<PhotographerBoardListResponseDto> photographerBoard;
 
-    public BoardListResponseDto(Board board) {
-        this.boardId = board.getId();
-        this.title = board.getTitle();
-        this.role = board.getUsers().getRole();
-        this.nickName = board.getUsers().getNickName();
-        this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt();
-        this.tag_boardList = board.getTagList();
+    public BoardListResponseDto(Page<ModelBoardListResponseDto> modelBoard, Page<PhotographerBoardListResponseDto> photographerBoard) {
+        this.modelBoard = modelBoard;
+        this.photographerBoard = photographerBoard;
     }
 }

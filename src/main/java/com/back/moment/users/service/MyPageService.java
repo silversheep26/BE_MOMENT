@@ -1,6 +1,7 @@
 package com.back.moment.users.service;
 
 import com.back.moment.boards.dto.BoardListResponseDto;
+import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
@@ -41,10 +42,10 @@ public class MyPageService {
                 () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
         );
 
-        List<BoardListResponseDto> boardList = new ArrayList<>();
+        List<MyPageBoardListResponseDto> boardList = new ArrayList<>();
 
         for(Board board : host.getBoardList()){
-            boardList.add(new BoardListResponseDto(board));
+            boardList.add(new MyPageBoardListResponseDto(board));
         }
         
         List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());

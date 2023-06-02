@@ -1,6 +1,7 @@
 package com.back.moment.mainPage.service;
 
 import com.back.moment.boards.dto.BoardListResponseDto;
+import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.mainPage.dto.AfterLogInResponseDto;
 import com.back.moment.mainPage.dto.BeforeLogInResponseDto;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,20 +45,24 @@ public class MainService {
     @Transactional(readOnly = true)
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users){
         Pageable pageable = PageRequest.of(0, 3);
-        List<BoardListResponseDto> boardList = boardRepository.selectAllBoardList();
-        List<BoardListResponseDto> topSixBoard = boardList.stream().limit(6).toList();
-        if (users != null) {
-            if (users.getRole() == RoleEnum.MODEL) {
-                List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
-                return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers, topSixBoard), HttpStatus.OK);
-            } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
-                List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
-                return new ResponseEntity<>(new AfterLogInResponseDto(top3Models, topSixBoard), HttpStatus.OK);
-            }
+        List<MyPageBoardListResponseDto> boardList;
+        List<MyPageBoardListResponseDto> topSixBoard;
+
+        if(users.getRole() == RoleEnum.MODEL) {
+            boardList = boardRepository.selectAllEachRoleBoardList(RoleEnum.PHOTOGRAPHER);
+            topSixBoard = boardList.stream().limit(6).toList();
+            List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
+            return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers, topSixBoard), HttpStatus.OK);
+        }else if(users.getRole() == RoleEnum.PHOTOGRAPHER) {
+            boardList = boardRepository.selectAllEachRoleBoardList(RoleEnum.MODEL);
+            topSixBoard = boardList.stream().limit(6).toList();
+            List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
+            return new ResponseEntity<>(new AfterLogInResponseDto(top3Models, topSixBoard), HttpStatus.OK);
+        }else {
+            boardList = boardRepository.selectAllBoardList();
+            topSixBoard = boardList.stream().limit(6).toList();
             List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
             return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
         }
-        List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
-        return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
     }
 }
