@@ -7,10 +7,7 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
 import com.back.moment.s3.S3Uploader;
-import com.back.moment.users.dto.LoginRequestDto;
-import com.back.moment.users.dto.SignupRequestDto;
-import com.back.moment.users.dto.TokenDto;
-import com.back.moment.users.dto.UserInfoResponseDto;
+import com.back.moment.users.dto.*;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
@@ -162,9 +159,9 @@ public class UserService {
 //    }
 
     // 회원 탈퇴(hard) : 영구 삭제
-    public ResponseEntity<Void> deleteUsersHard(String password, Users users) {
+    public ResponseEntity<Void> deleteUsersHard(DeleteUserRequestDto password, Users users) {
 
-        if(!users.getPassword().equals(passwordEncoder.encode(password)))
+        if(!users.getPassword().equals(passwordEncoder.encode(password.getPassword())))
             throw new ApiException(ExceptionEnum.NOT_MATCH_PASSWORD);
         // 유저 영구 삭제
         usersRepository.deleteById(users.getId());

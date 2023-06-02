@@ -107,10 +107,10 @@ public class FeedService {
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
         Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
 
-        List<PhotoFeedResponseDto> photoList = photoPage.getContent();
+        List<PhotoFeedResponseDto> photoList =new ArrayList<>(photoPage.getContent());
         List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>();
-
         // Sort the photoList by loveCnt in descending order
+
         photoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
 
         // Get the top three photos

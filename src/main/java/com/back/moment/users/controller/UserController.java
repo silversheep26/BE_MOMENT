@@ -1,6 +1,7 @@
 package com.back.moment.users.controller;
 
 import com.back.moment.oauth.KakaoService;
+import com.back.moment.users.dto.DeleteUserRequestDto;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
@@ -86,6 +87,7 @@ public class UserController {
     // 회원 탈퇴 hard (영구 삭제)
     @DeleteMapping("/hard")
     public ResponseEntity<Void> deleteUsersHard(@RequestPart String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
         return userService.deleteUsersHard(password, userDetails.getUsers());
     }
 
