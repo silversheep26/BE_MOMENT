@@ -43,26 +43,38 @@ public class MainService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users){
+    public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users) {
         Pageable pageable = PageRequest.of(0, 3);
-        List<MyPageBoardListResponseDto> boardList;
         List<MyPageBoardListResponseDto> topSixBoard;
 
-        if(users.getRole() == RoleEnum.MODEL) {
-            boardList = boardRepository.selectAllEachRoleBoardList(RoleEnum.PHOTOGRAPHER);
-            topSixBoard = boardList.stream().limit(6).toList();
-            List<ForMainResponseDto> top3Photographers = usersRepository.findTop3Photographer(RoleEnum.PHOTOGRAPHER, pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3Photographers, topSixBoard), HttpStatus.OK);
-        }else if(users.getRole() == RoleEnum.PHOTOGRAPHER) {
-            boardList = boardRepository.selectAllEachRoleBoardList(RoleEnum.MODEL);
-            topSixBoard = boardList.stream().limit(6).toList();
-            List<ForMainResponseDto> top3Models = usersRepository.findTop3Model(RoleEnum.MODEL, pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3Models, topSixBoard), HttpStatus.OK);
-        }else {
-            boardList = boardRepository.selectAllBoardList();
-            topSixBoard = boardList.stream().limit(6).toList();
-            List<ForMainResponseDto> top3 = usersRepository.findTop3(pageable);
-            return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
+        List<ForMainResponseDto> top3;
+        RoleEnum targetRole;
+
+        if (users.getRole() == RoleEnum.MODEL) {
+            targetRole = RoleEnum.PHOTOGRAPHER;
+        } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
+            targetRole = RoleEnum.MODEL;
+        } else {
+            targetRole = null;
         }
+
+        if (targetRole != null) {
+            topSixBoard = boardRepository.selectAllEachRoleBoardList(targetRole)
+                    .stream()
+                    .limit(6)
+                    .toList();
+
+            top3 = usersRepository.findTop3ByRole(targetRole, pageable);
+        } else {
+            topSixBoard = boardRepository.selectAllBoardList()
+                    .stream()
+                    .limit(6)
+                    .toList();
+
+            top3 = usersRepository.findTop3(pageable);
+        }
+
+        return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
     }
+
 }

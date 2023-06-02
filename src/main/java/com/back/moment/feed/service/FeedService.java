@@ -57,7 +57,6 @@ public class FeedService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
 
-        Love love = new Love(users, photo);
         Love existLove = loveRepository.findExistLove(photoId, users.getId());
 
         String message;
@@ -67,6 +66,7 @@ public class FeedService {
             message = "좋아요 취소";
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() - 1);
         }else {
+            Love love = new Love(users, photo);
             message = "좋아요 등록";
             loveRepository.save(love);
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() + 1);
@@ -104,27 +104,37 @@ public class FeedService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable){
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
         Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
 
-        List<PhotoFeedResponseDto> topThreePhotos = photoPage.getContent().stream()
-                .sorted(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed())
+        List<PhotoFeedResponseDto> photoList = photoPage.getContent();
+        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>();
+
+        // Sort the photoList by loveCnt in descending order
+        photoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
+
+        // Get the top three photos
+        List<PhotoFeedResponseDto> topThreePhotos = photoList.stream()
                 .limit(3)
                 .toList();
 
-        List<PhotoFeedResponseDto> remainingPhotos = photoPage.getContent().stream()
-                .filter(photo -> !topThreePhotos.contains(photo))
+        // Get the remaining photos
+        List<PhotoFeedResponseDto> remainingPhotos = photoList.stream()
+                .skip(3)
                 .collect(Collectors.toList());
 
+        // Shuffle the remaining photos
         Collections.shuffle(remainingPhotos);
 
-        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(topThreePhotos);
+        // Add the top three photos and remaining photos to the response list
+        responsePhotoList.addAll(topThreePhotos);
         responsePhotoList.addAll(remainingPhotos);
 
         boolean hasMorePages = photoPage.hasNext();
 
         return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages), HttpStatus.OK);
     }
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedDetailResponseDto> getFeed(Long photoId, Users users){
