@@ -26,4 +26,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("select new com.back.moment.boards.dto.MyPageBoardListResponseDto(b) from Board b where b.users.role = :role order by b.createdAt desc")
     List<MyPageBoardListResponseDto> selectAllEachRoleBoardList(@Param("role") RoleEnum role);
+
+    @Query("SELECT DISTINCT b FROM Board b JOIN FETCH b.tag_boardList tb JOIN FETCH tb.locationTag tbl WHERE tb.locationTag.id = tbl.id and  b.users.id = :hostId")
+    List<Board> getBoardListByHostIdWithFetch(@Param("hostId") Long hostId);
 }

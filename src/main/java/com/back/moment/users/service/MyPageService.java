@@ -3,6 +3,7 @@ package com.back.moment.users.service;
 import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
+import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,29 +33,25 @@ public class MyPageService {
 
     private final UsersRepository usersRepository;
     private final PhotoRepository photoRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Uploader s3Uploader;
 
     // 마이페이지 조회
     @Transactional(readOnly = true)
     public ResponseEntity<MyPageResponseDto> getMyPage(Long hostId, Users users){
-        existUser(users.getEmail());
         Users host = usersRepository.findById(hostId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
         );
 
-        List<MyPageBoardListResponseDto> boardList = new ArrayList<>();
-
-        for(Board board : host.getBoardList()){
-            boardList.add(new MyPageBoardListResponseDto(board));
-        }
-        
-        List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
-        photoList = photoList.stream()
-                .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())
+        List<Board> boardList = boardRepository.getBoardListByHostIdWithFetch(hostId);
+        List<MyPageBoardListResponseDto> myPageBoardListResponseDtoList = boardList.stream()
+                .map(MyPageBoardListResponseDto::new)
                 .toList();
 
-        return new ResponseEntity<>(new MyPageResponseDto(host, boardList, photoList), HttpStatus.OK);
+        List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
+
+        return new ResponseEntity<>(new MyPageResponseDto(host, myPageBoardListResponseDtoList, photoList), HttpStatus.OK);
     }
     
     // 마이페이지 수정
@@ -94,7 +92,6 @@ public class MyPageService {
     // 마이페이지 사진 삭제 
     @Transactional
     public ResponseEntity<String> deletePhoto(Long photoId, Users users){
-        existUser(users.getEmail());
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
@@ -107,11 +104,4 @@ public class MyPageService {
 
         return ResponseEntity.ok(null);
     }
-
-    public void existUser(String email) {
-        usersRepository.findByEmail(email).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
-        );
-    }
-    
 }

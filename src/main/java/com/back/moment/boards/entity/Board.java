@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -57,12 +58,9 @@ public class Board extends TimeStamped {
     }
 
     public List<String> getTagList(){
-        List<String> tagList = new ArrayList<>();
-        for(Tag_Board tag_board : tag_boardList){
-            String tag = tag_board.getLocationTag().getLocation();
-            tagList.add(tag);
-        }
-        return tagList;
+        return tag_boardList.stream()
+                .map(tag_board -> tag_board.getLocationTag().getLocation())
+                .collect(Collectors.toList());
     }
 
     public List<String> getTagListWithWell(){
