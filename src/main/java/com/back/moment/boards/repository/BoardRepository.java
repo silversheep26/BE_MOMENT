@@ -15,10 +15,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    @Query("select new com.back.moment.boards.dto.ModelBoardListResponseDto(b) from Board b where b.users.role = :role order by b.createdAt desc")
+    @Query("select new com.back.moment.boards.dto.ModelBoardListResponseDto(b) from Board b where b.role = :role order by b.createdAt desc")
     Page<ModelBoardListResponseDto> selectAllModelBoard(@Param("role") RoleEnum role, Pageable pageable);
 
-    @Query("select new com.back.moment.boards.dto.PhotographerBoardListResponseDto(b) from Board b where b.users.role = :role order by b.createdAt desc")
+    @Query("select new com.back.moment.boards.dto.PhotographerBoardListResponseDto(b) from Board b where b.role = :role order by b.createdAt desc")
     Page<PhotographerBoardListResponseDto> selectAllPhotographerBoard(@Param("role") RoleEnum role, Pageable pageable);
 
     @Query("select new com.back.moment.boards.dto.MyPageBoardListResponseDto(b) from Board b order by b.createdAt desc")
