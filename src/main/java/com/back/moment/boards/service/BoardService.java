@@ -1,8 +1,6 @@
 package com.back.moment.boards.service;
 
-import com.back.moment.boards.dto.BoardDetailResponseDto;
-import com.back.moment.boards.dto.BoardListResponseDto;
-import com.back.moment.boards.dto.BoardRequestDto;
+import com.back.moment.boards.dto.*;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.entity.LocationTag;
 import com.back.moment.boards.entity.Tag_Board;
@@ -89,17 +87,26 @@ public class BoardService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable) {
+    public ResponseEntity<BoardListResponseDto> getAllBoards(Users users, Pageable pageable) {
         existUser(users.getEmail());
-        Page<BoardListResponseDto> boardList = boardRepository.selectAllBoard(pageable);
 
-        if (boardList.hasNext()) {
-            boardList = new PageImpl<>(boardList.getContent(), pageable, boardList.getTotalElements());
+        Page<ModelBoardListResponseDto> modelBoardList = boardRepository.selectAllModelBoard(RoleEnum.MODEL, pageable);
+        Page<PhotographerBoardListResponseDto> photographerBoardList = boardRepository.selectAllPhotographerBoard(RoleEnum.MODEL, pageable);
+
+
+        if (modelBoardList.hasNext()) {
+            modelBoardList = new PageImpl<>(modelBoardList.getContent(), pageable, modelBoardList.getTotalElements());
         } else {
-            boardList = boardRepository.selectAllBoard(pageable);
+            modelBoardList = boardRepository.selectAllModelBoard(RoleEnum.MODEL, pageable);
         }
 
-        return new ResponseEntity<>(boardList, HttpStatus.OK);
+        if (photographerBoardList.hasNext()) {
+            photographerBoardList = new PageImpl<>(photographerBoardList.getContent(), pageable, photographerBoardList.getTotalElements());
+        } else {
+            photographerBoardList = boardRepository.selectAllPhotographerBoard(RoleEnum.PHOTOGRAPHER, pageable);
+        }
+
+        return new ResponseEntity<>(new BoardListResponseDto(modelBoardList, photographerBoardList), HttpStatus.OK);
     }
 
     // 게시글 상세 조회

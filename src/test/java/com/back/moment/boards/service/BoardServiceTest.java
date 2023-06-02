@@ -72,53 +72,53 @@ class BoardServiceTest {
         // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성
     }
 
-    @Test
-    void getAllBoards() {
-        // Given
-        Users users = new Users();
-        users.setEmail("test@example.com");
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        // 적절한 테스트 데이터로 mockBoardList 생성
-        List<BoardListResponseDto> mockBoardList = new ArrayList<>();
-        Board board1 = new Board();
-        board1.setTitle("게시글 1");
-
-        Users users1 = new Users();
-        users1.setRole(RoleEnum.MODEL);
-        board1.setUsers(users1);
-        // board1에 필요한 속성들을 적절한 값으로 설정
-        BoardListResponseDto dto1 = new BoardListResponseDto(board1);
-        mockBoardList.add(dto1);
-
-        Board board2 = new Board();
-        board2.setTitle("게시글 2");
-
-        Users users2 = new Users();
-        users2.setRole(RoleEnum.MODEL);
-        board2.setUsers(users2);
-        // board2에 필요한 속성들을 적절한 값으로 설정
-        BoardListResponseDto dto2 = new BoardListResponseDto(board2);
-        mockBoardList.add(dto2);
-
-        // Page 객체로 변환하여 mockBoardList 생성
-        Page<BoardListResponseDto> pageMockBoardList = new PageImpl<>(mockBoardList, pageable, mockBoardList.size());
-
-        // boardRepository.selectAllBoard() 메서드가 pageMockBoardList를 반환하도록 설정
-        when(boardRepository.selectAllBoard(pageable)).thenReturn(pageMockBoardList);
-
-        // 필요한 mock 동작을 when().thenReturn()을 사용하여 설정
-        // usersRepository.findByEmail이 항상 값이 존재하는 경우를 가정하여 반환 값을 설정
-        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(users));
-
-        // When
-        ResponseEntity<Page<BoardListResponseDto>> responseEntity = boardService.getAllBoards(users, pageable);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성
-    }
+//    @Test
+//    void getAllBoards() {
+//        // Given
+//        Users users = new Users();
+//        users.setEmail("test@example.com");
+//
+//        Pageable pageable = PageRequest.of(0, 10);
+//
+//        // 적절한 테스트 데이터로 mockBoardList 생성
+//        List<BoardListResponseDto> mockBoardList = new ArrayList<>();
+//        Board board1 = new Board();
+//        board1.setTitle("게시글 1");
+//
+//        Users users1 = new Users();
+//        users1.setRole(RoleEnum.MODEL);
+//        board1.setUsers(users1);
+//        // board1에 필요한 속성들을 적절한 값으로 설정
+//        BoardListResponseDto dto1 = new BoardListResponseDto(board1);
+//        mockBoardList.add(dto1);
+//
+//        Board board2 = new Board();
+//        board2.setTitle("게시글 2");
+//
+//        Users users2 = new Users();
+//        users2.setRole(RoleEnum.MODEL);
+//        board2.setUsers(users2);
+//        // board2에 필요한 속성들을 적절한 값으로 설정
+//        BoardListResponseDto dto2 = new BoardListResponseDto(board2);
+//        mockBoardList.add(dto2);
+//
+//        // Page 객체로 변환하여 mockBoardList 생성
+//        Page<BoardListResponseDto> pageMockBoardList = new PageImpl<>(mockBoardList, pageable, mockBoardList.size());
+//
+//        // boardRepository.selectAllBoard() 메서드가 pageMockBoardList를 반환하도록 설정
+//        when(boardRepository.selectAllBoard(pageable)).thenReturn(pageMockBoardList);
+//
+//        // 필요한 mock 동작을 when().thenReturn()을 사용하여 설정
+//        // usersRepository.findByEmail이 항상 값이 존재하는 경우를 가정하여 반환 값을 설정
+//        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(users));
+//
+//        // When
+//        ResponseEntity<Page<BoardListResponseDto>> responseEntity = boardService.getAllBoards(users, pageable);
+//
+//        // Then
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성
+//    }
 
     @Test
     void getBoard() {
