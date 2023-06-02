@@ -49,6 +49,9 @@ public class Users {
     //@Enumerated(value = EnumType.STRING)
     private RoleEnum role;  // 모델 또는 작가
 
+//    @Column(nullable = false)
+//    private boolean userDelete = false;
+
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Photo> photoList = new ArrayList<>();
 
@@ -103,5 +106,10 @@ public class Users {
         this.kakaoId=kakaoId;
         return this;
     }
+
+
+//    public void deleteUsers() {
+//        this.userDelete = true;
+//    }
 
 }
