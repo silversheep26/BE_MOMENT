@@ -162,17 +162,12 @@ public class UserService {
 //    }
 
     // 회원 탈퇴(hard) : 영구 삭제
-    public ResponseEntity<Void> deleteUsersHard(Long userId, Users users) {
-        // 유저가 맞는지 확인
-        if (!Objects.equals(userId, users.getId())) {
-            throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
-        }
-        // 유저가 있는지 확인
-        usersRepository.findById(userId).orElseThrow(
-            () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
-        );
+    public ResponseEntity<Void> deleteUsersHard(String password, Users users) {
+
+        if(!users.getPassword().equals(passwordEncoder.encode(password)))
+            throw new ApiException(ExceptionEnum.NOT_MATCH_PASSWORD);
         // 유저 영구 삭제
-        usersRepository.deleteById(userId);
+        usersRepository.deleteById(users.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
