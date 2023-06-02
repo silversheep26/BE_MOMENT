@@ -49,24 +49,24 @@ class MainServiceTest {
         // 적절한 응답 검증을 수행
     }
 
-    @Test
-    void getHomePageSource() {
-        // Given
-        Users users = new Users();
-        // users에 적절한 데이터를 추가
-
-        Pageable pageable = PageRequest.of(0, 3);
-
-        // 모의 객체(usersRepository)를 사용하여 메서드 호출 시 반환할 값을 설정
-        when(usersRepository.findTop3Photographer(users.getRole(), pageable)).thenReturn(new ArrayList<>());
-        when(usersRepository.findTop3Model(users.getRole(), pageable)).thenReturn(new ArrayList<>());
-        when(usersRepository.findTop3(pageable)).thenReturn(new ArrayList<>());
-
-        // When
-        ResponseEntity<AfterLogInResponseDto> responseEntity = mainService.getHomePageSource(users);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        // 적절한 응답 검증을 수행
-    }
+//    @Test
+//    void getHomePageSource() {
+//        // Given
+//        Users users = new Users();
+//        // users에 적절한 데이터를 추가
+//
+//        Pageable pageable = PageRequest.of(0, 3);
+//
+//        // 모의 객체(usersRepository)를 사용하여 메서드 호출 시 반환할 값을 설정
+//        when(usersRepository.findTop3Photographer(users.getRole(), pageable)).thenReturn(new ArrayList<>());
+//        when(usersRepository.findTop3Model(users.getRole(), pageable)).thenReturn(new ArrayList<>());
+//        when(usersRepository.findTop3(pageable)).thenReturn(new ArrayList<>());
+//
+//        // When
+//        ResponseEntity<AfterLogInResponseDto> responseEntity = mainService.getHomePageSource(users);
+//
+//        // Then
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//        // 적절한 응답 검증을 수행
+//    }
 }

@@ -21,10 +21,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByKakaoId(Long id);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u where u.role = :role ORDER BY u.totalLoveCnt DESC")
-    List<ForMainResponseDto> findTop3Photographer(@Param("role") RoleEnum role, Pageable pageable);
-
-    @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u where u.role = :role ORDER BY u.totalLoveCnt DESC")
-    List<ForMainResponseDto> findTop3Model(@Param("role") RoleEnum role, Pageable pageable);
+    List<ForMainResponseDto> findTop3ByRole(@Param("role") RoleEnum role, Pageable pageable);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u ORDER BY u.totalLoveCnt DESC")
     List<ForMainResponseDto> findTop3(Pageable pageable);
