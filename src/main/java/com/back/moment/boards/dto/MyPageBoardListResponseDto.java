@@ -26,6 +26,6 @@ public class MyPageBoardListResponseDto {
         this.nickName = board.getUsers().getNickName();
         this.boardImgUrl = board.getBoardImgUrl();
         this.createdTime = board.getCreatedAt();
-        this.tag_boardList = board.getTagList();
+        this.tag_boardList = board.getTagListWithWell();
     }
 }
