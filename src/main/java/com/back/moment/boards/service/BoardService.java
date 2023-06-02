@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -90,23 +92,51 @@ public class BoardService {
     public ResponseEntity<BoardListResponseDto> getAllBoards(Users users, Pageable pageable) {
         existUser(users.getEmail());
 
-        Page<ModelBoardListResponseDto> modelBoardList = boardRepository.selectAllModelBoard(RoleEnum.MODEL, pageable);
-        Page<PhotographerBoardListResponseDto> photographerBoardList = boardRepository.selectAllPhotographerBoard(RoleEnum.MODEL, pageable);
+        List<Board> modelBoardList = boardRepository.getModelBoardListByHostIdWithFetch(RoleEnum.MODEL);
+        List<Board> photographerBoardList = boardRepository.getPhotographerBoardListByHostIdWithFetch(RoleEnum.PHOTOGRAPHER);
+        Page<ModelBoardListResponseDto> modelBoardPage;
+        Page<PhotographerBoardListResponseDto> photographerBoardPage;
 
+        modelBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
 
-        if (modelBoardList.hasNext()) {
-            modelBoardList = new PageImpl<>(modelBoardList.getContent(), pageable, modelBoardList.getTotalElements());
-        } else {
-            modelBoardList = boardRepository.selectAllModelBoard(RoleEnum.MODEL, pageable);
+        if (modelBoardList.size() > pageable.getOffset()) {
+            int startIndex = (int) pageable.getOffset();
+            int endIndex = Math.min(startIndex + pageable.getPageSize(), modelBoardList.size());
+            List<ModelBoardListResponseDto> modelBoardDtoList = modelBoardList.subList(startIndex, endIndex)
+                    .stream()
+                    .map(ModelBoardListResponseDto::new)
+                    .toList();
+            modelBoardPage = new PageImpl<>(modelBoardDtoList, pageable, modelBoardList.size());
+        } else{
+            modelBoardPage = new PageImpl<>(
+                    modelBoardList.stream()
+                            .map(ModelBoardListResponseDto::new)
+                            .toList(),
+                    pageable,
+                    modelBoardList.size()
+            );
         }
 
-        if (photographerBoardList.hasNext()) {
-            photographerBoardList = new PageImpl<>(photographerBoardList.getContent(), pageable, photographerBoardList.getTotalElements());
-        } else {
-            photographerBoardList = boardRepository.selectAllPhotographerBoard(RoleEnum.PHOTOGRAPHER, pageable);
+        photographerBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
+        if (photographerBoardList.size() > pageable.getOffset()) {
+            int startIndex = (int) pageable.getOffset();
+            int endIndex = Math.min(startIndex + pageable.getPageSize(), photographerBoardList.size());
+            List<PhotographerBoardListResponseDto> photographerBoardDtoList = photographerBoardList.subList(startIndex, endIndex)
+                    .stream()
+                    .map(PhotographerBoardListResponseDto::new)
+                    .toList();
+            photographerBoardPage = new PageImpl<>(photographerBoardDtoList, pageable, photographerBoardList.size());
+        } else{
+            photographerBoardPage = new PageImpl<>(
+                    photographerBoardList.stream()
+                            .map(PhotographerBoardListResponseDto::new)
+                            .toList(),
+                    pageable,
+                    photographerBoardList.size()
+            );
         }
 
-        return new ResponseEntity<>(new BoardListResponseDto(modelBoardList, photographerBoardList), HttpStatus.OK);
+        return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage, photographerBoardPage), HttpStatus.OK);
     }
 
     // 게시글 상세 조회

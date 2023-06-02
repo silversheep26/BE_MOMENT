@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class ModelBoardListResponseDto {
     private RoleEnum role;
     private  String nickName;
     private  String boardImgUrl;
-    private LocalDate createdTime;
+    private String createdTime;
     private List<String> tag_boardList;
 
     public ModelBoardListResponseDto(Board board) {
