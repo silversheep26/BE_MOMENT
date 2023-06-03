@@ -15,12 +15,12 @@ public class RedisService {
 
     public void setRefreshValues(String key, String userId) {
         redisTemplate.opsForHash().put("Refresh",userId,key);
-        redisTemplate.expire(userId,Duration.ofMinutes(24 * 60L));
+        redisTemplate.expire("Refresh",Duration.ofMinutes(24 * 60L));
     }
 
     public void setCodeValues(String key, String userId) {
-        redisTemplate.opsForHash().put("code", userId, key);
-        redisTemplate.expire(userId,Duration.ofMinutes(10L));
+        redisTemplate.opsForHash().put("Code", userId, key);
+        redisTemplate.expire("Code",Duration.ofMinutes(10L));
     }
 
     public String getRefreshToken(String userId){
@@ -28,7 +28,7 @@ public class RedisService {
     }
 
     public String getCode(String userId){
-        return (String) redisTemplate.opsForHash().get("code",userId);
+        return (String) redisTemplate.opsForHash().get("Code",userId);
     }
 
 
