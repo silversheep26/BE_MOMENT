@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers("/emails/**").permitAll()
                 .requestMatchers("/main", "/home").permitAll()
-                .requestMatchers("/feeds").permitAll()
+                .requestMatchers("/feeds", "/boards").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
