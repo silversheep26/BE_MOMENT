@@ -13,12 +13,12 @@ public class RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void setRefreshValues(String key, String userId) {
+    public void setRefreshValues(String userId, String key) {
         redisTemplate.opsForHash().put("Refresh",userId,key);
         redisTemplate.expire("Refresh",Duration.ofMinutes(24 * 60L));
     }
 
-    public void setCodeValues(String key, String userId) {
+    public void setCodeValues(String userId, String key) {
         redisTemplate.opsForHash().put("Code", userId, key);
         redisTemplate.expire("Code",Duration.ofMinutes(10L));
     }
