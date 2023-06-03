@@ -86,9 +86,9 @@ public class UserController {
 
     // 회원 탈퇴 hard (영구 삭제)
     @PostMapping("/hard")
-    public ResponseEntity<Void> deleteUsersHard(@RequestPart String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        return userService.deleteUsersHard(password, userDetails.getUsers());
+    public ResponseEntity<Void> deleteUsersHard(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        EmailRequestDto emailRequestDto = new EmailRequestDto(userDetails.getUsers().getEmail());
+        return emailService.sendMessage(emailRequestDto);
     }
 
 }

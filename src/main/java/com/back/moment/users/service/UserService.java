@@ -146,25 +146,5 @@ public class UserService {
         response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());
         response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
-
-//    // 회원 탈퇴(soft) : 회원 탈퇴
-//    public ResponseEntity<Void> deleteUsers(Long userId, Users users) {
-//        usersRepository.findByEmail(users.getEmail()).orElseThrow(
-//            () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
-//        );
-//        users.deleteUsers();
-//        usersRepository.save(users);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-    // 회원 탈퇴(hard) : 영구 삭제
-    public ResponseEntity<Void> deleteUsersHard(String password, Users users) {
-
-        if(!passwordEncoder.matches(password, users.getPassword()))
-            throw new ApiException(ExceptionEnum.NOT_MATCH_PASSWORD);
-        // 유저 영구 삭제
-        usersRepository.deleteById(users.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    
 }

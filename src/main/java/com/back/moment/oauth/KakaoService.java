@@ -80,9 +80,9 @@ public class KakaoService {
 //        }
 
         String redisKey = tokenDto.getRefreshToken().substring(7);
-        String refreshRedis = redisService.getValues(redisKey);
+        String refreshRedis = redisService.getRefreshToken(kakaoUser.getEmail());
         if(refreshRedis == null){
-            redisService.setRefreshValues(redisKey, kakaoUser.getEmail());
+            redisService.setRefreshValues(kakaoUser.getEmail(), redisKey);
         }
 
         Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
