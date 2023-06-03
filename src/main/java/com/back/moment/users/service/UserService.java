@@ -3,6 +3,9 @@ package com.back.moment.users.service;
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 
+import com.back.moment.email.dto.CodeRequestDto;
+import com.back.moment.email.dto.EmailRequestDto;
+import com.back.moment.email.service.EmailService;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
@@ -36,6 +39,7 @@ public class UserService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
     public static final String BEARER_PREFIX = "Bearer ";
     private final S3Uploader s3Uploader;
     private final JwtUtil jwtUtil;
@@ -110,7 +114,7 @@ public class UserService {
             String redisKey = tokenDto.getRefreshToken().substring(7);
             String refreshRedis = redisService.getValues(redisKey);
             if (refreshRedis == null) {
-                redisService.setRefreshValues(redisKey, users.getEmail());
+                redisService.setRefreshValues(users.getEmail(),refreshRedis);
             }
 
             Claims claim = Jwts.parser().setSigningKey(secretKey)

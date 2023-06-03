@@ -14,8 +14,8 @@ public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void setRefreshValues(String key, String userId) {
-        ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(key, userId, Duration.ofMinutes(24*60L));
+        redisTemplate.opsForHash().put("Refresh",userId,key);
+        redisTemplate.expire(userId,Duration.ofMinutes(24 * 60L));
     }
 
     public void setCodeValues(String key, String userId) {
@@ -23,10 +23,14 @@ public class RedisService {
         redisTemplate.expire(userId,Duration.ofMinutes(10L));
     }
 
-    public String getValues(String key) {
-        ValueOperations<String, String> values = redisTemplate.opsForValue();
-        return values.get(key);
+    public String getRefreshToken(String userId){
+        return (String) redisTemplate.opsForHash().get("Refresh",userId);
     }
+
+    public String getCode(String userId){
+        return (String) redisTemplate.opsForHash().get("code",userId);
+    }
+
 
     public void deleteValues(String key){
         System.out.println(key);
