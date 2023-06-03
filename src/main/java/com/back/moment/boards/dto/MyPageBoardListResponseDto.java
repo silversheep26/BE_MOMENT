@@ -17,7 +17,7 @@ public class MyPageBoardListResponseDto {
     private RoleEnum role;
     private  String nickName;
     private  String boardImgUrl;
-    private String createdTime;
+    private LocalDateTime createdTime;
     private List<String> tag_boardList;
 
     public MyPageBoardListResponseDto(Board board) {
