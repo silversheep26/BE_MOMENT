@@ -48,15 +48,16 @@ public class MainService {
         List<MyPageBoardListResponseDto> topSixBoard;
 
         List<ForMainResponseDto> top3;
-        RoleEnum targetRole;
+        RoleEnum targetRole = null;
 
-        if (users.getRole() == RoleEnum.MODEL) {
-            targetRole = RoleEnum.PHOTOGRAPHER;
-        } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
-            targetRole = RoleEnum.MODEL;
-        } else {
-            targetRole = null;
+        if (users != null && users.getRole() != null) {
+            if (users.getRole() == RoleEnum.MODEL) {
+                targetRole = RoleEnum.PHOTOGRAPHER;
+            } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
+                targetRole = RoleEnum.MODEL;
+            }
         }
+
 
         if (targetRole != null) {
             topSixBoard = boardRepository.selectAllEachRoleBoardList(targetRole)
