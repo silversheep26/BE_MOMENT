@@ -114,7 +114,7 @@ public class UserService {
             String redisKey = tokenDto.getRefreshToken().substring(7);
             String refreshRedis = redisService.getRefreshToken(users.getEmail());
             if (refreshRedis == null) {
-                redisService.setRefreshValues(users.getEmail(),refreshRedis);
+                redisService.setRefreshValues(users.getEmail(),redisKey);
             }
 
             Claims claim = Jwts.parser().setSigningKey(secretKey)
