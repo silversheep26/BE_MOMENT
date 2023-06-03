@@ -1,5 +1,8 @@
 package com.back.moment.users.controller;
 
+import com.back.moment.email.dto.CodeRequestDto;
+import com.back.moment.email.dto.EmailRequestDto;
+import com.back.moment.email.service.EmailService;
 import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.DeleteUserRequestDto;
 import com.back.moment.users.dto.LoginRequestDto;
@@ -36,6 +39,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final EmailService emailService;
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,6 +93,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUsersHard(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         EmailRequestDto emailRequestDto = new EmailRequestDto(userDetails.getUsers().getEmail());
         return emailService.sendMessage(emailRequestDto);
+    }
+    @PostMapping("/code")
+    public ResponseEntity<Void> checkCodeForDeleteUsers(String code,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        CodeRequestDto codeRequestDto = new CodeRequestDto(userDetails.getUsers().getEmail(),code);
+        return emailService.codeCheck(codeRequestDto);
     }
 
 }

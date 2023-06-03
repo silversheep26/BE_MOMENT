@@ -144,8 +144,8 @@ public class JwtUtil {
 //        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
 //    }
 
-    public boolean existsRefreshToken(String token) {
-        return redisService.getValues(token) != null;
+    public boolean existsRefreshToken(String userId) {
+        return redisService.getRefreshToken(userId) != null;
     }
 
     //액세스 토큰 헤더 설정
