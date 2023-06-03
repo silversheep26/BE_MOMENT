@@ -110,7 +110,7 @@ public class EmailService {
 
         String redisCode = redisService.getValues(codeRequestDto.getCode());
         if(redisCode == null) {
-            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
+            throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
         if(!redisCode.equals(codeRequestDto.getCode()))
             throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);

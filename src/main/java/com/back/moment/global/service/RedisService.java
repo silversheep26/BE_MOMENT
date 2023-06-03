@@ -19,8 +19,8 @@ public class RedisService {
     }
 
     public void setCodeValues(String key, String userId) {
-        ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(key, userId, Duration.ofMinutes(10L));
+        redisTemplate.opsForHash().put("code", userId, key);
+        redisTemplate.expire(userId,Duration.ofMinutes(10L));
     }
 
     public String getValues(String key) {
