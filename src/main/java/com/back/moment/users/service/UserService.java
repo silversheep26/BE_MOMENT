@@ -112,7 +112,7 @@ public class UserService {
 //            }
 
             String redisKey = tokenDto.getRefreshToken().substring(7);
-            String refreshRedis = redisService.getValues(redisKey);
+            String refreshRedis = redisService.getRefreshToken(users.getEmail());
             if (refreshRedis == null) {
                 redisService.setRefreshValues(users.getEmail(),refreshRedis);
             }
@@ -150,5 +150,5 @@ public class UserService {
         response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());
         response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
-    
+
 }

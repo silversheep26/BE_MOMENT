@@ -108,7 +108,7 @@ public class EmailService {
      */
     public ResponseEntity<Void> codeCheck(CodeRequestDto codeRequestDto) {
 
-        String redisCode = redisService.getValues(codeRequestDto.getCode());
+        String redisCode = redisService.getCode(codeRequestDto.getEmail());
         if(redisCode == null) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
