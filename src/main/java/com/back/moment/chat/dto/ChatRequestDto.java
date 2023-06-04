@@ -19,5 +19,4 @@ public class ChatRequestDto {
     public void setChatRoomId(Long chatRoomId){
         this.chatRoomId = chatRoomId;
     }
-
 }
