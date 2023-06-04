@@ -1,12 +1,15 @@
 package com.back.moment.chat.controller;
 
 import com.back.moment.chat.dto.ChatRequestDto;
+import com.back.moment.chat.dto.ChatResponseDto;
 import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.service.ChatService;
 import com.back.moment.users.security.UserDetailsImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,16 +61,33 @@ public class ChatController {
             chatRequestDto.setChatRoomId(chatRoomId);
             msgOperation.convertAndSend("/sub/chat/room",chatRoomId);
         }
-        msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatRequestDto);
-        chatService.saveChat(chatRequestDto);
-        msgOperation.convertAndSend("/sub/chat/"+chatRequestDto.getReceiverId());
+        ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
+        msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
+        msgOperation.convertAndSend("/sub/chat/"+chatRequestDto.getReceiverId(),chatResponseDto);
     }
+
+    @MessageMapping("/chat/read")
+    public void readChat(ChatResponseDto chatResponseDto){
+        chatService.markAsRead(chatResponseDto);
+    }
+
+    @MessageMapping("/chat/save/{chatRoomId}")
+    public void saveChatList(@DestinationVariable("chatRoomId") Long chatRoomId){
+        chatService.saveChatList(chatRoomId);
+    }
+
+    //PostMan 연습 컨트롤러
     @PostMapping("/chat/send")
-    public void saveChat(@RequestBody ChatRequestDto chatRequestDto){
+    public ResponseEntity<ChatResponseDto> saveChat(@RequestBody ChatRequestDto chatRequestDto) throws JsonProcessingException {
         if(chatRequestDto.getChatRoomId()==null){
             Long chatRoomId = chatService.createChatRoom(chatRequestDto);
             chatRequestDto.setChatRoomId(chatRoomId);
         }
-        chatService.saveChat(chatRequestDto);
+        return ResponseEntity.ok(chatService.saveChat(chatRequestDto));
+    }
+    //PostMan 연습 컨트롤러
+    @PostMapping("/chat/read")
+    public void readChatTwo(ChatResponseDto chatResponseDto){
+        chatService.markAsRead(chatResponseDto);
     }
 }

@@ -10,8 +10,10 @@ import com.back.moment.chat.repository.ChatRepository;
 import com.back.moment.chat.repository.ChatRoomRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
+import com.back.moment.global.service.RedisService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -35,6 +37,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UsersRepository userRepository;
     private final MongoTemplate mongoTemplate;
+    private final RedisService redisService;
     /*
     방에 입장하는 메서드. 우선 채팅을 했던 내역이 있으면,
     내역들을 보내주어야 한다. 그리고 읽지않음을 모두 읽음으로 변경한다.
@@ -61,8 +64,20 @@ public class ChatService {
             } else {
                 chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(), findChatRoom.getHostEntryTime());
             }
+            List<Chat> chats = redisService.getChats(chatRoom.get().getId());
+            chatList.addAll(chats);
             List<ChatResponseDto> chatListDto = chatList.stream().map(ChatResponseDto::from).collect(Collectors.toList());
-            chatRoomResponseDto = new ChatRoomResponseDto(findChatRoom.getId(), chatListDto, userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            chatListDto.sort(new Comparator<ChatResponseDto>() {
+                @Override
+                public int compare(ChatResponseDto o1, ChatResponseDto o2) {
+                    return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+                }
+            });
+            chatRoomResponseDto = new ChatRoomResponseDto(findChatRoom.getId(),
+                                                          chatListDto,
+                                                          userTwo.getProfileImg(),
+                                                          userTwoId,
+                                                          userTwo.getNickName());
             return ResponseEntity.ok(chatRoomResponseDto);
         } else {
             chatRoomResponseDto = new ChatRoomResponseDto(null, null, userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
@@ -85,8 +100,8 @@ public class ChatService {
     채팅은 MongoDB에 저장한다.
      */
     public ChatResponseDto saveChat(ChatRequestDto chatRequestDto){
-        chatRoomRepository.findById(chatRequestDto.getChatRoomId()).orElseThrow(() -> new ApiException(ExceptionEnum.RUNTIME_EXCEPTION));
-        Chat chat = chatRepository.save(ChatRequestDto.toEntity(chatRequestDto, LocalDateTime.now()));
+        Chat chat = ChatRequestDto.toEntity(chatRequestDto,LocalDateTime.now());
+        redisService.setChatValues(chat, chat.getChatRoomId(),chat.getUuid());
         return ChatResponseDto.from(chat);
     }
     /*
@@ -104,6 +119,7 @@ public class ChatService {
         });
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByHostOrGuest(user, user);
         for (ChatRoom chatRoom : chatRoomList) {
+            redisService.saveChatsToDB("Chat"+chatRoom.getId());
             Chat chat;
             ChatRoomInfoResponseDto chatRoomInfoResponseDto;
             if(chatRoom.getHost().getId().equals(user.getId())){
@@ -111,7 +127,22 @@ public class ChatService {
                 System.out.println(chatRoom.getHostEntryTime());
                 if(chatOptional.isPresent()) {
                     chat = chatOptional.get();
-                    chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),chat.getCreatedAt(),ChatResponseDto.from(chat),chatRoom.getGuest().getProfileImg(),chatRoom.getGuest().getId(),chatRoom.getGuest().getNickName());
+                    if(chat.getReceiverId().equals(user.getId()) && chat.getReadStatus().equals(false)){
+                        chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
+                                                                              chat.getCreatedAt(),
+                                                                              ChatResponseDto.from(chat),
+                                                                              chatRoom.getGuest().getProfileImg(),
+                                                                              chatRoom.getGuest().getId(),
+                                                                              chatRoom.getGuest().getNickName(),true);
+                    }else{
+                        chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
+                                                                              chat.getCreatedAt(),
+                                                                              ChatResponseDto.from(chat),
+                                                                              chatRoom.getGuest().getProfileImg(),
+                                                                              chatRoom.getGuest().getId(),
+                                                                              chatRoom.getGuest().getNickName(),false);
+                    }
+
                 } else{
                     chat = null;
                     chatRoomInfoResponseDto = null;
@@ -121,7 +152,21 @@ public class ChatService {
                 Optional<Chat> chatOptional = chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(), chatRoom.getGuestEntryTime());
                 if(chatOptional.isPresent()) {
                     chat = chatOptional.get();
-                    chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),chat.getCreatedAt(),ChatResponseDto.from(chat),chatRoom.getHost().getProfileImg(),chatRoom.getHost().getId(),chatRoom.getHost().getNickName());
+                    if(chat.getReceiverId().equals(user.getId()) && chat.getReadStatus().equals(false)){
+                        chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
+                                                                              chat.getCreatedAt(),
+                                                                              ChatResponseDto.from(chat),
+                                                                              chatRoom.getHost().getProfileImg(),
+                                                                              chatRoom.getHost().getId(),
+                                                                              chatRoom.getHost().getNickName(),true);
+                    }else{
+                        chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
+                                                                              chat.getCreatedAt(),
+                                                                              ChatResponseDto.from(chat),
+                                                                              chatRoom.getHost().getProfileImg(),
+                                                                              chatRoom.getHost().getId(),
+                                                                              chatRoom.getHost().getNickName(),false);
+                    }
                 } else{
                     chat = null;
                     chatRoomInfoResponseDto = null;
@@ -131,10 +176,17 @@ public class ChatService {
         }
         return ResponseEntity.ok(chatRoomInfoResponseDtoQueue);
     }
+    public void markAsRead(ChatResponseDto chatResponseDto){
+        Chat chat = redisService.getChat(chatResponseDto.getChatRoomId(), chatResponseDto.getUuid());
+        chat.updateReadStatus();
+        redisService.setChatValues(chat,chat.getChatRoomId(),chat.getUuid());
+    }
+    public void saveChatList(Long chatRoomId){
+        redisService.saveChatsToDB("Chat"+chatRoomId);
+    }
     /*
     유저가 채팅방을 삭제하면 , 삭제를 하지않고,
     해당 유저에게 채팅방의 채팅이 보이지 않게함.
-
      */
     public ResponseEntity<String> deleteChatRoom(Users user,Long chatRoomId){
         ChatRoom findChatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_CHATROOM));
