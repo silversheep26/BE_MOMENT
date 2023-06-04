@@ -57,20 +57,28 @@ public class ChatController {
     @MessageMapping("/chat/send")
     public void enterChatRoom(ChatRequestDto chatRequestDto){
         if(chatRequestDto.getChatRoomId()==null){
-            Long chatRoomId = chatService.createChatRoom(chatRequestDto);
-            chatRequestDto.setChatRoomId(chatRoomId);
-            msgOperation.convertAndSend("/sub/chat/room",chatRoomId);
+            Long chatRoomId = chatService.createChatRoom(chatRequestDto); // 첫 채팅이면 , 채팅방을 우선 만들고 채팅방의 Id값을 반환한다.
+            chatRequestDto.setChatRoomId(chatRoomId); // Dto에 채팅Id를 넣어준다.
+            msgOperation.convertAndSend("/sub/chat/room",chatRoomId); // 우선적으로 채팅방의 Id 메시지를 한번 보낸다. 프론트에서 채팅방의 아이디를 받아서 사용하게끔
         }
         ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
         msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
-        msgOperation.convertAndSend("/sub/chat/"+chatRequestDto.getReceiverId(),chatResponseDto);
+        msgOperation.convertAndSend("/sub/alarm/"+chatRequestDto.getReceiverId(),chatResponseDto); // 알림 기능
     }
-
+    /*
+    채팅에 읽었다는 update를 해주기 위함.
+    프론트에서 /sub/chat/room + chatReqeustDto.getChatRoomId에 들어가있었으면 ,
+    /pub/chat/read로 해당 채팅ResponseDto를 그대로 다시 읽음설정을 해주게끔 한다.
+     */
     @MessageMapping("/chat/read")
     public void readChat(ChatResponseDto chatResponseDto){
         chatService.markAsRead(chatResponseDto);
     }
-
+    /*
+    채팅방을 나가거나 할 때 , 해당 Destination으로
+    채팅방 아이디를 보내서 , Redis에 남아있는 채팅내역들을
+    DB에 저장하게끔 한다.
+     */
     @MessageMapping("/chat/save/{chatRoomId}")
     public void saveChatList(@DestinationVariable("chatRoomId") Long chatRoomId){
         chatService.saveChatList(chatRoomId);
@@ -78,7 +86,7 @@ public class ChatController {
 
     //PostMan 연습 컨트롤러
     @PostMapping("/chat/send")
-    public ResponseEntity<ChatResponseDto> saveChat(@RequestBody ChatRequestDto chatRequestDto) throws JsonProcessingException {
+    public ResponseEntity<ChatResponseDto> saveChat(@RequestBody ChatRequestDto chatRequestDto){
         if(chatRequestDto.getChatRoomId()==null){
             Long chatRoomId = chatService.createChatRoom(chatRequestDto);
             chatRequestDto.setChatRoomId(chatRoomId);

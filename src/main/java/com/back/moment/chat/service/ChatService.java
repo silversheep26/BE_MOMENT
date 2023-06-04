@@ -41,8 +41,7 @@ public class ChatService {
     /*
     방에 입장하는 메서드. 우선 채팅을 했던 내역이 있으면,
     내역들을 보내주어야 한다. 그리고 읽지않음을 모두 읽음으로 변경한다.
-    채팅은 생성된 순으로 먼저 보낸다. 방이 없다면 , chatRoomId , chatList를
-    모두 우선적으로 null로 반환한다. (좋은 방법인지는 모르겠음)
+    Redis에 채팅이 있으면 해당 채팅도 전부 같이 보여준다.
      */
     public ResponseEntity<ChatRoomResponseDto> enterChatRoom(Users userOne , Long userTwoId) {
         Users userTwo = userRepository.findById(userTwoId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
@@ -105,10 +104,9 @@ public class ChatService {
         return ChatResponseDto.from(chat);
     }
     /*
-    모든 채팅방을 모두 가져온다.
-    이 로직에서 MessageAt이 가장 최근인
-    채팅방부터 가져오고 , 현재 로그인된 사용자가 userOne에 존재하는지,
-    userTwo에 존재하는지도 확인해서 , 상대 사용자의 정보도 같이 보내줌.
+    모든 채팅방을 가져온다.
+    이전에 Redis에 남아있는 채팅들을 전부 DB에 insert 처리
+    해당 채팅방에 읽지않은 메시지가 있었는지 없었는지 보여준다.
      */
     public ResponseEntity<Queue<ChatRoomInfoResponseDto>> findAllChatRoom(Users user){
         Queue<ChatRoomInfoResponseDto> chatRoomInfoResponseDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
@@ -176,6 +174,10 @@ public class ChatService {
         }
         return ResponseEntity.ok(chatRoomInfoResponseDtoQueue);
     }
+    /*
+    읽음 처리를 해주는 메서드
+    우선적으로 redis에 저장되어있는 채팅을 update한다.
+     */
     public void markAsRead(ChatResponseDto chatResponseDto){
         Chat chat = redisService.getChat(chatResponseDto.getChatRoomId(), chatResponseDto.getUuid());
         chat.updateReadStatus();
