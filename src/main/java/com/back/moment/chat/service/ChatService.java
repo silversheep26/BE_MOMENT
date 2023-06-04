@@ -2,6 +2,7 @@ package com.back.moment.chat.service;
 
 import com.back.moment.chat.dto.ChatRequestDto;
 import com.back.moment.chat.dto.ChatResponseDto;
+import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.entity.Chat;
 import com.back.moment.chat.entity.ChatRoom;
@@ -16,15 +17,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,30 +41,33 @@ public class ChatService {
     채팅은 생성된 순으로 먼저 보낸다. 방이 없다면 , chatRoomId , chatList를
     모두 우선적으로 null로 반환한다. (좋은 방법인지는 모르겠음)
      */
-    public ResponseEntity<ChatRoomResponseDto> enterChatRoom(Users userOne , Long userTwoId){
-        Long userOneId = userOne.getId();
+    public ResponseEntity<ChatRoomResponseDto> enterChatRoom(Users userOne , Long userTwoId) {
         Users userTwo = userRepository.findById(userTwoId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        Optional<ChatRoom> chatRoomByUsers = chatRoomRepository.findChatRoomByUsers(userOne, userTwo);
-        if(chatRoomByUsers.isPresent()){
-            boolean isUserOne=false;
-            if(chatRoomByUsers.get().getUserOne().getId().equals(userOneId)) isUserOne = true;
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findChatRoomByUsers(userOne.getId(), userTwoId);
+        ChatRoomResponseDto chatRoomResponseDto;
+        if (chatRoom.isPresent()) {
+            ChatRoom findChatRoom = chatRoom.get();
+            List<Chat> chatList;
             Query query = new Query();
             query.addCriteria(new Criteria().andOperator(
-                    Criteria.where("chatRoomId").is(chatRoomByUsers.get().getId()),
+                    Criteria.where("chatRoomId").is(findChatRoom.getId()),
                     Criteria.where("senderId").is(userTwo.getId()),
                     Criteria.where("readStatus").is(false)
-                    ));
+            ));
             Update update = Update.update("readStatus", true);
-            mongoTemplate.updateMulti(query,update,Chat.class);
-            List<ChatResponseDto> chatResponseDtoList;
-            if(isUserOne){
-                chatResponseDtoList = chatRepository.findByChatRoomIdAndUserOneCanSeeTrueOrderByCreatedAt(chatRoomByUsers.get().getId()).stream().map(c -> ChatResponseDto.from(c)).collect(Collectors.toList());
-                return ResponseEntity.ok(new ChatRoomResponseDto(chatRoomByUsers.get().getId(),chatResponseDtoList,userTwo.getProfileImg(),userTwoId,userTwo.getNickName(),false));
+            mongoTemplate.updateMulti(query, update, Chat.class);
+            if (findChatRoom.getGuest().equals(userOne.getId())) {
+                chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(),findChatRoom.getGuestEntryTime());
+            } else {
+                chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(), findChatRoom.getHostEntryTime());
             }
-            chatResponseDtoList = chatRepository.findByChatRoomIdAndUserTwoCanSeeTrueOrderByCreatedAt(chatRoomByUsers.get().getId()).stream().map(c -> ChatResponseDto.from(c)).collect(Collectors.toList());
-            return ResponseEntity.ok(new ChatRoomResponseDto(chatRoomByUsers.get().getId(),chatResponseDtoList,userOne.getProfileImg(),userOneId,userOne.getNickName(),false));
+            List<ChatResponseDto> chatListDto = chatList.stream().map(ChatResponseDto::from).collect(Collectors.toList());
+            chatRoomResponseDto = new ChatRoomResponseDto(findChatRoom.getId(), chatListDto, userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            return ResponseEntity.ok(chatRoomResponseDto);
+        } else {
+            chatRoomResponseDto = new ChatRoomResponseDto(null, null, userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            return ResponseEntity.ok(chatRoomResponseDto);
         }
-        return ResponseEntity.ok(new ChatRoomResponseDto(null,null,userTwo.getProfileImg(),userTwoId,userTwo.getNickName(),false));
     }
     /*
     방을 생성하는 로직이다.
@@ -73,7 +76,7 @@ public class ChatService {
     public Long createChatRoom(ChatRequestDto chatRequestDto){
         Users userOne = userRepository.findById(chatRequestDto.getSenderId()).orElseThrow(()-> new ApiException(ExceptionEnum.NOT_FOUND_USER));
         Users userTwo = userRepository.findById(chatRequestDto.getReceiverId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo);
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo,LocalDateTime.now());
         chatRoomRepository.save(chatRoom);
         return chatRoom.getId();
     }
@@ -81,12 +84,9 @@ public class ChatService {
     채팅 내용을 저장한다.
     채팅은 MongoDB에 저장한다.
      */
-    public ChatResponseDto saveChat(ChatRequestDto chatRequestDto,Long chatRoomId){
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.RUNTIME_EXCEPTION));
-        chatRoom.updateCanUserOneSee();
-        chatRoom.updateCanUserTwoSee();
+    public ChatResponseDto saveChat(ChatRequestDto chatRequestDto){
+        chatRoomRepository.findById(chatRequestDto.getChatRoomId()).orElseThrow(() -> new ApiException(ExceptionEnum.RUNTIME_EXCEPTION));
         Chat chat = chatRepository.save(ChatRequestDto.toEntity(chatRequestDto, LocalDateTime.now()));
-        chatRoom.updateLastMessageAt(LocalDateTime.now());
         return ChatResponseDto.from(chat);
     }
     /*
@@ -95,62 +95,54 @@ public class ChatService {
     채팅방부터 가져오고 , 현재 로그인된 사용자가 userOne에 존재하는지,
     userTwo에 존재하는지도 확인해서 , 상대 사용자의 정보도 같이 보내줌.
      */
-    public ResponseEntity<List<ChatRoomResponseDto>> findAllChatRoom(Users user){
-        ArrayList<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
-        List<ChatRoom> chatRoomList = chatRoomRepository.findAllByUserOneOrUserTwoOrderByLastMessageAtDesc(user, user);
+    public ResponseEntity<Queue<ChatRoomInfoResponseDto>> findAllChatRoom(Users user){
+        Queue<ChatRoomInfoResponseDto> chatRoomInfoResponseDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
+            @Override
+            public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
+                return o2.getLastChatTime().compareTo(o1.getLastChatTime());
+            }
+        });
+        List<ChatRoom> chatRoomList = chatRoomRepository.findAllByHostOrGuest(user, user);
         for (ChatRoom chatRoom : chatRoomList) {
-            boolean existReadStatusIsFalse;
-            if(chatRoom.getUserOne().getId().equals(user.getId())){
-                Users userTwo = chatRoom.getUserTwo();
-                if(chatRoom.getCanUserOneSee()){
-                    existReadStatusIsFalse = chatRepository.existsByChatRoomIdAndUserOneCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
-                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userTwo.getProfileImg(),userTwo.getId(),userTwo.getNickName(),existReadStatusIsFalse));
-                }
-            }else{
-                Users userOne = chatRoom.getUserOne();
-                if(chatRoom.getCanUserOneSee()){
-                    existReadStatusIsFalse = chatRepository.existsByChatRoomIdAndUserTwoCanSeeTrueAndReadStatusFalseAndReceiverId(chatRoom.getId(), user.getId());
-                    chatRoomResponseDtoList.add(new ChatRoomResponseDto(chatRoom.getId(),null,userOne.getProfileImg(),userOne.getId(),userOne.getNickName(),existReadStatusIsFalse));
+            Chat chat;
+            ChatRoomInfoResponseDto chatRoomInfoResponseDto;
+            if(chatRoom.getHost().getId().equals(user.getId())){
+                Optional<Chat> chatOptional = chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(), chatRoom.getHostEntryTime());
+                System.out.println(chatRoom.getHostEntryTime());
+                if(chatOptional.isPresent()) {
+                    chat = chatOptional.get();
+                    chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),chat.getCreatedAt(),ChatResponseDto.from(chat),chatRoom.getGuest().getProfileImg(),chatRoom.getGuest().getId(),chatRoom.getGuest().getNickName());
+                } else{
+                    chat = null;
+                    chatRoomInfoResponseDto = null;
                 }
             }
+            else{
+                Optional<Chat> chatOptional = chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(), chatRoom.getGuestEntryTime());
+                if(chatOptional.isPresent()) {
+                    chat = chatOptional.get();
+                    chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),chat.getCreatedAt(),ChatResponseDto.from(chat),chatRoom.getHost().getProfileImg(),chatRoom.getHost().getId(),chatRoom.getHost().getNickName());
+                } else{
+                    chat = null;
+                    chatRoomInfoResponseDto = null;
+                }
+            }
+            if(chatRoomInfoResponseDto!=null) chatRoomInfoResponseDtoQueue.add(chatRoomInfoResponseDto);
         }
-        return ResponseEntity.ok(chatRoomResponseDtoList);
+        return ResponseEntity.ok(chatRoomInfoResponseDtoQueue);
     }
     /*
     유저가 채팅방을 삭제하면 , 삭제를 하지않고,
-    해당 유저에게 채팅방을 보이지 않게함.
+    해당 유저에게 채팅방의 채팅이 보이지 않게함.
+
      */
     public ResponseEntity<String> deleteChatRoom(Users user,Long chatRoomId){
         ChatRoom findChatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_CHATROOM));
-        if(findChatRoom.getUserOne().getId().equals(user.getId())){
-            findChatRoom.updateCanNotUserOneSee();
-            deleteChat(chatRoomId,true);
+        if(findChatRoom.getHost().getId().equals(user.getId())){
+            findChatRoom.updateHostEntryTime(LocalDateTime.now());
         }else{
-            findChatRoom.updateCanNotUserTwoSee();
-            deleteChat(chatRoomId,false);
+            findChatRoom.updateGuestEntryTime(LocalDateTime.now());
         }
         return ResponseEntity.ok("success");
     }
-    /*
-    채팅을 보이지 않게 update하는것은 비동기적으로 처리해주고 싶어서
-    @Async 어노테이션을 붙이고 deleteChatRoom에서 deleteChat
-    메서드를 사용했다.
-     */
-    @Async
-    public void deleteChat(Long chatRoomId,boolean isUserOne){
-        List<Chat> chatList = chatRepository.findByChatRoomId(chatRoomId);
-        Query query = new Query();
-        Update update=null;
-        query.addCriteria(new Criteria().andOperator(
-                Criteria.where("chatRoomId").is(chatRoomId)
-        ));
-        if(isUserOne){
-             update=Update.update("userOneCanSee", false);
-        }else{
-            update=Update.update("userTwoCanSee",false);
-        }
-        mongoTemplate.updateMulti(query,update,Chat.class);
-    }
-
-
 }

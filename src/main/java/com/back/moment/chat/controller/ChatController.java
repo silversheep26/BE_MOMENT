@@ -1,7 +1,7 @@
 package com.back.moment.chat.controller;
 
 import com.back.moment.chat.dto.ChatRequestDto;
-import com.back.moment.chat.dto.ChatResponseDto;
+import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.service.ChatService;
 import com.back.moment.users.security.UserDetailsImpl;
@@ -11,8 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import java.util.Queue;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class ChatController {
     DM 목록을 볼때 호출하는 컨트롤러
      */
     @GetMapping("chatRoom/list")
-    public ResponseEntity<List<ChatRoomResponseDto>> findAllChatRoomByUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<Queue<ChatRoomInfoResponseDto>> findAllChatRoomByUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.findAllChatRoom(userDetails.getUsers());
     }
     /*
@@ -49,20 +48,26 @@ public class ChatController {
     웹소켓을 통해 채팅을 시작하고 , 첫 채팅을 보내면
     채팅방을 생성한다. 우선 채팅방이 없는 상태이면
     /sub/chat/room으로 먼저 채팅방 Id 를 보낸다.
-    그다음 /sub/chat/room/{chatRoomId} 에 chatResponseDto를 보내고,
+    그다음 /sub/chat/room/{chatRoomId} 에 chatRequestDto를 보내고,
     그다음 /sub/chat{receiverId}에 알림을 보냄 , 이쪽으로 값을 따로 보내는건 없다.
      */
     @MessageMapping("/chat/send")
     public void enterChatRoom(ChatRequestDto chatRequestDto){
-        Long chatRoomId=null;
         if(chatRequestDto.getChatRoomId()==null){
-            chatRoomId = chatService.createChatRoom(chatRequestDto);
+            Long chatRoomId = chatService.createChatRoom(chatRequestDto);
+            chatRequestDto.setChatRoomId(chatRoomId);
             msgOperation.convertAndSend("/sub/chat/room",chatRoomId);
         }
-        chatRequestDto.setChatRoomId(chatRoomId);
-        ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto, chatRoomId);
-        msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
+        msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatRequestDto);
+        chatService.saveChat(chatRequestDto);
         msgOperation.convertAndSend("/sub/chat/"+chatRequestDto.getReceiverId());
     }
-
+    @PostMapping("/chat/send")
+    public void saveChat(@RequestBody ChatRequestDto chatRequestDto){
+        if(chatRequestDto.getChatRoomId()==null){
+            Long chatRoomId = chatService.createChatRoom(chatRequestDto);
+            chatRequestDto.setChatRoomId(chatRoomId);
+        }
+        chatService.saveChat(chatRequestDto);
+    }
 }
