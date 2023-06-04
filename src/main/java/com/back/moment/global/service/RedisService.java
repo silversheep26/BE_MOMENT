@@ -10,7 +10,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import javax.swing.plaf.ListUI;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -57,6 +60,19 @@ public class RedisService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    public List<Chat> getChats(Long chatRoomId){
+        List<Object> chats = redisTemplate.opsForHash().values("Chat" + chatRoomId);
+        ArrayList<Chat> chatList = new ArrayList<>();
+        for (Object c : chats) {
+            try {
+                Chat chat = objectMapper.readValue((String) c, Chat.class);
+                chatList.add(chat);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return chatList;
     }
 
 
