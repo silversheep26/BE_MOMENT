@@ -17,8 +17,6 @@ public class Chat {
     private Long chatRoomId;
     private LocalDateTime createdAt;
     private Boolean readStatus = false; // 채팅의 읽음 , 읽지않음 표시
-    private Boolean userOneCanSee = true; // 유저1이 볼 수 있는지 판별 , 예를들어 유저1이 채팅목록에서 삭제했는지 여부
-    private Boolean userTwoCanSee = true; // 유저2가 볼 수 있는지 판별 , 예를들어 유저1이 채팅목록에서 삭제했는지 여부
 
     private Chat(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt) {
         this.message = message;
@@ -29,15 +27,6 @@ public class Chat {
 
     public static Chat of(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt){
         return new Chat(message,senderId,chatRoomId,createdAt);
-    }
-    public void updateReadStatus(){
-        this.readStatus = true;
-    } // 읽음 , 읽지않음 업데이트 표시
-    public void updateUserOneCanSee(){ // 삭제시 여부
-        this.userOneCanSee = false;
-    }
-    public void updateUserTwoCanSee(){
-        this.userTwoCanSee = false;
     }
 }
 

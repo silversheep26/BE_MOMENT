@@ -14,36 +14,28 @@ public class ChatRoom{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userOne_id")
-    private Users userOne;
+    @JoinColumn(name = "host_id")
+    private Users host;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userTwo_id")
-    private Users userTwo;
-    private Boolean canUserOneSee = true; // 유저1이 이 채팅방을 지웠는지 여부 확인
-    private Boolean canUserTwoSee = true; // 유저2가 이 채팅방을 지웠는지 여부 확인
-    @Version
-    private LocalDateTime lastMessageAt; // 가장 최근에 채팅이 생성된 시간을 나타냄
-    private ChatRoom(Users userOne , Users userTwo) {
-        this.userOne = userOne;
-        this.userTwo = userTwo;
+    @JoinColumn(name = "guest_id")
+    private Users guest;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime hostEntryTime; // 5/28 20시 10분 -> 6/3 20시 50분
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime guestEntryTime; // 5/28 20시 10분
+    private ChatRoom(Users host , Users guest,LocalDateTime time) {
+        this.host = host;
+        this.guest = guest;
+        this.hostEntryTime = time;
+        this.guestEntryTime = time;
     }
-    public static ChatRoom of(Users user1,Users user2){
-        return new ChatRoom(user1,user2);
+    public static ChatRoom of(Users host,Users guest,LocalDateTime time){
+        return new ChatRoom(host,guest,time);
     }
-
-    public void updateCanUserOneSee(){
-        this.canUserOneSee = true;
+    public void updateHostEntryTime(LocalDateTime time){
+        this.hostEntryTime = time;
     }
-    public void updateCanUserTwoSee(){
-        this.canUserTwoSee = true;
-    }
-    public void updateCanNotUserOneSee(){
-        this.canUserOneSee = false;
-    }
-    public void updateCanNotUserTwoSee(){
-        this.canUserTwoSee = false;
-    }
-    public void updateLastMessageAt(LocalDateTime localDateTime){
-        this.lastMessageAt = localDateTime;
+    public void updateGuestEntryTime(LocalDateTime time){
+        this.guestEntryTime = time;
     }
 }
