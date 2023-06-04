@@ -16,4 +16,5 @@ public class ChatRoomInfoResponseDto {
     private String receiverProfileImg;
     private Long receiverId;
     private String receiverNickName;
+    private Boolean haveToRead;
 }

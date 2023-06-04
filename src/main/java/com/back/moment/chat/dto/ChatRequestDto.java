@@ -13,6 +13,7 @@ public class ChatRequestDto {
     private Long chatRoomId;
 
 
+
     public static Chat toEntity(ChatRequestDto chatDto, LocalDateTime createdAt){
         return Chat.of(chatDto.getMessage(), chatDto.getSenderId(),chatDto.getChatRoomId(),createdAt);
     }
