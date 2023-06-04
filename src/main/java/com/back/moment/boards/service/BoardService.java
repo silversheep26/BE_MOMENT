@@ -9,6 +9,8 @@ import com.back.moment.boards.repository.LocationTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
+import com.back.moment.photos.dto.OnlyPhotoResponseDto;
+import com.back.moment.photos.entity.Photo;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
@@ -143,6 +145,8 @@ public class BoardService {
     @Transactional(readOnly = true)
     public ResponseEntity<BoardDetailResponseDto> getBoard(Long boardId, Users users){
         Board board = existBoard(boardId);
+//        BoardDetailResponseDto detailResponseDto = new BoardDetailResponseDto(board, users);
+
 
         return new ResponseEntity<>(new BoardDetailResponseDto(board), HttpStatus.OK);
     }
