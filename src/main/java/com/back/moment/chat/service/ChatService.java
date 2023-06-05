@@ -119,7 +119,6 @@ public class ChatService {
             ChatRoomInfoResponseDto chatRoomInfoResponseDto;
             if(chatRoom.getHost().getId().equals(user.getId())){
                 Optional<Chat> chatOptional = chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(), chatRoom.getHostEntryTime());
-                System.out.println(chatRoom.getHostEntryTime());
                 if(chatOptional.isPresent()) {
                     chat = chatOptional.get();
                     if(chat.getReceiverId().equals(user.getId()) && chat.getReadStatus().equals(false)){
@@ -175,13 +174,15 @@ public class ChatService {
     읽음 처리를 해주는 메서드
     우선적으로 redis에 저장되어있는 채팅을 update한다.
      */
-    public void markAsRead(ChatResponseDto chatResponseDto){
+    public ResponseEntity<String> markAsRead(ChatResponseDto chatResponseDto){
         Chat chat = redisService.getChat(chatResponseDto.getChatRoomId(), chatResponseDto.getUuid());
         chat.updateReadStatus();
         redisService.setChatValues(chat,chat.getChatRoomId(),chat.getUuid());
+        return ResponseEntity.ok("success");
     }
-    public void saveChatList(Long chatRoomId){
+    public ResponseEntity<String> saveChatList(Long chatRoomId){
         redisService.saveChatsToDB(chatRoomId);
+        return ResponseEntity.ok("success");
     }
     /*
     유저가 채팅방을 삭제하면 , 삭제를 하지않고,
