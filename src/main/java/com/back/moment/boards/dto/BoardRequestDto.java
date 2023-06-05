@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 @Getter
 public class BoardRequestDto {
     private String title;
-    private String contents;
+    private String location;
+    private String pay;
+    private String apply;
+    private String deadLine;
     private List<String> locationTags;
 
     public void setLocationTags(List<String> locationTags){

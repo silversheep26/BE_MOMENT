@@ -32,7 +32,16 @@ public class Board extends TimeStamped {
     private String title;
 
     @Column(nullable = false)
-    private String contents;
+    private String location;
+
+    @Column(nullable = false)
+    private String pay;
+
+    @Column(nullable = false)
+    private String apply;
+
+    @Column(nullable = false)
+    private String deadLine;
 
     @Column
     private String boardImgUrl;
@@ -43,17 +52,24 @@ public class Board extends TimeStamped {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
 
-    private Board(Users users, String title, String contents, RoleEnum role) {
+    public Board(Users users, String title, String location, String pay, String apply, String deadLine, String boardImgUrl, RoleEnum role) {
         this.users = users;
         this.title = title;
-        this.contents = contents;
+        this.location = location;
+        this.pay = pay;
+        this.apply = apply;
+        this.deadLine = deadLine;
+        this.boardImgUrl = boardImgUrl;
         this.role = role;
     }
 
     public void saveBoard(BoardRequestDto boardRequestDto, Users users){
         this.users = users;
         this.title = boardRequestDto.getTitle();
-        this.contents = boardRequestDto.getContents();
+        this.location = boardRequestDto.getLocation();
+        this.pay = boardRequestDto.getPay();
+        this.apply = boardRequestDto.getApply();
+        this.deadLine = boardRequestDto.getDeadLine();
         this.role = users.getRole();
     }
 
