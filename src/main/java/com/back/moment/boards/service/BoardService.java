@@ -88,8 +88,8 @@ public class BoardService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<BoardListResponseDto> getAllBoards(Users users, Pageable pageable) {
-        existUser(users.getEmail());
+    public ResponseEntity<BoardListResponseDto> getAllBoards(Pageable pageable) {
+//        existUser(users.getEmail());
 
         List<Board> modelBoardList = boardRepository.getModelBoardListByHostIdWithFetch(RoleEnum.MODEL);
         List<Board> photographerBoardList = boardRepository.getPhotographerBoardListByHostIdWithFetch(RoleEnum.PHOTOGRAPHER);
