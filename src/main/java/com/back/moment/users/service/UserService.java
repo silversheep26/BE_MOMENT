@@ -147,4 +147,8 @@ public class UserService {
         response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
 
+    public ResponseEntity<Void> deleteUsersHard(Users users) {
+        usersRepository.deleteById(users.getId());
+        return ResponseEntity.ok(null);
+    }
 }
