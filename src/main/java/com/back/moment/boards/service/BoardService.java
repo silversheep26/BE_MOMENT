@@ -115,6 +115,8 @@ public class BoardService {
             );
         }
         boolean modelHasMorePage = modelBoardPage.hasNext();
+        int modelCurrentPage = modelBoardPage.getNumber() + 1;
+        int modelTotalPages = modelBoardPage.getTotalPages();
 
         photographerBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
         if (photographerBoardList.size() > pageable.getOffset()) {
@@ -135,11 +137,17 @@ public class BoardService {
             );
         }
         boolean photographerHasMorePage = photographerBoardPage.hasNext();
+        int photographerCurrentPage = photographerBoardPage.getNumber() + 1;
+        int photographerTotalPages = photographerBoardPage.getTotalPages();
 
         return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage,
                 photographerBoardPage,
                 modelHasMorePage,
-                photographerHasMorePage), HttpStatus.OK);
+                photographerHasMorePage,
+                modelCurrentPage,
+                modelTotalPages,
+                photographerCurrentPage,
+                photographerTotalPages), HttpStatus.OK);
     }
 
     // 게시글 상세 조회
