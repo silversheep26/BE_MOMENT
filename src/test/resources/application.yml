@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    include: secret
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        hbm2ddl:
+          auto: update
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+cloud:
+  aws:
+    s3:
+      bucket: moment-photo
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+
+logging.level:
+  org.hibernate.SQL: debug
+
+
+
