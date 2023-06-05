@@ -20,6 +20,7 @@ public class BoardDetailResponseDto {
     private RoleEnum role;
     private List<String> tag_boardList;
     private String profileUrl;
+    private String boardImgUrl;
     private List<OnlyPhotoResponseDto> feedImgUrl;
 
     public BoardDetailResponseDto(Board board){
@@ -30,6 +31,7 @@ public class BoardDetailResponseDto {
         this.role = board.getUsers().getRole();
         this.tag_boardList = board.getTagListWithWell();
         this.profileUrl = board.getUsers().getProfileImg();
+        this.boardImgUrl = board.getBoardImgUrl();
         this.feedImgUrl = board.getUsers().getPhotoList().stream()
             .map(OnlyPhotoResponseDto::new)
             .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())
