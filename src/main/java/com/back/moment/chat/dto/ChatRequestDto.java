@@ -2,10 +2,12 @@ package com.back.moment.chat.dto;
 
 import com.back.moment.chat.entity.Chat;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class ChatRequestDto {
     private String message;
     private Long senderId;
