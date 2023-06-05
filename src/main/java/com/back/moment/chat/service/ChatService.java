@@ -56,7 +56,7 @@ public class ChatService {
             ));
             Update update = Update.update("readStatus", true);
             mongoTemplate.updateMulti(query, update, Chat.class);
-            if (findChatRoom.getGuest().equals(userOne.getId())) {
+            if (findChatRoom.getGuest().getId().equals(userOne.getId())) {
                 chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(),findChatRoom.getGuestEntryTime());
             } else {
                 chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(), findChatRoom.getHostEntryTime());
@@ -87,8 +87,8 @@ public class ChatService {
         Users userOne = userRepository.findById(chatRequestDto.getSenderId()).orElseThrow(()-> new ApiException(ExceptionEnum.NOT_FOUND_USER));
         Users userTwo = userRepository.findById(chatRequestDto.getReceiverId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
         ChatRoom chatRoom = ChatRoom.of(userOne, userTwo,LocalDateTime.now());
-        chatRoomRepository.save(chatRoom);
-        return chatRoom.getId();
+        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+        return savedChatRoom.getId();
     }
     /*
     채팅 내용을 저장한다.
@@ -97,6 +97,7 @@ public class ChatService {
     public ChatResponseDto saveChat(ChatRequestDto chatRequestDto){
         Chat chat = ChatRequestDto.toEntity(chatRequestDto,LocalDateTime.now());
         redisService.setChatValues(chat, chat.getChatRoomId(),chat.getUuid());
+        if(redisService.getChat(chat.getChatRoomId(),chat.getUuid())==null) throw new ApiException(ExceptionEnum.FAIL_CHAT_SAVE);
         return ChatResponseDto.from(chat);
     }
     /*
