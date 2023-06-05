@@ -4,11 +4,14 @@ import com.back.moment.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 public class ChatRoom{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
