@@ -1,8 +1,5 @@
 package com.back.moment.users.controller;
 
-import com.back.moment.email.dto.CodeRequestDto;
-import com.back.moment.email.dto.EmailRequestDto;
-import com.back.moment.email.service.EmailService;
 import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -36,7 +33,6 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
-    private final EmailService emailService;
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -78,23 +74,15 @@ public class UserController {
         return "redirect:/main"; //주소 요청으로 변경
     }
 
-//    // 회원 탈퇴 soft
-//    @DeleteMapping("/{userId}")
-//    public ResponseEntity<Void> deleteUsers(@PathVariable Long userId,
-//        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        return userService.deleteUsers(userId, userDetails.getUsers());
-//    }
-
     // 회원 탈퇴 hard (영구 삭제)
     @PostMapping("/hard")
     public ResponseEntity<Void> deleteUsersHard(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        EmailRequestDto emailRequestDto = new EmailRequestDto(userDetails.getUsers().getEmail());
-        return emailService.sendMessage(emailRequestDto);
+        return userService.deleteUsersHard(userDetails.getUsers());
     }
-    @PostMapping("/code")
-    public ResponseEntity<Void> checkCodeForDeleteUsers(String code,@AuthenticationPrincipal UserDetailsImpl userDetails){
-        CodeRequestDto codeRequestDto = new CodeRequestDto(userDetails.getUsers().getEmail(),code);
-        return emailService.codeCheck(codeRequestDto);
-    }
+//    @PostMapping("/code")
+//    public ResponseEntity<Void> checkCodeForDeleteUsers(String code,@AuthenticationPrincipal UserDetailsImpl userDetails){
+//        CodeRequestDto codeRequestDto = new CodeRequestDto(userDetails.getUsers().getEmail(),code);
+//        return emailService.codeCheck(codeRequestDto);
+//    }
 
 }
