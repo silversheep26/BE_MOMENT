@@ -2,6 +2,7 @@ package com.back.moment.chat.service;
 
 import com.back.moment.chat.dto.ChatRequestDto;
 import com.back.moment.chat.dto.ChatResponseDto;
+import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.entity.Chat;
 import com.back.moment.chat.entity.ChatRoom;
@@ -19,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
@@ -245,4 +243,263 @@ class ChatServiceTest {
         when(redisService.getChat(anyLong(),anyString())).thenReturn(chat);
         assertThat(chatService.saveChat(chatRequestDto).getChatRoomId()).isEqualTo(1L);
     }
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Host인 경우 , 마지막 채팅의 Receiver가 user이고, ReadStatus가 false인 경우")
+    public void success_find_All_chatRoom_given_User_then_Return_Queue_ChatRoomInfoResponseDto(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Users userThree = new Users();
+        Long userOneId = 1L;
+        Long userTwoId =2L;
+        Long userThreeId =3L;
+        userOne.setId(userOneId);
+        userTwo.setId(userTwoId);
+        userThree.setId(userThreeId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo, LocalDateTime.now());
+        ChatRoom chatRoom2 = ChatRoom.of(userOne, userThree, LocalDateTime.now().minusMinutes(10));
+        chatRoomList.add(chatRoom);
+        chatRoomList.add(chatRoom2);
+        chatRoom.setId(1L);
+        chatRoom2.setId(2L);
+        Chat chat1 = Chat.of("메시지", 2L, 1L, 1L, LocalDateTime.now());
+        Chat chat2 = Chat.of("메시지", 3L, 1L, 2L, LocalDateTime.now().minusMinutes(10));
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getHostEntryTime()))
+                .thenReturn(Optional.of(chat1));
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom2.getId(),chatRoom2.getHostEntryTime()))
+                .thenReturn(Optional.of(chat2));
+            ChatRoomInfoResponseDto chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId()
+                    , chat1.getCreatedAt(),
+                    ChatResponseDto.from(chat1),
+                    chatRoom.getHost().getProfileImg(),
+                    chatRoom.getHost().getId(),
+                    chatRoom.getHost().getNickName(), true);
+        ChatRoomInfoResponseDto chatRoomInfoResponseDto2 = new ChatRoomInfoResponseDto(chatRoom2.getId()
+                , chat2.getCreatedAt(),
+                ChatResponseDto.from(chat2),
+                chatRoom2.getHost().getProfileImg(),
+                chatRoom2.getHost().getId(),
+                chatRoom2.getHost().getNickName(), true);
+        Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
+            @Override
+            public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
+                return o2.getLastChatTime().compareTo(o1.getLastChatTime());
+            }
+        });
+        chatRoomInfoDtoQueue.add(chatRoomInfoResponseDto);
+        chatRoomInfoDtoQueue.add(chatRoomInfoResponseDto2);
+        assertThat(chatService.findAllChatRoom(userOne).getBody().size()).isEqualTo(chatRoomInfoDtoQueue.size());
+        assertThat(chatService.findAllChatRoom(userOne).getBody().poll().getChatRoomId()).isEqualTo(chatRoomInfoDtoQueue.poll().getChatRoomId());
+    }
+
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Host인 경우 , 마지막 채팅의 Receiver가 user이고, ReadStatus가 true인 경우")
+    public void success_find_All_chatRoom_given_User_then_Return_Queue_ChatRoomInfoResponseDto_readStatusIsTrue(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long userOneId = 1L;
+        Long userTwoId =2L;
+        userOne.setId(userOneId);
+        userTwo.setId(userTwoId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo, LocalDateTime.now());
+        chatRoomList.add(chatRoom);
+        chatRoom.setId(1L);
+        Chat chat1 = Chat.of("메시지", 2L, 1L, 1L, LocalDateTime.now());
+        chat1.updateReadStatus();
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getHostEntryTime()))
+                .thenReturn(Optional.of(chat1));
+        ChatRoomInfoResponseDto chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId()
+                , chat1.getCreatedAt(),
+                ChatResponseDto.from(chat1),
+                chatRoom.getHost().getProfileImg(),
+                chatRoom.getHost().getId(),
+                chatRoom.getHost().getNickName(), false);
+        Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
+            @Override
+            public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
+                return o2.getLastChatTime().compareTo(o1.getLastChatTime());
+            }
+        });
+        chatRoomInfoDtoQueue.add(chatRoomInfoResponseDto);
+        assertThat(chatService.findAllChatRoom(userOne).getBody().poll().getHaveToRead()).isEqualTo(chatRoomInfoDtoQueue.poll().getHaveToRead());
+    }
+
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Host인 경우 , 마지막 채팅의 Receiver가 user이고, 볼수있는 채팅이 없는경우")
+    public void success_find_All_chatRoom_given_User_then_Return_Queue_isEmpty(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo, LocalDateTime.now());
+        chatRoomList.add(chatRoom);
+        chatRoom.setId(1L);
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getHostEntryTime()))
+                .thenReturn(Optional.empty());
+        assertThat(chatService.findAllChatRoom(userOne).getBody().size()).isEqualTo(0);
+    }
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Guest인 경우 , 마지막 채팅의 Receiver가 user이고, ReadStatus가 false인 경우")
+    public void success_find_All_chatRoom_given_UserIsGuest_then_Return_Queue_ChatRoomInfoResponseDto(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long userOneId = 1L;
+        Long userTwoId =2L;
+        userOne.setId(userOneId);
+        userTwo.setId(userTwoId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userTwo, userOne, LocalDateTime.now());
+        chatRoomList.add(chatRoom);
+        chatRoom.setId(1L);
+        Chat chat1 = Chat.of("메시지", 2L, 1L, 1L, LocalDateTime.now());
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getGuestEntryTime()))
+                .thenReturn(Optional.of(chat1));
+        ChatRoomInfoResponseDto chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId()
+                , chat1.getCreatedAt(),
+                ChatResponseDto.from(chat1),
+                chatRoom.getGuest().getProfileImg(),
+                chatRoom.getGuest().getId(),
+                chatRoom.getGuest().getNickName(), true);
+        Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
+            @Override
+            public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
+                return o2.getLastChatTime().compareTo(o1.getLastChatTime());
+            }
+        });
+        chatRoomInfoDtoQueue.add(chatRoomInfoResponseDto);
+        assertThat(chatService.findAllChatRoom(userOne).getBody().poll().getChatRoomId()).isEqualTo(chatRoomInfoDtoQueue.poll().getChatRoomId());
+    }
+
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Guest인 경우 , 마지막 채팅의 Receiver가 user이고, ReadStatus가 true인 경우")
+    public void success_find_All_chatRoom_given_UserIsGuest_then_Return_Queue_ChatRoomInfoResponseDto_readStatusIsTrue(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long userOneId = 1L;
+        Long userTwoId =2L;
+        userOne.setId(userOneId);
+        userTwo.setId(userTwoId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userTwo, userOne, LocalDateTime.now());
+        chatRoomList.add(chatRoom);
+        chatRoom.setId(1L);
+        Chat chat1 = Chat.of("메시지", 2L, 1L, 1L, LocalDateTime.now());
+        chat1.updateReadStatus();
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getGuestEntryTime()))
+                .thenReturn(Optional.of(chat1));
+        ChatRoomInfoResponseDto chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId()
+                , chat1.getCreatedAt(),
+                ChatResponseDto.from(chat1),
+                chatRoom.getGuest().getProfileImg(),
+                chatRoom.getGuest().getId(),
+                chatRoom.getGuest().getNickName(), false);
+        Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
+            @Override
+            public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
+                return o2.getLastChatTime().compareTo(o1.getLastChatTime());
+            }
+        });
+        chatRoomInfoDtoQueue.add(chatRoomInfoResponseDto);
+        assertThat(chatService.findAllChatRoom(userOne).getBody().poll().getHaveToRead()).isEqualTo(chatRoomInfoDtoQueue.poll().getHaveToRead());
+    }
+
+    @Test
+    @DisplayName("모든 채팅방 불러오기 성공 테스트, user가 Guest인 경우 , 마지막 채팅의 Receiver가 user이고, 볼수있는 채팅이 없는경우")
+    public void success_find_All_chatRoom_given_UserIsGuest_then_Return_Queue_isEmpty(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ArrayList<ChatRoom> chatRoomList = new ArrayList<>();
+        ChatRoom chatRoom = ChatRoom.of(userTwo, userOne, LocalDateTime.now());
+        chatRoomList.add(chatRoom);
+        chatRoom.setId(1L);
+        when(chatRoomRepository.findAllByHostOrGuest(userOne,userOne)).thenReturn(chatRoomList);
+        when(chatRepository.findTopByChatRoomIdAndCreatedAtAfterOrderByCreatedAtDesc(chatRoom.getId(),chatRoom.getHostEntryTime()))
+                .thenReturn(Optional.empty());
+        assertThat(chatService.findAllChatRoom(userOne).getBody().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("채팅 읽음 상태 업데이트 테스트")
+    public void success_MarkAsRead_given_ChatResponseDto(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ChatRoom chatRoom = ChatRoom.of(userTwo, userOne, LocalDateTime.now());
+        chatRoom.setId(1L);
+        Chat chat1 = Chat.of("메시지", 2L, 1L, 1L, LocalDateTime.now());
+        ChatResponseDto chatResponseDto = ChatResponseDto.from(chat1);
+        chat1.updateReadStatus();
+        when(redisService.getChat(chatResponseDto.getChatRoomId(),chatResponseDto.getUuid())).thenReturn(chat1);
+        assertThat(chatService.markAsRead(chatResponseDto).getBody()).isEqualTo("success");
+    }
+
+    @Test
+    @DisplayName("채팅 DB에 저장 테스트")
+    public void success_SaveChatList_given_ChatRoomId(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ChatRoom chatRoom = ChatRoom.of(userTwo, userOne, LocalDateTime.now());
+        chatRoom.setId(1L);
+        assertThat(chatService.saveChatList(1L).getBody()).isEqualTo("success");
+    }
+
+    @Test
+    @DisplayName("채팅방 삭제 실패 테스트")
+    public void fail_deleteChatRoom_given_UsersAndChatRoomId(){
+        Users userOne = new Users();
+        when(chatRoomRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThatThrownBy(()->chatService.deleteChatRoom(userOne,1L)).isInstanceOf(ApiException.class);
+    }
+    @Test
+    @DisplayName("채팅방 삭제 성공 테스트, 유저가 Host")
+    public void success_deleteChatRoom_given_UserIsHostAndChatRoomId(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo, LocalDateTime.now());
+        chatRoom.setId(1L);
+        when(chatRoomRepository.findById(1L)).thenReturn(Optional.of(chatRoom));
+        chatRoom.updateHostEntryTime(LocalDateTime.now());
+        assertThat(chatService.deleteChatRoom(userOne,1L).getBody()).isEqualTo("success");
+    }
+    @Test
+    @DisplayName("채팅방 삭제 성공 테스트, 유저가 Guest")
+    public void success_deleteChatRoom_given_UserIsGuestAndChatRoomId(){
+        Users userOne = new Users();
+        Users userTwo = new Users();
+        Long senderId = 1L;
+        userOne.setId(senderId);
+        Long receiverId =2L;
+        userTwo.setId(receiverId);
+        ChatRoom chatRoom = ChatRoom.of(userTwo,userOne,LocalDateTime.now());
+        chatRoom.setId(1L);
+        when(chatRoomRepository.findById(1L)).thenReturn(Optional.of(chatRoom));
+        chatRoom.updateGuestEntryTime(LocalDateTime.now());
+        assertThat(chatService.deleteChatRoom(userOne,1L).getBody()).isEqualTo("success");
+    }
+
+
 }
