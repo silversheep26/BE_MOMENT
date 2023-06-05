@@ -104,8 +104,11 @@ public class FeedService {
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
         Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
 
-        int currentPage = photoPage.getNumber() + 1;
-        int totalPages = photoPage.getTotalPages();
+        int currentPage = photoPage.getNumber();
+        int totalPages;
+        if(photoPage.isEmpty())
+            totalPages = photoPage.getTotalPages();
+        else totalPages = photoPage.getTotalPages() - 1;
 
         List<PhotoFeedResponseDto> photoList =new ArrayList<>(photoPage.getContent());
         List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>();

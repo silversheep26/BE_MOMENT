@@ -115,8 +115,11 @@ public class BoardService {
             );
         }
         boolean modelHasMorePage = modelBoardPage.hasNext();
-        int modelCurrentPage = modelBoardPage.getNumber() + 1;
-        int modelTotalPages = modelBoardPage.getTotalPages();
+        int modelCurrentPage = modelBoardPage.getNumber();
+        int modelTotalPages;
+        if(modelBoardList.isEmpty())
+            modelTotalPages = modelBoardPage.getTotalPages();
+        else modelTotalPages = modelBoardPage.getTotalPages() - 1;
 
         photographerBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
         if (photographerBoardList.size() > pageable.getOffset()) {
@@ -137,8 +140,11 @@ public class BoardService {
             );
         }
         boolean photographerHasMorePage = photographerBoardPage.hasNext();
-        int photographerCurrentPage = photographerBoardPage.getNumber() + 1;
-        int photographerTotalPages = photographerBoardPage.getTotalPages();
+        int photographerCurrentPage = photographerBoardPage.getNumber();
+        int photographerTotalPages;
+        if(photographerBoardList.isEmpty())
+            photographerTotalPages = photographerBoardPage.getTotalPages();
+        else photographerTotalPages = photographerBoardPage.getTotalPages() - 1;
 
         return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage,
                 photographerBoardPage,
