@@ -26,11 +26,11 @@ for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do
     echo "> #${RETRY_COUNT} trying..."
     # 테스트할 API 주소를 통해 http 상태 코드 가져오기
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT})
-
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT}/main)
 	# RESPONSE_CODE의 http 상태가 200번인 경우
     if [ ${RESPONSE_CODE} -eq 200 ]; then
         echo "> New WAS successfully running"
+        sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${TARGET_PORT}
         exit 0
     elif [ ${RETRY_COUNT} -eq 10 ]; then
         echo "> Health check failed."
@@ -38,4 +38,5 @@ do
     fi
     # 아직 열려있지 않았다면 sleep
     sleep 15
+
 done
