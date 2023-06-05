@@ -53,6 +53,11 @@ public class BoardController {
     public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.deleteBoard(boardId, userDetails.getUsers());
     }
+
+    @GetMapping("/party/test-vepo")
+    public String testVepo(){
+        return "JadongVepo SungGonghaera!!!";
+    }
 }
 
 /*
