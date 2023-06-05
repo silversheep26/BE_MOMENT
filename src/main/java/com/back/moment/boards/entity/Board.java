@@ -32,7 +32,16 @@ public class Board extends TimeStamped {
     private String title;
 
     @Column(nullable = false)
-    private String contents;
+    private String location;
+
+    @Column(nullable = false)
+    private String pay;
+
+    @Column(nullable = false)
+    private String apply;
+
+    @Column(nullable = false)
+    private String deadLine;
 
     @Column
     private String boardImgUrl;

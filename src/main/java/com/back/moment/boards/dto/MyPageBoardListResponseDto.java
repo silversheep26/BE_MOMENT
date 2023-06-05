@@ -13,10 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 public class MyPageBoardListResponseDto {
     private Long boardId;
-    private  String title;
+    private String title;
     private RoleEnum role;
-    private  String nickName;
-    private  String boardImgUrl;
+    private String nickName;
+    private String boardImgUrl;
     private LocalDateTime createdTime;
     private List<String> tag_boardList;
 
