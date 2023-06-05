@@ -43,7 +43,7 @@ public class BoardController {
     }
 
     // 게시글 상세 조회
-    @GetMapping("/test/{boardId}")
+    @GetMapping("/{boardId}")
     public ResponseEntity<BoardDetailResponseDto> getBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.getBoard(boardId, userDetails.getUsers());
     }
