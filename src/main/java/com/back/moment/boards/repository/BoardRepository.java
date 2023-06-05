@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select new com.back.moment.boards.dto.MyPageBoardListResponseDto(b) from Board b order by b.createdAt desc")
@@ -24,4 +25,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT DISTINCT b FROM Board b JOIN FETCH b.tag_boardList tb JOIN FETCH tb.locationTag tbl WHERE tb.locationTag.id = tbl.id and  b.users.role = :role order by b.createdAt desc")
     List<Board> getPhotographerBoardListByHostIdWithFetch(@Param("role") RoleEnum role);
+
+    @Query("SELECT DISTINCT b FROM Board b JOIN FETCH b.tag_boardList tb JOIN FETCH tb.locationTag tbl WHERE tb.locationTag.id = tbl.id and b.id = :boardId")
+    Optional<Board> findExistBoard(@Param("boardId") Long boardId);
 }
