@@ -114,6 +114,7 @@ public class BoardService {
                     modelBoardList.size()
             );
         }
+        boolean modelHasMorePage = modelBoardPage.hasNext();
 
         photographerBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
         if (photographerBoardList.size() > pageable.getOffset()) {
@@ -133,8 +134,12 @@ public class BoardService {
                     photographerBoardList.size()
             );
         }
+        boolean photographerHasMorePage = photographerBoardPage.hasNext();
 
-        return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage, photographerBoardPage), HttpStatus.OK);
+        return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage,
+                photographerBoardPage,
+                modelHasMorePage,
+                photographerHasMorePage), HttpStatus.OK);
     }
 
     // 게시글 상세 조회
