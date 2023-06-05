@@ -43,7 +43,7 @@ public class BoardController {
     }
 
     // 게시글 상세 조회
-    @GetMapping("/{boardId}")
+    @GetMapping("/test/{boardId}")
     public ResponseEntity<BoardDetailResponseDto> getBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.getBoard(boardId, userDetails.getUsers());
     }
@@ -52,11 +52,6 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.deleteBoard(boardId, userDetails.getUsers());
-    }
-
-    @GetMapping("/party/test-vepo")
-    public String testVepo(){
-        return "JadongVepo SungGonghaera!!!";
     }
 }
 
