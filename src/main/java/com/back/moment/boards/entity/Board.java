@@ -31,16 +31,16 @@ public class Board extends TimeStamped {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String location;
 
-    @Column(nullable = false)
+    @Column
     private String pay;
 
-    @Column(nullable = false)
+    @Column
     private String apply;
 
-    @Column(nullable = false)
+    @Column
     private String deadLine;
 
     @Column
