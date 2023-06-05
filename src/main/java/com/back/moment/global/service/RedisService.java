@@ -2,19 +2,14 @@ package com.back.moment.global.service;
 
 import com.back.moment.chat.entity.Chat;
 import com.back.moment.chat.repository.ChatRepository;
-import com.back.moment.exception.ApiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
-import javax.swing.plaf.ListUI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor

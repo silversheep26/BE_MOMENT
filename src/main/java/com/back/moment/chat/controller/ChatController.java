@@ -6,7 +6,6 @@ import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.service.ChatService;
 import com.back.moment.users.security.UserDetailsImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

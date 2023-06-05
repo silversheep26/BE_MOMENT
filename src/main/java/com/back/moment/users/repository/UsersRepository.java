@@ -1,7 +1,5 @@
 package com.back.moment.users.repository;
 
-import com.back.moment.love.entity.Love;
-//import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.ForMainResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;

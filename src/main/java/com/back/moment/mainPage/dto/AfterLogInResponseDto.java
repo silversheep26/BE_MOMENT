@@ -1,6 +1,5 @@
 package com.back.moment.mainPage.dto;
 
-import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.users.dto.ForMainResponseDto;
 import lombok.Getter;

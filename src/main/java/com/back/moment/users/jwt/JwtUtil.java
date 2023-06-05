@@ -2,13 +2,8 @@ package com.back.moment.users.jwt;
 
 import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.TokenDto;
-//import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
-//import com.back.moment.users.repository.RefreshTokenRepository;
-
-
-//import com.back.moment.users.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;

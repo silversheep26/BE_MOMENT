@@ -1,6 +1,5 @@
 package com.back.moment.mainPage.service;
 
-import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.mainPage.dto.AfterLogInResponseDto;

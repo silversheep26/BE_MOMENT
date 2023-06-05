@@ -1,6 +1,5 @@
 package com.back.moment.users.service;
 
-import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.repository.BoardRepository;
@@ -22,10 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

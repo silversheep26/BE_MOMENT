@@ -3,8 +3,6 @@ package com.back.moment.feed.dto;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 
 @Getter

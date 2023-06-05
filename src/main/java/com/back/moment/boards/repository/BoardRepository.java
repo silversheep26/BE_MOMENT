@@ -1,13 +1,8 @@
 package com.back.moment.boards.repository;
 
-import com.back.moment.boards.dto.BoardListResponseDto;
-import com.back.moment.boards.dto.ModelBoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
-import com.back.moment.boards.dto.PhotographerBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.users.entity.RoleEnum;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -9,8 +9,6 @@ import com.back.moment.boards.repository.LocationTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-import com.back.moment.photos.dto.OnlyPhotoResponseDto;
-import com.back.moment.photos.entity.Photo;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
@@ -24,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
-
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;

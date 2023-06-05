@@ -1,6 +1,5 @@
 package com.back.moment.users.dto;
 
-import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.users.entity.RoleEnum;

@@ -3,8 +3,6 @@ package com.back.moment.email.service;
 
 import com.back.moment.email.dto.CodeRequestDto;
 import com.back.moment.email.dto.EmailRequestDto;
-//import com.back.moment.email.entity.Email;
-//import com.back.moment.email.repository.EmailRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;

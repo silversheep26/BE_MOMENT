@@ -2,9 +2,6 @@ package com.back.moment.users.service;
 
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
-
-import com.back.moment.email.dto.CodeRequestDto;
-import com.back.moment.email.dto.EmailRequestDto;
 import com.back.moment.email.service.EmailService;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
@@ -19,7 +16,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

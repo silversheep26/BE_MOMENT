@@ -3,14 +3,12 @@ package com.back.moment.users.entity;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.love.entity.Love;
 import com.back.moment.photos.entity.Photo;
-//import com.back.moment.recommend.entity.Recommend;
 import com.back.moment.users.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-
 import java.util.ArrayList;
 import java.util.List;
 

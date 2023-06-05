@@ -1,6 +1,5 @@
 package com.back.moment.users.dto;
 
-import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.RoleEnum;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

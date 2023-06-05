@@ -2,7 +2,6 @@ package com.back.moment.boards.dto;
 
 import com.back.moment.boards.entity.Board;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
-import com.back.moment.photos.entity.Photo;
 import com.back.moment.users.entity.RoleEnum;
 import java.util.Comparator;
 import lombok.Getter;

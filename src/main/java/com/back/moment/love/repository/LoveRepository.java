@@ -1,7 +1,6 @@
 package com.back.moment.love.repository;
 
 import com.back.moment.love.entity.Love;
-import com.back.moment.users.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

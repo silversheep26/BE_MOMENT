@@ -5,13 +5,10 @@ import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
-//import com.back.moment.users.entity.RefreshToken;
 import com.back.moment.users.dto.UserInfoResponseDto;
-import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
-//import com.back.moment.users.repository.RefreshTokenRepository;
 import com.back.moment.users.repository.UsersRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,11 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
-
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
