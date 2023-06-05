@@ -45,6 +45,7 @@ public class BoardService {
     public ResponseEntity<Void> createBoard(BoardRequestDto boardRequestDto, Users users, MultipartFile boardImg){
         Board board = new Board();
         if(users.getRole() != RoleEnum.NONE) {
+
             board.saveBoard(boardRequestDto, users);
             if (!boardImg.isEmpty()) {
                 try {
@@ -145,8 +146,6 @@ public class BoardService {
     @Transactional(readOnly = true)
     public ResponseEntity<BoardDetailResponseDto> getBoard(Long boardId, Users users){
         Board board = existBoard(boardId);
-//        BoardDetailResponseDto detailResponseDto = new BoardDetailResponseDto(board, users);
-
 
         return new ResponseEntity<>(new BoardDetailResponseDto(board), HttpStatus.OK);
     }
@@ -174,7 +173,7 @@ public class BoardService {
     }
 
     public Board existBoard(Long boardId){
-        return boardRepository.findById(boardId).orElseThrow(
+        return boardRepository.findExistBoard(boardId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
     }
