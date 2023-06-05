@@ -61,7 +61,16 @@ public class RedisService {
             throw new RuntimeException(e);
         }
     }
-    public List<Chat> getChats(Long chatRoomId){
+    public void saveChatsToDB(Long chatRoomId){
+        List<Chat> chats = getChats(chatRoomId);
+        chatRepository.saveAll(chats);
+        redisTemplate.delete("Chat"+chatRoomId);
+    }
+    public void deleteValues(String key){
+        redisTemplate.delete(key);
+    }
+
+    private List<Chat> getChats(Long chatRoomId){
         List<Object> chats = redisTemplate.opsForHash().values("Chat" + chatRoomId);
         ArrayList<Chat> chatList = new ArrayList<>();
         for (Object c : chats) {
@@ -73,26 +82,5 @@ public class RedisService {
             }
         }
         return chatList;
-    }
-
-
-    public void saveChatsToDB(String hashKey){
-        Map<Object, Object> entries = redisTemplate.opsForHash().entries(hashKey);
-        for (Object key : entries.keySet()) {
-            String json =(String) entries.get(key);
-            Chat chat = null;
-            try {
-                chat = objectMapper.readValue(json, Chat.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            chatRepository.save(chat);
-        }
-        redisTemplate.delete(hashKey);
-    }
-
-
-    public void deleteValues(String key){
-        redisTemplate.delete(key);
     }
 }
