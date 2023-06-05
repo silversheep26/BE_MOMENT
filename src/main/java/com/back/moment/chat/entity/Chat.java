@@ -21,16 +21,17 @@ public class Chat {
     private LocalDateTime createdAt;
     private Boolean readStatus = false; // 채팅의 읽음 , 읽지않음 표시
 
-    private Chat(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt) {
+    private Chat(String message, Long senderId ,Long receiverId, Long chatRoomId, LocalDateTime createdAt) {
         this.message = message;
         this.senderId = senderId;
+        this.receiverId = receiverId;
         this.chatRoomId = chatRoomId;
         this.createdAt = createdAt;
         this.uuid = UUID.randomUUID().toString().substring(0,8);
     }
 
-    public static Chat of(String message, Long senderId, Long chatRoomId, LocalDateTime createdAt){
-        return new Chat(message,senderId,chatRoomId,createdAt);
+    public static Chat of(String message, Long senderId, Long receiverId, Long chatRoomId, LocalDateTime createdAt){
+        return new Chat(message,senderId,receiverId,chatRoomId,createdAt);
     }
 
     public void updateReadStatus(){
