@@ -1,8 +1,6 @@
 package com.back.moment.boards.service;
 
-import com.back.moment.boards.dto.BoardDetailResponseDto;
-import com.back.moment.boards.dto.BoardListResponseDto;
-import com.back.moment.boards.dto.BoardRequestDto;
+import com.back.moment.boards.dto.*;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.boards.repository.LocationTagRepository;
@@ -31,6 +29,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -72,53 +71,45 @@ class BoardServiceTest {
         // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성
     }
 
-//    @Test
-//    void getAllBoards() {
-//        // Given
-//        Users users = new Users();
-//        users.setEmail("test@example.com");
-//
-//        Pageable pageable = PageRequest.of(0, 10);
-//
-//        // 적절한 테스트 데이터로 mockBoardList 생성
-//        List<BoardListResponseDto> mockBoardList = new ArrayList<>();
-//        Board board1 = new Board();
-//        board1.setTitle("게시글 1");
-//
-//        Users users1 = new Users();
-//        users1.setRole(RoleEnum.MODEL);
-//        board1.setUsers(users1);
-//        // board1에 필요한 속성들을 적절한 값으로 설정
-//        BoardListResponseDto dto1 = new BoardListResponseDto(board1);
-//        mockBoardList.add(dto1);
-//
-//        Board board2 = new Board();
-//        board2.setTitle("게시글 2");
-//
-//        Users users2 = new Users();
-//        users2.setRole(RoleEnum.MODEL);
-//        board2.setUsers(users2);
-//        // board2에 필요한 속성들을 적절한 값으로 설정
-//        BoardListResponseDto dto2 = new BoardListResponseDto(board2);
-//        mockBoardList.add(dto2);
-//
-//        // Page 객체로 변환하여 mockBoardList 생성
-//        Page<BoardListResponseDto> pageMockBoardList = new PageImpl<>(mockBoardList, pageable, mockBoardList.size());
-//
-//        // boardRepository.selectAllBoard() 메서드가 pageMockBoardList를 반환하도록 설정
-//        when(boardRepository.selectAllBoard(pageable)).thenReturn(pageMockBoardList);
-//
-//        // 필요한 mock 동작을 when().thenReturn()을 사용하여 설정
-//        // usersRepository.findByEmail이 항상 값이 존재하는 경우를 가정하여 반환 값을 설정
-//        when(usersRepository.findByEmail(anyString())).thenReturn(Optional.of(users));
-//
-//        // When
-//        ResponseEntity<Page<BoardListResponseDto>> responseEntity = boardService.getAllBoards(users, pageable);
-//
-//        // Then
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        // 기대하는 동작을 확인하기 위해 추가적인 assert문을 작성
-//    }
+    @Test
+    void getAllBoards() {
+        // Given
+
+        Pageable pageable = mock(Pageable.class);
+        List<Board> modelBoardList = new ArrayList<>();
+        // 모델 게시판 데이터 추가
+
+        List<Board> photographerBoardList = new ArrayList<>();
+        // 포토그래퍼 게시판 데이터 추가
+
+        // boardRepository의 getModelBoardListByHostIdWithFetch 메서드가 호출될 때 mock 데이터 반환하도록 설정
+        when(boardRepository.getModelBoardListByHostIdWithFetch(RoleEnum.MODEL)).thenReturn(modelBoardList);
+        // boardRepository의 getPhotographerBoardListByHostIdWithFetch 메서드가 호출될 때 mock 데이터 반환하도록 설정
+        when(boardRepository.getPhotographerBoardListByHostIdWithFetch(RoleEnum.PHOTOGRAPHER)).thenReturn(photographerBoardList);
+
+        // 테스트할 메서드 호출
+        ResponseEntity<BoardListResponseDto> response = boardService.getAllBoards(pageable);
+
+        // 결과 검증
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        BoardListResponseDto responseBody = response.getBody();
+
+        // modelBoardList와 modelBoardPage의 일치 여부 검증
+        Page<ModelBoardListResponseDto> modelBoardPage = responseBody.getModelBoard();
+        assertEquals(modelBoardList.size(), modelBoardPage.getTotalElements());
+
+        List<ModelBoardListResponseDto> modelBoardDtoList = modelBoardPage.getContent();
+        assertEquals(modelBoardList.size(), modelBoardDtoList.size());
+        // modelBoardDtoList의 내용을 추가적으로 검증할 수 있는 로직 작성
+
+        // photographerBoardList와 photographerBoardPage의 일치 여부 검증
+        Page<PhotographerBoardListResponseDto> photographerBoardPage = responseBody.getPhotographerBoard();
+        assertEquals(photographerBoardList.size(), photographerBoardPage.getTotalElements());
+
+        List<PhotographerBoardListResponseDto> photographerBoardDtoList = photographerBoardPage.getContent();
+        assertEquals(photographerBoardList.size(), photographerBoardDtoList.size());
+        // photographerBoardDtoList의 내용을 추가적으로 검증할 수 있는 로직 작성
+    }
 
     @Test
     void getBoard() {
