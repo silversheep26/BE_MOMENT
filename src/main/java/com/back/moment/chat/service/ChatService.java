@@ -49,6 +49,7 @@ public class ChatService {
         ChatRoomResponseDto chatRoomResponseDto;
         if (chatRoom.isPresent()) {
             ChatRoom findChatRoom = chatRoom.get();
+            redisService.saveChatsToDB(findChatRoom.getId());
             List<Chat> chatList;
             Query query = new Query();
             query.addCriteria(new Criteria().andOperator(
@@ -63,8 +64,6 @@ public class ChatService {
             } else {
                 chatList = chatRepository.findByChatRoomIdAndCreatedAtAfter(findChatRoom.getId(), findChatRoom.getHostEntryTime());
             }
-            List<Chat> chats = redisService.getChats(chatRoom.get().getId());
-            chatList.addAll(chats);
             List<ChatResponseDto> chatListDto = chatList.stream().map(ChatResponseDto::from).collect(Collectors.toList());
             chatListDto.sort(new Comparator<ChatResponseDto>() {
                 @Override
@@ -117,7 +116,7 @@ public class ChatService {
         });
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByHostOrGuest(user, user);
         for (ChatRoom chatRoom : chatRoomList) {
-            redisService.saveChatsToDB("Chat"+chatRoom.getId());
+            redisService.saveChatsToDB(chatRoom.getId());
             Chat chat;
             ChatRoomInfoResponseDto chatRoomInfoResponseDto;
             if(chatRoom.getHost().getId().equals(user.getId())){
@@ -184,7 +183,7 @@ public class ChatService {
         redisService.setChatValues(chat,chat.getChatRoomId(),chat.getUuid());
     }
     public void saveChatList(Long chatRoomId){
-        redisService.saveChatsToDB("Chat"+chatRoomId);
+        redisService.saveChatsToDB(chatRoomId);
     }
     /*
     유저가 채팅방을 삭제하면 , 삭제를 하지않고,

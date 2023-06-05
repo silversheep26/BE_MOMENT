@@ -15,7 +15,7 @@ public class ChatRequestDto {
 
 
     public static Chat toEntity(ChatRequestDto chatDto, LocalDateTime createdAt){
-        return Chat.of(chatDto.getMessage(), chatDto.getSenderId(),chatDto.getChatRoomId(),createdAt);
+        return Chat.of(chatDto.getMessage(), chatDto.getSenderId(), chatDto.getReceiverId() , chatDto.getChatRoomId(),createdAt);
     }
     public void setChatRoomId(Long chatRoomId){
         this.chatRoomId = chatRoomId;
