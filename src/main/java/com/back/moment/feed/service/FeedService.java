@@ -104,6 +104,9 @@ public class FeedService {
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
         Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
 
+        int currentPage = photoPage.getNumber() + 1;
+        int totalPages = photoPage.getTotalPages();
+
         List<PhotoFeedResponseDto> photoList =new ArrayList<>(photoPage.getContent());
         List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>();
         // Sort the photoList by loveCnt in descending order
@@ -129,7 +132,7 @@ public class FeedService {
 
         boolean hasMorePages = photoPage.hasNext();
 
-        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages), HttpStatus.OK);
+        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
     }
 
 
