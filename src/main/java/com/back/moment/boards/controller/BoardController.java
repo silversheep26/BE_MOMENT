@@ -35,11 +35,11 @@ public class BoardController {
 
     @GetMapping("")
     public ResponseEntity<BoardListResponseDto> getBoardsByPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return boardService.getAllBoards(userDetails.getUsers(), pageable);
+        return boardService.getAllBoards(pageable);
     }
 
     // 게시글 상세 조회
