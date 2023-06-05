@@ -31,6 +31,10 @@ jobs:
         run: |
           echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-secret.yml
           find src
+      - name: Set Test YML
+        run: |
+          echo "${{secrets.APPLICATION_TEST_SECRET_KEY}}" | base64 --decode > src/test/resources/application-secret.yml
+          find src
       - name: Build with Gradle
         run: ./gradlew build
         shell: bash
