@@ -11,18 +11,18 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LocationTag {
+public class BoardHashTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String location;
+    private String hashTag;
 
-    @OneToMany(mappedBy = "locationTag", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "boardHashTag", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
 
-    public LocationTag(String location){
-        this.location = location;
+    public BoardHashTag(String hashTag){
+        this.hashTag = hashTag;
     }
 }

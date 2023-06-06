@@ -4,12 +4,18 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
+import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.entity.PhotoHashTag;
+import com.back.moment.photos.entity.Tag_Photo;
+import com.back.moment.photos.repository.PhotoHashTagRepository;
 import com.back.moment.photos.repository.PhotoRepository;
+import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.s3.S3Uploader;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,19 +37,39 @@ public class FeedService {
     private final S3Uploader s3Uploader;
     private final PhotoRepository photoRepository;
     private final LoveRepository loveRepository;
+    private final Tag_PhotoRepository tag_photoRepository;
+    private final PhotoHashTagRepository photoHashTagRepository;
 //    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ResponseEntity<Void> uploadImages(String content, List<MultipartFile> imageList, Users users) throws IOException {
-
-        for(MultipartFile image : imageList){
-            Photo photo = new Photo();
+    public ResponseEntity<Void> uploadImages(FeedRequestDto feedRequestDto, MultipartFile image, Users users) throws IOException {
+        if(users.getRole() != RoleEnum.NONE) {
             String imageUrl = s3Uploader.upload(image);
-            photo = new Photo(users, imageUrl);
-            if(content != null)
-                photo.updateContents(content);
+            Photo photo = new Photo(users, imageUrl);
+            if(feedRequestDto.getContent() != null)
+                photo.updateContents(feedRequestDto.getContent());
             photoRepository.save(photo);
+
+            if(feedRequestDto.getPhotoHashTag() != null) {
+                feedRequestDto.setPhotoHashTag(feedRequestDto.getPhotoHashTag());
+
+                for (String photoHashTag : feedRequestDto.getPhotoHashTag()) {
+                    String photoHashTagString = photoHashTag.substring(1);
+                    PhotoHashTag existTag = photoHashTagRepository.findByHashTag(photoHashTagString);
+                    if (existTag != null) {
+                        Tag_Photo tag_photo = new Tag_Photo(existTag, photo);
+                        tag_photoRepository.save(tag_photo);
+                    } else {
+                        PhotoHashTag photoHashTagTable = new PhotoHashTag(photoHashTagString);
+                        photoHashTagRepository.save(photoHashTagTable);
+                        Tag_Photo tag_photo = new Tag_Photo(photoHashTagTable, photo);
+                        tag_photoRepository.save(tag_photo);
+                    }
+                }
+            }
+        } else{
+            throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
         return ResponseEntity.ok(null);
     }
@@ -145,15 +171,7 @@ public class FeedService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
 
-        boolean checkLove = loveRepository.checkLove(photo.getId(), users.getId());
-
-        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo.getUsers().getId(),
-                                                                                photo.getImagUrl(),
-                                                                                photo.getLoveCnt(),
-                                                                                photo.getUsers().getProfileImg(),
-                                                                                photo.getUsers().getNickName(),
-                                                                                photo.getUsers().getRole(),
-                                                                                photo.getContents());
+        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo);
         feedDetailResponseDto.setCheckLove(loveRepository.checkLove(photo.getId(), users.getId()));
 
 //        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);

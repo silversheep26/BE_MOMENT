@@ -1,6 +1,7 @@
-package com.back.moment.boards.entity;
+package com.back.moment.photos.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,23 +9,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Tag_Board {
+public class Tag_Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_hash_tag_id")
     @JsonIgnore
-    private BoardHashTag boardHashTag;
+    private PhotoHashTag photoHashTag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
     @JsonIgnore
-    private Board board;
+    private Photo photo;
 
-    public Tag_Board(BoardHashTag boardHashTag, Board board) {
-        this.boardHashTag = boardHashTag;
-        this.board = board;
+    public Tag_Photo(PhotoHashTag photoHashTag, Photo photo){
+        this.photoHashTag = photoHashTag;
+        this.photo = photo;
     }
 }

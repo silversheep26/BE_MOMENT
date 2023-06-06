@@ -1,6 +1,7 @@
 package com.back.moment.photos.dto;
 
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ public class PhotoFeedResponseDto {
         this.photoId = photo.getId();
         this.photoUrl = photo.getImagUrl();
         this.nickName = photo.getUsers().getNickName();
+        this.role = photo.getUsers().getRole();
         this.loveCnt = photo.getLoveCnt();
     }
 }
