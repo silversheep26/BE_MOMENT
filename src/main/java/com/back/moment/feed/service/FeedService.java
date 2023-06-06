@@ -20,6 +20,7 @@ import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,8 +129,21 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
-        Page<PhotoFeedResponseDto> photoPage = photoRepository.getAllPhoto(pageable);
-
+        List<Photo> getAllPhoto = photoRepository.getAllPhotoWithTag();
+        Page<PhotoFeedResponseDto> photoPage;
+        if(getAllPhoto.size() > pageable.getOffset()) {
+            int startIndex = (int) pageable.getOffset();
+            int endIndex = Math.min(startIndex + pageable.getPageSize(), getAllPhoto.size());
+            List<PhotoFeedResponseDto> getAllPhotoDto = getAllPhoto.subList(startIndex, endIndex)
+                    .stream()
+                    .map(PhotoFeedResponseDto::new)
+                    .toList();
+            photoPage = new PageImpl<>(getAllPhotoDto, pageable, getAllPhoto.size());
+        } else{
+            photoPage = new PageImpl<>(getAllPhoto.stream()
+                    .map(PhotoFeedResponseDto::new)
+                    .toList(), pageable, getAllPhoto.size());
+        }
         int currentPage = photoPage.getNumber();
         int totalPages;
         if(photoPage.isEmpty())

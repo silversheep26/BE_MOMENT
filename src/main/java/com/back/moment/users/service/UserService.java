@@ -1,5 +1,6 @@
 package com.back.moment.users.service;
 
+import static com.back.moment.users.entity.GenderEnum.FEMALE;
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 
@@ -11,6 +12,7 @@ import com.back.moment.global.service.RedisService;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.*;
+import com.back.moment.users.entity.GenderEnum;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
@@ -21,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,7 +68,7 @@ public class UserService {
         RoleEnum role = requestDto.getRole();
 
         users.saveUsers(requestDto, password, gender, role);
-
+        usersRepository.save(users);
         // 프로필 이미지 처리
         if (profileImg != null) {
             try {
@@ -74,13 +77,18 @@ public class UserService {
             } catch (IOException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+        } else{
+            if(Objects.equals(users.getGender(), "FEMALE")){
+                users.setProfileImg("https://moment-photo-resized.s3.ap-northeast-2.amazonaws.com/%EC%97%AC%EC%9E%90.jpg");
+            } else{
+                users.setProfileImg("https://moment-photo-resized.s3.ap-northeast-2.amazonaws.com/%EB%82%A8%EC%9E%90.jpg");
+            }
         }
 
 //        if(!profileImg.isEmpty()) {
 //            String imgPath = s3Uploader.upload(profileImg);
 //            users.setProfileImg(imgPath);
 //        }
-        usersRepository.save(users);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -156,12 +164,16 @@ public class UserService {
         List<String> urlsToDelete = new ArrayList<>();
         urlsToDelete.add(users.getProfileImg());
 
-        for (Photo photo : users.getPhotoList()) {
-            urlsToDelete.add(photo.getImagUrl());
+        if(!users.getPhotoList().isEmpty()) {
+            for (Photo photo : users.getPhotoList()) {
+                urlsToDelete.add(photo.getImagUrl());
+            }
         }
 
-        for (Board board : users.getBoardList()) {
-            urlsToDelete.add(board.getBoardImgUrl());
+        if(!users.getBoardList().isEmpty()) {
+            for (Board board : users.getBoardList()) {
+                urlsToDelete.add(board.getBoardImgUrl());
+            }
         }
 
         // Delete the entities from the database
