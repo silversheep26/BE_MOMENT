@@ -30,6 +30,9 @@ do
 	# RESPONSE_CODE의 http 상태가 200번인 경우
     if [ ${RESPONSE_CODE} -eq 200 ]; then
         echo "> New WAS successfully running"
+        # 이전 규칙 삭제
+        sudo iptables -t nat -D PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${CURRENT_PORT}
+        # 새로운 규칙 추가
         sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${TARGET_PORT}
         exit 0
     elif [ ${RETRY_COUNT} -eq 10 ]; then
