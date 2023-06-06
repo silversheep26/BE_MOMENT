@@ -17,7 +17,7 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: moment-photo
+      bucket: moment-photo-resized
     stack:
       auto: false
     region:
