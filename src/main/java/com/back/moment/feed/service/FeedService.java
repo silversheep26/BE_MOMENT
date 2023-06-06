@@ -4,7 +4,7 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
+//import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -44,19 +44,22 @@ public class FeedService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ResponseEntity<Void> uploadImages(FeedRequestDto feedRequestDto, MultipartFile image, Users users) throws IOException {
+    public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTag, MultipartFile image, Users users) throws IOException {
+        List<String> hashTags;
         if(users.getRole() != RoleEnum.NONE) {
             String imageUrl = s3Uploader.upload(image);
             Photo photo = new Photo(users, imageUrl);
-            if(feedRequestDto.getContent() != null)
-                photo.updateContents(feedRequestDto.getContent());
+            if(contents != null)
+                photo.updateContents(contents);
             photoRepository.save(photo);
 
-            if(feedRequestDto.getPhotoHashTag() != null) {
-                feedRequestDto.setPhotoHashTag(feedRequestDto.getPhotoHashTag());
+            if(photoHashTag != null) {
+                hashTags = photoHashTag.stream()
+                        .filter(tag -> tag.startsWith("#"))
+                        .collect(Collectors.toList());
 
-                for (String photoHashTag : feedRequestDto.getPhotoHashTag()) {
-                    String photoHashTagString = photoHashTag.substring(1);
+                for (String hashTag : hashTags) {
+                    String photoHashTagString = hashTag.substring(1);
                     PhotoHashTag existTag = photoHashTagRepository.findByHashTag(photoHashTagString);
                     if (existTag != null) {
                         Tag_Photo tag_photo = new Tag_Photo(existTag, photo);

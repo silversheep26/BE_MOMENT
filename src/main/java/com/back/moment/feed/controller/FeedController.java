@@ -2,7 +2,7 @@ package com.back.moment.feed.controller;
 
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
+//import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
