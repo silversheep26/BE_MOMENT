@@ -14,6 +14,9 @@ public class MyPageBoardListResponseDto {
     private String title;
     private RoleEnum role;
     private String nickName;
+    private int totalLoveCnt;
+    private String profileImgUrl;
+    private String location;
     private String boardImgUrl;
     private LocalDateTime createdTime;
     private List<String> tag_boardList;
