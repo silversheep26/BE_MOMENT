@@ -2,10 +2,10 @@ package com.back.moment.boards.service;
 
 import com.back.moment.boards.dto.*;
 import com.back.moment.boards.entity.Board;
-import com.back.moment.boards.entity.LocationTag;
+import com.back.moment.boards.entity.BoardHashTag;
 import com.back.moment.boards.entity.Tag_Board;
 import com.back.moment.boards.repository.BoardRepository;
-import com.back.moment.boards.repository.LocationTagRepository;
+import com.back.moment.boards.repository.BoardHashTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
@@ -31,7 +31,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final LocationTagRepository locationTagRepository;
+    private final BoardHashTagRepository boardHashTagRepository;
     private final Tag_BoardRepository tag_boardRepository;
     private final UsersRepository usersRepository;
     private final S3Uploader s3Uploader;
@@ -54,20 +54,20 @@ public class BoardService {
 
             boardRepository.save(board);
 
-            if (boardRequestDto.getLocationTags() != null) {
+            if (boardRequestDto.getBoardHashTag() != null) {
                 // 첫번째 문자에 #이 있는지 확인하는 메서드 호출
-                boardRequestDto.setLocationTags(boardRequestDto.getLocationTags());
+                boardRequestDto.setBoardHashTag(boardRequestDto.getBoardHashTag());
 
-                for (String locationTag : boardRequestDto.getLocationTags()) {
-                    String locationTagString = locationTag.substring(1);
-                    LocationTag existTag = locationTagRepository.findByLocation(locationTagString);
+                for (String boardHashTag : boardRequestDto.getBoardHashTag()) {
+                    String boardHashTagString = boardHashTag.substring(1);
+                    BoardHashTag existTag = boardHashTagRepository.findByHashTag(boardHashTagString);
                     if (existTag != null) {
                         Tag_Board tag_board = new Tag_Board(existTag, board);
                         tag_boardRepository.save(tag_board);
                     } else {
-                        LocationTag locationTagTable = new LocationTag(locationTagString);
-                        locationTagRepository.save(locationTagTable);
-                        Tag_Board tag_board = new Tag_Board(locationTagTable, board);
+                        BoardHashTag boardHashTagTable = new BoardHashTag(boardHashTagString);
+                        boardHashTagRepository.save(boardHashTagTable);
+                        Tag_Board tag_board = new Tag_Board(boardHashTagTable, board);
                         tag_boardRepository.save(tag_board);
                     }
                 }

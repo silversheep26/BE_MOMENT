@@ -3,7 +3,7 @@ package com.back.moment.boards.service;
 import com.back.moment.boards.dto.*;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.repository.BoardRepository;
-import com.back.moment.boards.repository.LocationTagRepository;
+import com.back.moment.boards.repository.BoardHashTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.s3.S3Uploader;
@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +40,7 @@ class BoardServiceTest {
     private BoardRepository boardRepository;
 
     @MockBean
-    private LocationTagRepository locationTagRepository;
+    private BoardHashTagRepository boardHashTagRepository;
 
     @MockBean
     private Tag_BoardRepository tag_boardRepository;

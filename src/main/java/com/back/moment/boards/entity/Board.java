@@ -80,14 +80,14 @@ public class Board extends TimeStamped {
 
     public List<String> getTagList(){
         return tag_boardList.stream()
-                .map(tag_board -> tag_board.getLocationTag().getLocation())
+                .map(tag_board -> tag_board.getBoardHashTag().getHashTag())
                 .collect(Collectors.toList());
     }
 
     public List<String> getTagListWithWell(){
         List<String> tagList = new ArrayList<>();
         for(Tag_Board tag_board : tag_boardList){
-            String tag = tag_board.getLocationTag().getLocation();
+            String tag = tag_board.getBoardHashTag().getHashTag();
             tagList.add("#" + tag);
         }
         return tagList;

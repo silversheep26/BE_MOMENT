@@ -1,11 +1,13 @@
 package com.back.moment.boards.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@NoArgsConstructor
 public class BoardRequestDto {
     private String title;
     private String content;
@@ -13,15 +15,15 @@ public class BoardRequestDto {
     private String pay;
     private String apply;
     private String deadLine;
-    private List<String> locationTags;
+    private List<String> boardHashTag;
 
-    public void setLocationTags(List<String> locationTags){
-        if(locationTags != null){
-            this.locationTags = locationTags.stream()
+    public void setBoardHashTag(List<String> boardHashTag){
+        if(boardHashTag != null){
+            this.boardHashTag = boardHashTag.stream()
                     .filter(tag -> tag.startsWith("#"))
                     .collect(Collectors.toList());
         } else {
-            this.locationTags = null;
+            this.boardHashTag = null;
         }
     }
 }
