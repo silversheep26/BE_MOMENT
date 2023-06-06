@@ -11,6 +11,8 @@ public class PhotoFeedResponseDto {
     private Long photoId;
     private String photoUrl;
     private String nickName;
+    private String profileImgUrl;
+    private RoleEnum role;
     private int loveCnt;
 
     public PhotoFeedResponseDto(Photo photo) {
@@ -19,5 +21,6 @@ public class PhotoFeedResponseDto {
         this.nickName = photo.getUsers().getNickName();
         this.role = photo.getUsers().getRole();
         this.loveCnt = photo.getLoveCnt();
+        this.profileImgUrl = photo.getUsers().getProfileImg();
     }
 }
