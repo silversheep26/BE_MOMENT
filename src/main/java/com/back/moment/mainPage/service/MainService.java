@@ -43,10 +43,10 @@ public class MainService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<AfterLogInResponseDto> getHomePageSource(Users users) {
-        Pageable pageable = PageRequest.of(0, 3);
-        List<MyPageBoardListResponseDto> topSixBoard;
+        Pageable pageable = PageRequest.of(0, 4);
+        List<MyPageBoardListResponseDto> topFourBoard;
 
-        List<ForMainResponseDto> top3;
+        List<ForMainResponseDto> top4;
         RoleEnum targetRole = null;
 
         if (users != null && users.getRole() != null) {
@@ -59,22 +59,22 @@ public class MainService {
 
 
         if (targetRole != null) {
-            topSixBoard = boardRepository.selectAllEachRoleBoardList(targetRole)
+            topFourBoard = boardRepository.selectAllEachRoleBoardList(targetRole)
                     .stream()
-                    .limit(6)
+                    .limit(4)
                     .toList();
 
-            top3 = usersRepository.findTop3ByRole(targetRole, pageable);
+            top4 = usersRepository.findTop4ByRole(targetRole, pageable);
         } else {
-            topSixBoard = boardRepository.selectAllBoardList()
+            topFourBoard = boardRepository.selectAllBoardList()
                     .stream()
-                    .limit(6)
+                    .limit(4)
                     .toList();
 
-            top3 = usersRepository.findTop3(pageable);
+            top4 = usersRepository.findTop4(pageable);
         }
 
-        return new ResponseEntity<>(new AfterLogInResponseDto(top3, topSixBoard), HttpStatus.OK);
+        return new ResponseEntity<>(new AfterLogInResponseDto(top4, topFourBoard), HttpStatus.OK);
     }
 
 }

@@ -16,6 +16,7 @@ public class ForMainResponseDto {
     private String nickName;
     private RoleEnum role;
     private String profileUrl;
+    private int totalLoveCnt;
     private List<OnlyPhotoResponseDto> photoList;
 
     public ForMainResponseDto(Users users) {
@@ -23,6 +24,7 @@ public class ForMainResponseDto {
         this.nickName = users.getNickName();
         this.role = users.getRole();
         this.profileUrl = users.getProfileImg();
+        this.totalLoveCnt = users.getTotalLoveCnt();
         this.photoList = users.getPhotoList().stream()
                 .map(OnlyPhotoResponseDto::new)
                 .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())

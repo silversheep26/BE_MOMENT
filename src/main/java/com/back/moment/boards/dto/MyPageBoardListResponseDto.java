@@ -14,6 +14,9 @@ public class MyPageBoardListResponseDto {
     private String title;
     private RoleEnum role;
     private String nickName;
+    private int totalLoveCnt;
+    private String profileImgUrl;
+    private String location;
     private String boardImgUrl;
     private LocalDateTime createdTime;
     private List<String> tag_boardList;
@@ -23,6 +26,9 @@ public class MyPageBoardListResponseDto {
         this.title = board.getTitle();
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
+        this.totalLoveCnt = board.getUsers().getTotalLoveCnt();
+        this.profileImgUrl = board.getUsers().getProfileImg();
+        this.location = board.getLocation();
         this.boardImgUrl = board.getBoardImgUrl();
         this.createdTime = board.getCreatedAt();
         this.tag_boardList = board.getTagListWithWell();
