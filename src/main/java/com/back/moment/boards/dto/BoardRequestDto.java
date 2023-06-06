@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 @Getter
 public class BoardRequestDto {
     private String title;
+    private String content;
     private String location;
     private String pay;
     private String apply;

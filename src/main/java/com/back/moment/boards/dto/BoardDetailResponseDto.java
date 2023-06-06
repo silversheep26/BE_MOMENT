@@ -15,6 +15,7 @@ public class BoardDetailResponseDto {
     private Long hostId;
     private String nickName;
     private String title;
+    private String content;
     private String location;
     private String pay;
     private String apply;
@@ -29,6 +30,7 @@ public class BoardDetailResponseDto {
         this.hostId = board.getUsers().getId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
+        this.content = board.getContent();
         this.location = board.getLocation();
         this.pay = board.getPay();
         this.apply = board.getApply();
