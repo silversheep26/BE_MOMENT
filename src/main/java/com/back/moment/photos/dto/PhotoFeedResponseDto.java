@@ -5,6 +5,8 @@ import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class PhotoFeedResponseDto {
@@ -14,6 +16,8 @@ public class PhotoFeedResponseDto {
     private String profileImgUrl;
     private RoleEnum role;
     private int loveCnt;
+    private String content;
+    private List<String> tag_photoList;
 
     public PhotoFeedResponseDto(Photo photo) {
         this.photoId = photo.getId();
@@ -22,5 +26,7 @@ public class PhotoFeedResponseDto {
         this.role = photo.getUsers().getRole();
         this.loveCnt = photo.getLoveCnt();
         this.profileImgUrl = photo.getUsers().getProfileImg();
+        this.content = photo.getContents();
+        this.tag_photoList = photo.getTagListWithWell();
     }
 }
