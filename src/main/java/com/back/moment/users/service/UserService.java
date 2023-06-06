@@ -2,10 +2,13 @@ package com.back.moment.users.service;
 
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
+
+import com.back.moment.boards.entity.Board;
 import com.back.moment.email.service.EmailService;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
+import com.back.moment.photos.entity.Photo;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.*;
 import com.back.moment.users.entity.RoleEnum;
@@ -16,6 +19,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,7 +153,23 @@ public class UserService {
     }
 
     public ResponseEntity<Void> deleteUsersHard(Users users) {
+        List<String> urlsToDelete = new ArrayList<>();
+        urlsToDelete.add(users.getProfileImg());
+
+        for (Photo photo : users.getPhotoList()) {
+            urlsToDelete.add(photo.getImagUrl());
+        }
+
+        for (Board board : users.getBoardList()) {
+            urlsToDelete.add(board.getBoardImgUrl());
+        }
+
+        // Delete the entities from the database
         usersRepository.deleteById(users.getId());
+
+        // Delete the URLs from the S3 bucket
+        s3Uploader.deleteBatch(urlsToDelete);
+
         return ResponseEntity.ok(null);
     }
 }
