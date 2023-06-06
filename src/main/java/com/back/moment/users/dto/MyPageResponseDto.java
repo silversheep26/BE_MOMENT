@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class MyPageResponseDto {
     private String profileUrl;
@@ -18,7 +20,8 @@ public class MyPageResponseDto {
     private RoleEnum role;
     private int boardCnt;
     private int totalPhotoLoveCnt;
-//    private int recommendCnt;
+    private boolean checkKakaoId = false;
+    //    private int recommendCnt;
     private List<MyPageBoardListResponseDto> boardList;
     private List<OnlyPhotoResponseDto> photoList;
 

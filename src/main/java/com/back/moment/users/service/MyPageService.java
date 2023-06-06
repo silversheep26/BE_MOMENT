@@ -48,7 +48,13 @@ public class MyPageService {
 
         List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
 
-        return new ResponseEntity<>(new MyPageResponseDto(host, myPageBoardListResponseDtoList, photoList), HttpStatus.OK);
+        MyPageResponseDto myPageResponseDto = new MyPageResponseDto(users, myPageBoardListResponseDtoList, photoList);
+
+        if (users.getKakaoId() != null){
+            myPageResponseDto.setCheckKakaoId(true);
+        }
+
+        return new ResponseEntity<>(myPageResponseDto, HttpStatus.OK);
     }
     
     // 마이페이지 수정
