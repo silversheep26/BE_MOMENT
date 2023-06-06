@@ -1,6 +1,9 @@
 package com.back.moment.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.DeleteObjectsResult;
+import com.amazonaws.services.s3.model.MultiObjectDeleteException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -28,14 +32,34 @@ public class S3Uploader {
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
-    public boolean delete(String imgUrl) {
+    public void delete(String imgUrl) {
         try {
             String[] temp = imgUrl.split("/");
             String fileKey = temp[temp.length-1];
             amazonS3.deleteObject(bucket, fileKey);
-            return true;
-        } catch (Exception e) {
-            return false;
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void deleteBatch(List<String> urls) {
+        DeleteObjectsRequest deleteRequest = new DeleteObjectsRequest(bucket);
+        deleteRequest.withKeys(urls.toArray(new String[0]));
+
+        try {
+            DeleteObjectsResult result = amazonS3.deleteObjects(deleteRequest);
+            List<DeleteObjectsResult.DeletedObject> deletedObjects = result.getDeletedObjects();
+
+            // Optional: Handle deleted objects if needed
+            for (DeleteObjectsResult.DeletedObject deletedObject : deletedObjects) {
+                System.out.println("Deleted object: " + deletedObject.getKey());
+            }
+        } catch (MultiObjectDeleteException e) {
+            // Handle exception if some objects failed to delete
+            List<MultiObjectDeleteException.DeleteError> errors = e.getErrors();
+
+            for (MultiObjectDeleteException.DeleteError error : errors) {
+                System.out.println("Failed to delete object: " + error.getKey());
+            }
         }
     }
 }
