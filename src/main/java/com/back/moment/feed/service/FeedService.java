@@ -27,6 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,7 +42,7 @@ public class FeedService {
     private final LoveRepository loveRepository;
     private final Tag_PhotoRepository tag_photoRepository;
     private final PhotoHashTagRepository photoHashTagRepository;
-//    private final RecommendRepository recommendRepository;
+    //    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
 
     @Transactional
@@ -131,20 +133,23 @@ public class FeedService {
 //    }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable) {
+    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
+
         List<Photo> getAllPhoto = photoRepository.getAllPhotoWithTag();
         Page<PhotoFeedResponseDto> photoPage;
         if(getAllPhoto.size() > pageable.getOffset()) {
             int startIndex = (int) pageable.getOffset();
             int endIndex = Math.min(startIndex + pageable.getPageSize(), getAllPhoto.size());
-            List<PhotoFeedResponseDto> getAllPhotoDto = getAllPhoto.subList(startIndex, endIndex)
+            List<PhotoFeedResponseDto> getAllPhotoDto;
+
+            getAllPhotoDto = getAllPhoto.subList(startIndex, endIndex)
                     .stream()
-                    .map(PhotoFeedResponseDto::new)
+                    .map(photo -> new PhotoFeedResponseDto(photo, loveRepository.checkLove(photo.getId(), users.getId())))
                     .toList();
             photoPage = new PageImpl<>(getAllPhotoDto, pageable, getAllPhoto.size());
         } else{
             photoPage = new PageImpl<>(getAllPhoto.stream()
-                    .map(PhotoFeedResponseDto::new)
+                    .map(photo -> new PhotoFeedResponseDto(photo, loveRepository.checkLove(photo.getId(), users.getId())))
                     .toList(), pageable, getAllPhoto.size());
         }
         int currentPage = photoPage.getNumber();
@@ -210,5 +215,8 @@ public class FeedService {
         return ResponseEntity.ok(null);
     }
 
-
+//    private boolean isPhotoLoved(Photo photo, Users currentUser) {
+//        return currentUser.getLoveList().stream()
+//                .anyMatch(love -> love.getPhoto().equals(photo));
+//    }
 }

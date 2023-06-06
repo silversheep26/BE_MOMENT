@@ -30,7 +30,7 @@ public class Photo {
     @Column(nullable = false)
     private String imagUrl;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Love> loveList = new ArrayList<>();
 
     @Column
@@ -39,7 +39,7 @@ public class Photo {
     @ColumnDefault("0")
     private int loveCnt;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Tag_Photo> tag_photoList = new ArrayList<>();
 
 

@@ -2,6 +2,7 @@ package com.back.moment.photos.dto;
 
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.users.entity.RoleEnum;
+import com.back.moment.users.entity.Users;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +20,9 @@ public class PhotoFeedResponseDto {
     private int loveCnt;
     private String content;
     private List<String> tag_photoList;
+    private boolean loveCheck;
 
-    public PhotoFeedResponseDto(Photo photo) {
+    public PhotoFeedResponseDto(Photo photo, boolean loveCheck) {
         this.photoId = photo.getId();
         this.hostId = photo.getUsers().getId();
         this.photoUrl = photo.getImagUrl();
@@ -30,5 +32,6 @@ public class PhotoFeedResponseDto {
         this.profileImgUrl = photo.getUsers().getProfileImg();
         this.content = photo.getContents();
         this.tag_photoList = photo.getTagListWithWell();
+        this.loveCheck = loveCheck;
     }
 }

@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
-    @Query("select new com.back.moment.photos.dto.PhotoFeedResponseDto(p) from Photo p")
-    Page<PhotoFeedResponseDto> getAllPhoto(Pageable pageable);
+//    @Query("select new com.back.moment.photos.dto.PhotoFeedResponseDto(p) from Photo p")
+//    Page<PhotoFeedResponseDto> getAllPhoto(Pageable pageable);
 
     @Query("select p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp")
     List<Photo> getAllPhotoWithTag();
