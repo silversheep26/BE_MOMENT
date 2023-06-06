@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PhotoFeedResponseDto {
     private Long photoId;
+    private Long hostId;
     private String photoUrl;
     private String nickName;
     private String profileImgUrl;
@@ -21,6 +22,7 @@ public class PhotoFeedResponseDto {
 
     public PhotoFeedResponseDto(Photo photo) {
         this.photoId = photo.getId();
+        this.hostId = photo.getUsers().getId();
         this.photoUrl = photo.getImagUrl();
         this.nickName = photo.getUsers().getNickName();
         this.role = photo.getUsers().getRole();
