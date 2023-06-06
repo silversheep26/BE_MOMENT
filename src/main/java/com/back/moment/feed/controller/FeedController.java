@@ -2,7 +2,7 @@ package com.back.moment.feed.controller;
 
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
-import com.back.moment.feed.dto.FeedRequestDto;
+//import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,11 @@ public class FeedController {
 
     // feed 업로드
     @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> uploadImages(@RequestPart(value = "feedRequest")FeedRequestDto feedRequestDto,
+    public ResponseEntity<Void> uploadImages(@RequestPart String contents,
+                                             @RequestPart List<String> photoHashTag,
                                              @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return feedService.uploadImages(feedRequestDto, imageFile, userDetails.getUsers());
+        return feedService.uploadImages(contents, photoHashTag, imageFile, userDetails.getUsers());
     }
 
     // Feed 에서 photo 좋아요
