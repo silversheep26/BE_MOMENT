@@ -160,6 +160,7 @@ public class UserService {
         response.addHeader(REFRESH_KEY, tokenDto.getRefreshToken());
     }
 
+    @Transactional
     public ResponseEntity<Void> deleteUsersHard(Users users) {
         List<String> urlsToDelete = new ArrayList<>();
         urlsToDelete.add(users.getProfileImg());
