@@ -25,9 +25,9 @@ public class ChatController {
     채팅방에 입장 , DM 을 보내는 화면에 들어갔을때 요청을 보내면
     그동안의 채팅내역들이 보여지고 , 읽지않았던 채팅들이 있으면 읽음으로 상태를 바꾼다.
      */
-    @GetMapping("chatRoom/enter/{userId}")
-    public ResponseEntity<ChatRoomResponseDto> enterChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId){
-        return chatService.enterChatRoom(userDetails.getUsers(),userId);
+    @GetMapping("chatRoom/enter/{receiverId}")
+    public ResponseEntity<ChatRoomResponseDto> enterChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long receiverId){
+        return chatService.enterChatRoom(userDetails.getUsers(),receiverId);
     }
     /*
     내가 소속되어 있고 , 내가 채팅방을 삭제하지 않은 채팅방 목록들을 가져온다.
@@ -65,9 +65,10 @@ public class ChatController {
         msgOperation.convertAndSend("/sub/alarm/"+chatRequestDto.getReceiverId(),chatResponseDto); // 알림 기능
     }
     /*
-    채팅에 읽었다는 update를 해주기 위함.
-    프론트에서 /sub/chat/room + chatReqeustDto.getChatRoomId에 들어가있었으면 ,
-    /pub/chat/read로 해당 채팅ResponseDto를 그대로 다시 읽음설정을 해주게끔 한다.
+    1. pub/chat/send 준비 , 보낼데이터(채팅) 첫채팅이면 chatRoomId = null
+    2. /sub/chat/room 여기로 데이터가 날아옴 , chatRoomId를 줌 , 그 받음 chatRoomId를 이제 가지고 있어야함
+    3. /sub/chat/room/(받은 chatRoomId)에 구독
+    4. /sub/chat/room/(chatRoomId)에서 받은 데이터를 가지고 , /pub/chat/read에 그대로 보내기
      */
     @MessageMapping("/chat/read")
     public void readChat(ChatResponseDto chatResponseDto){
