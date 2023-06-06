@@ -45,7 +45,7 @@ public class FeedController {
     // feed 전체 조회
     @GetMapping("")
     public ResponseEntity<FeedListResponseDto> getAllFeeds(@RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "15") int size){
+                                                           @RequestParam(defaultValue = "16") int size){
         Pageable pageable = PageRequest.of(page, size);
         return feedService.getAllFeeds(pageable);
     }
