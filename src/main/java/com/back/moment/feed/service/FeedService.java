@@ -191,7 +191,7 @@ public class FeedService {
 
         boolean hasMorePages = endIndex < getAllPhoto.size();
 
-        int totalPages = (int) Math.ceil((double) getAllPhoto.size() / pageSize);
+        int totalPages = (int) Math.ceil((double) getAllPhoto.size() / pageSize) - 1;
 
         return new ResponseEntity<>(new FeedListResponseDto(finalPhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
     }
