@@ -67,6 +67,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/main", "/home").permitAll()
                 .requestMatchers("/feeds", "/boards").permitAll()
                 .requestMatchers("/party/test-vepo").permitAll()
+                .requestMatchers("/test").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
