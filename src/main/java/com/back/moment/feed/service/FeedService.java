@@ -134,43 +134,45 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
-
         List<Photo> getAllPhoto = photoRepository.getAllPhotoWithTag();
-        Page<PhotoFeedResponseDto> photoPage;
-        if(getAllPhoto.size() > pageable.getOffset()) {
-            int startIndex = (int) pageable.getOffset();
-            int endIndex = Math.min(startIndex + pageable.getPageSize(), getAllPhoto.size());
-            List<PhotoFeedResponseDto> getAllPhotoDto;
 
-            getAllPhotoDto = getAllPhoto.subList(startIndex, endIndex)
+        int currentPage = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        // Calculate the start and end index for the current page
+        int startIndex = currentPage * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, getAllPhoto.size());
+
+        List<Photo> currentPagePhotos = getAllPhoto.subList(startIndex, endIndex);
+
+        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(currentPagePhotos.size());
+
+        if (users != null) {
+            Set<Long> lovedPhotoIds = users.getLoveList()
                     .stream()
-                    .map(photo -> new PhotoFeedResponseDto(photo, loveRepository.checkLove(photo.getId(), users.getId())))
-                    .toList();
-            photoPage = new PageImpl<>(getAllPhotoDto, pageable, getAllPhoto.size());
-        } else{
-            photoPage = new PageImpl<>(getAllPhoto.stream()
-                    .map(photo -> new PhotoFeedResponseDto(photo, loveRepository.checkLove(photo.getId(), users.getId())))
-                    .toList(), pageable, getAllPhoto.size());
+                    .map(love -> love.getPhoto().getId())
+                    .collect(Collectors.toSet());
+
+            for (Photo photo : currentPagePhotos) {
+                boolean isLoved = lovedPhotoIds.contains(photo.getId());
+                responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
+            }
+        } else {
+            for (Photo photo : currentPagePhotos) {
+                responsePhotoList.add(new PhotoFeedResponseDto(photo, false));
+            }
         }
-        int currentPage = photoPage.getNumber();
-        int totalPages;
-        if(photoPage.isEmpty())
-            totalPages = photoPage.getTotalPages();
-        else totalPages = photoPage.getTotalPages() - 1;
 
-        List<PhotoFeedResponseDto> photoList =new ArrayList<>(photoPage.getContent());
-        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>();
-        // Sort the photoList by loveCnt in descending order
-
-        photoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
+        // Sort the responsePhotoList by loveCnt in descending order
+        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
 
         // Get the top three photos
-        List<PhotoFeedResponseDto> topThreePhotos = photoList.stream()
+        List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
                 .limit(3)
                 .toList();
 
         // Get the remaining photos
-        List<PhotoFeedResponseDto> remainingPhotos = photoList.stream()
+        List<PhotoFeedResponseDto> remainingPhotos = responsePhotoList.stream()
                 .skip(3)
                 .collect(Collectors.toList());
 
@@ -178,13 +180,17 @@ public class FeedService {
         Collections.shuffle(remainingPhotos);
 
         // Add the top three photos and remaining photos to the response list
-        responsePhotoList.addAll(topThreePhotos);
-        responsePhotoList.addAll(remainingPhotos);
+        List<PhotoFeedResponseDto> finalPhotoList = new ArrayList<>();
+        finalPhotoList.addAll(topThreePhotos);
+        finalPhotoList.addAll(remainingPhotos);
 
-        boolean hasMorePages = photoPage.hasNext();
+        boolean hasMorePages = endIndex < getAllPhoto.size();
 
-        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
+        int totalPages = (int) Math.ceil((double) getAllPhoto.size() / pageSize);
+
+        return new ResponseEntity<>(new FeedListResponseDto(finalPhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
     }
+
 
 
     @Transactional(readOnly = true)

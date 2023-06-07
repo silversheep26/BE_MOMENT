@@ -50,7 +50,7 @@ public class FeedController {
                                                            @RequestParam(defaultValue = "16") int size,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails){
         Pageable pageable = PageRequest.of(page, size);
-        return feedService.getAllFeeds(pageable, userDetails.getUsers());
+        return feedService.getAllFeeds(pageable, userDetails != null ? userDetails.getUsers() : null);
     }
 
     // Feed 상세 조회

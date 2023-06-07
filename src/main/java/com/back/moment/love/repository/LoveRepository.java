@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Map;
+
 public interface LoveRepository extends JpaRepository<Love, Long> {
     @Query("select l from Love l where l.photo.id = :photoId and l.users.id = :userId")
     Love findExistLove(@Param("photoId") Long photoId, @Param("userId") Long userId);
@@ -16,5 +19,6 @@ public interface LoveRepository extends JpaRepository<Love, Long> {
 
     @Query("select case when (count(l) > 0) then true else false end from Love l where l.photo.id = :photoId and l.users.id = :usersId")
     boolean checkLove(@Param("photoId") Long photoId, @Param("usersId") Long usersId);
+
 
 }
