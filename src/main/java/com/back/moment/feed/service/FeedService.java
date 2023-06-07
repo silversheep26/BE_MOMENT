@@ -51,8 +51,7 @@ public class FeedService {
         if(users.getRole() != RoleEnum.NONE) {
             String imageUrl = s3Uploader.upload(image);
             Photo photo = new Photo(users, imageUrl);
-            if(contents != null)
-                photo.updateContents(contents);
+            photo.updateContents(contents);
             photoRepository.save(photo);
 
             if(photoHashTag != null) {
