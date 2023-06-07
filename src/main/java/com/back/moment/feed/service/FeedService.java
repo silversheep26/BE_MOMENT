@@ -148,13 +148,18 @@ public class FeedService {
         List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(currentPagePhotos.size());
 
         if (users != null) {
-            Set<Long> lovedPhotoIds = users.getLoveList()
-                    .stream()
-                    .map(love -> love.getPhoto().getId())
-                    .collect(Collectors.toSet());
+            List<Long> photoIdList = getAllPhoto.stream().map(Photo::getId).collect(Collectors.toList());
+            List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users.getId());
+            Map<Long, Boolean> photoLoveMap = new HashMap<>();
+
+            for (Object[] result : photoLoveList) {
+                Long photoId = (Long) result[0];
+                Boolean isLoved = (Boolean) result[1];
+                photoLoveMap.put(photoId, isLoved);
+            }
 
             for (Photo photo : currentPagePhotos) {
-                boolean isLoved = lovedPhotoIds.contains(photo.getId());
+                boolean isLoved = photoLoveMap.getOrDefault(photo.getId(), false);
                 responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
             }
         } else {

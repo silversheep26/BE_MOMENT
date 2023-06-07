@@ -25,4 +25,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<OnlyPhotoResponseDto> getAllOnlyPhotoByHostId(@Param("hostId") Long hostId);
 
 //    boolean existsByIdAndUsersId(Long photoId, Long userId);
+    @Query("SELECT p.id, CASE WHEN (COUNT(l) > 0) THEN true ELSE false END FROM Photo p LEFT JOIN p.loveList l ON l.users.id = :usersId WHERE p.id IN :photoIdList GROUP BY p.id")
+    List<Object[]> checkLoveList(@Param("photoIdList") List<Long> photoIdList, @Param("usersId") Long usersId);
+
 }
