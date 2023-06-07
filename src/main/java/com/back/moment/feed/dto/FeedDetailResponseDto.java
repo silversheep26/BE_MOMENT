@@ -32,7 +32,10 @@ public class FeedDetailResponseDto {
         this.profileUrl = photo.getUsers().getProfileImg();
         this.nickName = photo.getUsers().getNickName();
         this.role = photo.getUsers().getRole();
-        this.contents = photo.getContents();
+        String contents = photo.getContents();
+        if (contents != null && !contents.isEmpty()) {
+            this.contents = contents;
+        }
         this.tag_photoList = photo.getTagListWithWell();
         this.createdTime = photo.getCreatedAt();
     }

@@ -28,4 +28,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     @Query("SELECT p.id, CASE WHEN (COUNT(l) > 0) THEN true ELSE false END FROM Photo p LEFT JOIN p.loveList l ON l.users.id = :usersId WHERE p.id IN :photoIdList GROUP BY p.id")
     List<Object[]> checkLoveList(@Param("photoIdList") List<Long> photoIdList, @Param("usersId") Long usersId);
 
+    @Query("delete from Photo p where p.id = :photoId")
+    void removeFeed(@Param("photoId") Long photoId);
+
 }

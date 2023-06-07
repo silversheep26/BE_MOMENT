@@ -36,6 +36,6 @@ public class PhotoFeedResponseDto {
         this.content = photo.getContents();
         this.tag_photoList = photo.getTagListWithWell();
         this.loveCheck = loveCheck;
-        this.createdTime = photo.getCreatedAt();
+        this.createdTime = (photo.getCreatedAt() != null) ? photo.getCreatedAt() : LocalDateTime.now();
     }
 }

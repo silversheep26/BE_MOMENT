@@ -173,16 +173,14 @@ public class FeedService {
 
         // Get the top three photos
         List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
-                .limit(3)
+                .limit(4)
                 .toList();
 
         // Get the remaining photos
         List<PhotoFeedResponseDto> remainingPhotos = responsePhotoList.stream()
-                .skip(3)
-                .collect(Collectors.toList());
-
-        // Shuffle the remaining photos
-        Collections.shuffle(remainingPhotos);
+                .skip(4)
+                .sorted(Comparator.comparing(PhotoFeedResponseDto::getCreatedTime).reversed())
+                .toList();
 
         // Add the top three photos and remaining photos to the response list
         List<PhotoFeedResponseDto> finalPhotoList = new ArrayList<>();
