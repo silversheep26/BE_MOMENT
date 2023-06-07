@@ -75,7 +75,7 @@ public class ChatService {
                                                           userTwo.getNickName());
             return ResponseEntity.ok(chatRoomResponseDto);
         } else {
-            chatRoomResponseDto = new ChatRoomResponseDto(null, null, userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            chatRoomResponseDto = new ChatRoomResponseDto(null,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
             return ResponseEntity.ok(chatRoomResponseDto);
         }
     }
