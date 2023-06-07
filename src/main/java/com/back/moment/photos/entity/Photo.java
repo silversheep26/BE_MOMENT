@@ -34,7 +34,7 @@ public class Photo extends TimeStamped {
     @Column(nullable = false)
     private String imagUrl;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
     private List<Love> loveList = new ArrayList<>();
 
     @Column
@@ -43,7 +43,7 @@ public class Photo extends TimeStamped {
     @ColumnDefault("0")
     private int loveCnt;
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
     private List<Tag_Photo> tag_photoList = new ArrayList<>();
 
 

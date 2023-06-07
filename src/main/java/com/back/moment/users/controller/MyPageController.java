@@ -24,7 +24,7 @@ public class MyPageController {
         return myPageService.getMyPage(hostId, userDetails.getUsers());
     }
 
-    @DeleteMapping("/{photoId}")
+    @DeleteMapping ("/{photoId}")
     public ResponseEntity<String> deletePhoto(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return myPageService.deletePhoto(photoId, userDetails.getUsers());
     }

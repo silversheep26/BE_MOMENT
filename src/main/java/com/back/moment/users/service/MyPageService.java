@@ -8,6 +8,7 @@ import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
+import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
 import com.back.moment.users.dto.UpdateRequestDto;
@@ -32,6 +33,7 @@ public class MyPageService {
     private final PhotoRepository photoRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Tag_PhotoRepository tag_photoRepository;
     private final S3Uploader s3Uploader;
 
     // 마이페이지 조회
@@ -89,16 +91,23 @@ public class MyPageService {
     // 마이페이지 사진 삭제 
     @Transactional
     public ResponseEntity<String> deletePhoto(Long photoId, Users users){
-        Photo photo = photoRepository.findById(photoId).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
-        );
+        try {
+            Photo photo = photoRepository.findById(photoId).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
+            );
 
-        if(!Objects.equals(users.getId(), photo.getUsers().getId())){
-            return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
+            if (!Objects.equals(users.getId(), photo.getUsers().getId())) {
+                return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
+            }
+
+            photoRepository.deleteById(photoId);
+            s3Uploader.delete(photo.getImagUrl());
+
+
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            // 롤백되는 경우에 대한 예외 처리
+            return new ResponseEntity<>("사진 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        s3Uploader.delete(photo.getImagUrl());
-        photoRepository.delete(photo);
-
-        return ResponseEntity.ok(null);
     }
 }
