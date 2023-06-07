@@ -37,6 +37,6 @@ public class FeedDetailResponseDto {
             this.contents = contents;
         }
         this.tag_photoList = photo.getTagListWithWell();
-        this.createdTime = photo.getCreatedAt().plusHours(9L);
+        this.createdTime = (photo.getCreatedAt() != null) ? photo.getCreatedAt().plusHours(9L) : LocalDateTime.now().plusHours(9L);
     }
 }
