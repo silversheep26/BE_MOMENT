@@ -1,6 +1,5 @@
 package com.back.moment.users.service;
 
-import static com.back.moment.users.entity.GenderEnum.FEMALE;
 import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 
@@ -11,8 +10,10 @@ import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.s3.S3Uploader;
-import com.back.moment.users.dto.*;
-import com.back.moment.users.entity.GenderEnum;
+import com.back.moment.users.dto.LoginRequestDto;
+import com.back.moment.users.dto.SignupRequestDto;
+import com.back.moment.users.dto.TokenDto;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
@@ -59,6 +60,9 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Optional<Users> findEmail = usersRepository.findByEmail(requestDto.getEmail());
+        if (usersRepository.findByNickName(requestDto.getNickName()).isPresent()){
+            throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
+        }
         if (findEmail.isPresent()) {
             throw new ApiException(ExceptionEnum.DUPLICATED_USER_NAME);
         }
