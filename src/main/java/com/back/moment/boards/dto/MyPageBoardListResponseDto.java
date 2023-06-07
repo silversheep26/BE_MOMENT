@@ -19,7 +19,7 @@ public class MyPageBoardListResponseDto {
     private String profileImgUrl;
     private String location;
     private String boardImgUrl;
-    private String createdTime;
+    private LocalDateTime createdTime;
     private List<String> tag_boardList;
 
     public MyPageBoardListResponseDto(Board board) {
@@ -31,8 +31,7 @@ public class MyPageBoardListResponseDto {
         this.profileImgUrl = board.getUsers().getProfileImg();
         this.location = board.getLocation();
         this.boardImgUrl = board.getBoardImgUrl();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.createdTime = board.getCreatedAt().format(formatter).substring(0, 19);
+        this.createdTime = board.getCreatedAt();
         this.tag_boardList = board.getTagListWithWell();
     }
 }

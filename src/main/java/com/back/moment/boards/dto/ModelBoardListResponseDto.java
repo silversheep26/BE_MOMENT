@@ -16,7 +16,7 @@ public class ModelBoardListResponseDto {
     private RoleEnum role;
     private  String nickName;
     private  String boardImgUrl;
-    private String createdTime;
+    private LocalDateTime createdTime;
     private List<String> tag_boardList;
 
     public ModelBoardListResponseDto(Board board) {
@@ -25,8 +25,7 @@ public class ModelBoardListResponseDto {
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
         this.boardImgUrl = board.getBoardImgUrl();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.createdTime = board.getCreatedAt().format(formatter).substring(0, 19);
+        this.createdTime = board.getCreatedAt();
         this.tag_boardList = board.getTagList();
     }
 }
