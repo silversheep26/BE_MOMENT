@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class PhotographerBoardListResponseDto {
     private RoleEnum role;
     private  String nickName;
     private  String boardImgUrl;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private List<String> tag_boardList;
 
     public PhotographerBoardListResponseDto(Board board) {
@@ -25,7 +26,8 @@ public class PhotographerBoardListResponseDto {
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
         this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.createdTime = board.getCreatedAt().format(formatter).substring(0, 19);
         this.tag_boardList = board.getTagList();
     }
 }
