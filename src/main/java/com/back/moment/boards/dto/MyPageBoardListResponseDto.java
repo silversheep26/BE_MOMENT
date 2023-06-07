@@ -5,6 +5,7 @@ import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ public class MyPageBoardListResponseDto {
     private String profileImgUrl;
     private String location;
     private String boardImgUrl;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private List<String> tag_boardList;
 
     public MyPageBoardListResponseDto(Board board) {
@@ -30,7 +31,8 @@ public class MyPageBoardListResponseDto {
         this.profileImgUrl = board.getUsers().getProfileImg();
         this.location = board.getLocation();
         this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.createdTime = board.getCreatedAt().format(formatter).substring(0, 19);
         this.tag_boardList = board.getTagListWithWell();
     }
 }

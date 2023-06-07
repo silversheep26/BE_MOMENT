@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -21,6 +23,7 @@ public class FeedDetailResponseDto {
     private RoleEnum role;
     private boolean checkLove = false;
     private List<String> tag_photoList;
+    private String createdTime;
 
     public FeedDetailResponseDto(Photo photo) {
         this.hostId = photo.getUsers().getId();
@@ -31,5 +34,7 @@ public class FeedDetailResponseDto {
         this.role = photo.getUsers().getRole();
         this.contents = photo.getContents();
         this.tag_photoList = photo.getTagListWithWell();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.createdTime = photo.getCreatedAt().format(formatter).substring(0, 19);
     }
 }

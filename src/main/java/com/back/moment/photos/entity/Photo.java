@@ -1,6 +1,7 @@
 package com.back.moment.photos.entity;
 
 import com.back.moment.boards.entity.Tag_Board;
+import com.back.moment.common.TimeStamped;
 import com.back.moment.love.entity.Love;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Photo {
+public class Photo extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
