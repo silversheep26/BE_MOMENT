@@ -65,7 +65,7 @@ public class ChatService {
             chatListDto.sort(new Comparator<ChatResponseDto>() {
                 @Override
                 public int compare(ChatResponseDto o1, ChatResponseDto o2) {
-                    return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
                 }
             });
             chatRoomResponseDto = new ChatRoomResponseDto(findChatRoom.getId(),
