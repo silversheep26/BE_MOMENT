@@ -48,7 +48,7 @@ public class MyPageService {
 
         List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
 
-        MyPageResponseDto myPageResponseDto = new MyPageResponseDto(users, myPageBoardListResponseDtoList, photoList);
+        MyPageResponseDto myPageResponseDto = new MyPageResponseDto(host, myPageBoardListResponseDtoList, photoList);
 
         if (users.getKakaoId() != null){
             myPageResponseDto.setCheckKakaoId(true);
