@@ -4,10 +4,13 @@ import com.back.moment.users.dto.ForMainResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +26,6 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u ORDER BY u.totalLoveCnt DESC")
     List<ForMainResponseDto> findTop4(Pageable pageable);
+
 
 }

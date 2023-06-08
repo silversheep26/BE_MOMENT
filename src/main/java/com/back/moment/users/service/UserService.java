@@ -4,11 +4,13 @@ import static com.back.moment.users.jwt.JwtUtil.ACCESS_KEY;
 import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 
 import com.back.moment.boards.entity.Board;
+import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.email.service.EmailService;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +46,8 @@ public class UserService {
     private String secretKey; // 암호화/복호화에 필요
 
     private final UsersRepository usersRepository;
+    private final PhotoRepository photoRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     public static final String BEARER_PREFIX = "Bearer ";
@@ -183,6 +188,8 @@ public class UserService {
 
         // Delete the entities from the database
         usersRepository.deleteById(users.getId());
+
+
 
         // Delete the URLs from the S3 bucket
         s3Uploader.deleteBatch(urlsToDelete);

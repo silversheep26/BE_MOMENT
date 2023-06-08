@@ -28,4 +28,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.id = :boardId")
     Optional<Board> findExistBoard(@Param("boardId") Long boardId);
+;
 }
