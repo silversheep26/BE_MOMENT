@@ -50,13 +50,13 @@ public class Users {
 //    @Column(nullable = false)
 //    private boolean userDelete = false;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Photo> photoList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Love> loveList = new ArrayList<>();  //좋아요(내가 좋아요 누른 사진 목록)
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Board> boardList = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
