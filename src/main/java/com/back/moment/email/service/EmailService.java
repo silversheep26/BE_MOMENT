@@ -94,7 +94,7 @@ public class EmailService {
         } catch (MailException es) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
-        redisService.setCodeValues(code, emailRequestDto.getEmail());
+        redisService.setCodeValues(emailRequestDto.getEmail(),code);
 
         log.info("인증 코드 : " + code);
         return ResponseEntity.ok(null);
