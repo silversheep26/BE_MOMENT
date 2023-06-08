@@ -145,7 +145,7 @@ class ChatServiceTest {
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatRoomId())
                 .isEqualTo(null);
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatList())
-                .isEqualTo(null);
+                .isEqualTo(new ArrayList<>());
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getReceiverId())
                 .isEqualTo(2L);
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getReceiverNickName())
