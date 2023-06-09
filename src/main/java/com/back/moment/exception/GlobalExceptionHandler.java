@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return ErrorResponse.toResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
     }
+
+    @ExceptionHandler(value = IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
+        e.printStackTrace();
+        return ErrorResponse.toResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
+    }
 }
