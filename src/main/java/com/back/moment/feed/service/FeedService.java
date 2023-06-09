@@ -191,15 +191,11 @@ public class FeedService {
 //        finalPhotoList.addAll(topThreePhotos);
 //        finalPhotoList.addAll(remainingPhotos);
 
-        List<PhotoFeedResponseDto> finalPhotoList = responsePhotoList.stream()
-                .sorted(Comparator.comparing(PhotoFeedResponseDto::getCreatedTime).reversed())
-                .collect(Collectors.toList());
-
         boolean hasMorePages = endIndex < getAllPhoto.size();
 
         int totalPages = (int) Math.ceil((double) getAllPhoto.size() / pageSize) - 1;
 
-        return new ResponseEntity<>(new FeedListResponseDto(finalPhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
+        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
     }
 
 
