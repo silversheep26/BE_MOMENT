@@ -21,7 +21,7 @@ public class RedisService {
 
     public void setRefreshValues(String userId, String key) {
         redisTemplate.opsForHash().put("Refresh",userId,key);
-        redisTemplate.expire("Refresh",Duration.ofMinutes(2L));
+        redisTemplate.expire("Refresh",Duration.ofMinutes(3L));
     }
 
     public void setCodeValues(String userId, String key) {
