@@ -106,6 +106,8 @@ public class MyPageService {
                 return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
             }
 
+            users.setTotalLoveCnt(users.getTotalLoveCnt() - photo.getLoveCnt());
+            usersRepository.save(users);
             photoRepository.deleteById(photoId);
             s3Uploader.delete(photo.getImagUrl());
 
