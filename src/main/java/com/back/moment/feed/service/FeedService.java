@@ -173,7 +173,7 @@ public class FeedService {
         }
 
         // Sort the responsePhotoList by loveCnt in descending order
-        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
+//        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
 
         // Get the top three photos
         List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
