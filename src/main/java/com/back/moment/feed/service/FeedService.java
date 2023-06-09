@@ -172,24 +172,28 @@ public class FeedService {
             }
         }
 
-        // Sort the responsePhotoList by loveCnt in descending order
-        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
+//        // Sort the responsePhotoList by loveCnt in descending order
+//        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
+//
+//        // Get the top three photos
+//        List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
+//                .limit(4)
+//                .toList();
+//
+//        // Get the remaining photos
+//        List<PhotoFeedResponseDto> remainingPhotos = responsePhotoList.stream()
+//                .skip(4)
+//                .sorted(Comparator.comparing(PhotoFeedResponseDto::getCreatedTime).reversed())
+//                .toList();
+//
+//        // Add the top three photos and remaining photos to the response list
+//        List<PhotoFeedResponseDto> finalPhotoList = new ArrayList<>();
+//        finalPhotoList.addAll(topThreePhotos);
+//        finalPhotoList.addAll(remainingPhotos);
 
-        // Get the top three photos
-        List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
-                .limit(4)
-                .toList();
-
-        // Get the remaining photos
-        List<PhotoFeedResponseDto> remainingPhotos = responsePhotoList.stream()
-                .skip(4)
+        List<PhotoFeedResponseDto> finalPhotoList = responsePhotoList.stream()
                 .sorted(Comparator.comparing(PhotoFeedResponseDto::getCreatedTime).reversed())
-                .toList();
-
-        // Add the top three photos and remaining photos to the response list
-        List<PhotoFeedResponseDto> finalPhotoList = new ArrayList<>();
-        finalPhotoList.addAll(topThreePhotos);
-        finalPhotoList.addAll(remainingPhotos);
+                .collect(Collectors.toList());
 
         boolean hasMorePages = endIndex < getAllPhoto.size();
 
