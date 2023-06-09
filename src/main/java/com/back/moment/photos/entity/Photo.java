@@ -26,7 +26,7 @@ public class Photo extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private Users users;
@@ -45,7 +45,6 @@ public class Photo extends TimeStamped {
 
     @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
     private List<Tag_Photo> tag_photoList = new ArrayList<>();
-
 
     public Photo(Users users, String imagUrl) {
         this.users = users;

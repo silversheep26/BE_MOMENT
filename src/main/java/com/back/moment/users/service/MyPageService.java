@@ -7,6 +7,7 @@ import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.entity.Tag_Photo;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.s3.S3Uploader;
@@ -104,6 +105,12 @@ public class MyPageService {
 
             if (!Objects.equals(users.getId(), photo.getUsers().getId())) {
                 return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
+            }
+
+            List<Tag_Photo> tag_photoList = tag_photoRepository.findByPhotoId(photo.getId());
+            if(tag_photoList != null && !tag_photoList.isEmpty()){
+                tag_photoList.clear();
+                tag_photoRepository.deleteAll(tag_photoList);
             }
 
             users.setTotalLoveCnt(users.getTotalLoveCnt() - photo.getLoveCnt());
