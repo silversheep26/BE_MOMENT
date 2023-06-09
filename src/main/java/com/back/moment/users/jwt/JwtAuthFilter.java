@@ -1,5 +1,7 @@
 package com.back.moment.users.jwt;
 
+import com.back.moment.exception.ApiException;
+import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.users.dto.SecurityExceptionDto;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -55,12 +57,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // Security context에 인증 정보 넣기
                 setAuthentication(jwtUtil.getUserInfoFromToken(newAccessToken.substring(7)));
             } else if (refresh_token == null) {
-                jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.BAD_REQUEST.value());
+                throw new ApiException(ExceptionEnum.NOT_FOUND_REFRESH_TOKEN);
             }
             // (토큰 만료 && 리프레시 토큰 만료) || 리프레시 토큰이 DB와 비호교했을 때 같지 않다면
             else {
-                jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST.value());
-                return;
+                throw new ApiException(ExceptionEnum.NOT_FOUND_REFRESH_TOKEN);
             }
         }
         filterChain.doFilter(request, response);
