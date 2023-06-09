@@ -21,12 +21,12 @@ public class RedisService {
 
     public void setRefreshValues(String userId, String key) {
         redisTemplate.opsForHash().put("Refresh",userId,key);
-        redisTemplate.expire("Refresh",Duration.ofDays(2L));
+        redisTemplate.expire("Refresh",Duration.ofSeconds(172800));
     }
 
     public void setCodeValues(String userId, String key) {
         redisTemplate.opsForHash().put("Code", userId, key);
-        redisTemplate.expire("Code",Duration.ofMinutes(10L));
+        redisTemplate.expire("Code",Duration.ofSeconds(300));
     }
 
     public void setChatValues(Chat chat,Long chatRoomId,String chatId){
@@ -37,7 +37,7 @@ public class RedisService {
             throw new RuntimeException(e);
         }
         redisTemplate.opsForHash().put("Chat"+chatRoomId,chatId,chatAsJson);
-        redisTemplate.expire("Chat"+chatRoomId,Duration.ofMinutes(24 * 60L));
+        redisTemplate.expire("Chat"+chatRoomId,Duration.ofSeconds(259200));
     }
 
     public String getRefreshToken(String userId){
