@@ -57,7 +57,7 @@ public class ChatController {
     public void enterChatRoom(ChatRequestDto chatRequestDto){
             Long chatRoomId = chatService.createChatRoom(chatRequestDto); // 첫 채팅이면 , 채팅방을 우선 만들고 채팅방의 Id값을 반환한다.
             chatRequestDto.setChatRoomId(chatRoomId); // Dto에 채팅Id를 넣어준다.
-            msgOperation.convertAndSend("/sub/chat/room/",chatRequestDto); // 우선적으로 채팅방의 Id 메시지를 한번 보낸다. 프론트에서 채팅방의 아이디를 받아서 사용하게끔
+            msgOperation.convertAndSend("/sub/chat/room",chatRequestDto); // 우선적으로 채팅방의 Id 메시지를 한번 보낸다. 프론트에서 채팅방의 아이디를 받아서 사용하게끔
     }
     @MessageMapping("/chat/send")
     public void sendChat(ChatRequestDto chatRequestDto){
