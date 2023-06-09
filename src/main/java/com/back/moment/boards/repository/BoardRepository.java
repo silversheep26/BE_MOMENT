@@ -3,6 +3,7 @@ package com.back.moment.boards.repository;
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.users.entity.RoleEnum;
+import com.back.moment.users.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +30,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.id = :boardId")
     Optional<Board> findExistBoard(@Param("boardId") Long boardId);
 ;
+    List<Board> findByUsers(Users users);
 }

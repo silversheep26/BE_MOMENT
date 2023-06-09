@@ -174,26 +174,36 @@ public class UserService {
         List<String> urlsToDelete = new ArrayList<>();
         urlsToDelete.add(users.getProfileImg());
 
-        if(!users.getPhotoList().isEmpty()) {
-            for (Photo photo : users.getPhotoList()) {
+        // Delete the entities from the database
+        // photoList 삭제
+        List<Photo> photoList = photoRepository.findByUsers(users);
+        if (photoList != null && !photoList.isEmpty()) {
+            for (Photo photo : photoList) {
+                photo.setUsers(null);
                 urlsToDelete.add(photo.getImagUrl());
             }
+            photoList.clear();
+            photoRepository.deleteAll(photoList);
         }
 
-        if(!users.getBoardList().isEmpty()) {
-            for (Board board : users.getBoardList()) {
+        // boardList 삭제
+        List<Board> boardList = boardRepository.findByUsers(users);
+        if (boardList != null && !boardList.isEmpty()) {
+            for (Board board : boardList) {
+                board.setUsers(null);
                 urlsToDelete.add(board.getBoardImgUrl());
             }
+            boardList.clear();
+            boardRepository.deleteAll(boardList);
         }
-
-        // Delete the entities from the database
-        usersRepository.deleteById(users.getId());
-
-
 
         // Delete the URLs from the S3 bucket
         s3Uploader.deleteBatch(urlsToDelete);
 
+        // Delete the users entity
+        usersRepository.delete(users);
+
         return ResponseEntity.ok(null);
     }
+
 }
