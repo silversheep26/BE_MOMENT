@@ -53,6 +53,7 @@ public class BoardController {
     public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return boardService.deleteBoard(boardId, userDetails.getUsers());
     }
+
 }
 
 /*

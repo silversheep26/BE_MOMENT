@@ -191,4 +191,6 @@ public class BoardService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
     }
+
 }
+
