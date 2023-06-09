@@ -69,6 +69,9 @@ public class JwtUtil {
         String tokenName = token.equals("ACCESS_KEY") ? ACCESS_KEY : REFRESH_KEY;
         String bearerToken = request.getHeader(tokenName);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            if(tokenName.equals(REFRESH_KEY)){
+                return bearerToken;
+            }
             return bearerToken.substring(7);
         }
         return null;
