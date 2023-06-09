@@ -3,6 +3,7 @@ package com.back.moment.feed.controller;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
+import com.back.moment.feed.dto.LoveCheckResponseDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class FeedController {
 
     // Feed 에서 photo 좋아요
     @PostMapping("/love/{photoId}")
-    public ResponseEntity<String> lovePhoto(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<LoveCheckResponseDto> lovePhoto(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return feedService.lovePhoto(photoId, userDetails.getUsers());
     }
 

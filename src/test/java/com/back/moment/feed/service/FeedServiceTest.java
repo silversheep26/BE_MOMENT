@@ -2,6 +2,7 @@ package com.back.moment.feed.service;
 
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
+import com.back.moment.feed.dto.LoveCheckResponseDto;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.PhotoRepository;
@@ -84,7 +85,7 @@ class FeedServiceTest {
         // 의존성과 그 동작을 모킹한다
 
         // When
-        ResponseEntity<String> responseEntity = feedService.lovePhoto(photoId, users);
+        ResponseEntity<LoveCheckResponseDto> responseEntity = feedService.lovePhoto(photoId, users);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

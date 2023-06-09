@@ -5,6 +5,7 @@ import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
+import com.back.moment.feed.dto.LoveCheckResponseDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -80,7 +81,7 @@ public class FeedService {
     }
 
     @Transactional
-    public ResponseEntity<String> lovePhoto(Long photoId, Users users) {
+    public ResponseEntity<LoveCheckResponseDto> lovePhoto(Long photoId, Users users) {
         Photo photo = photoRepository.findById(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
@@ -88,22 +89,25 @@ public class FeedService {
         Love existLove = loveRepository.findExistLove(photoId, users.getId());
 
         String message;
+        LoveCheckResponseDto loveCheckResponseDto;
 
         if(existLove != null){
             loveRepository.delete(existLove);
             message = "좋아요 취소";
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() - 1);
+            loveCheckResponseDto = new LoveCheckResponseDto(false);
         }else {
             Love love = new Love(users, photo);
             message = "좋아요 등록";
             loveRepository.save(love);
             photo.getUsers().setTotalLoveCnt(photo.getUsers().getTotalLoveCnt() + 1);
+            loveCheckResponseDto = new LoveCheckResponseDto(true);
         }
         int loveCnt = loveRepository.findCntByPhotoId(photoId);
         photo.setLoveCnt(loveCnt);
         photoRepository.save(photo);
 
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(loveCheckResponseDto, HttpStatus.OK);
     }
 
 //    @Transactional
