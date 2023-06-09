@@ -105,6 +105,7 @@ public class FeedService {
         }
         int loveCnt = loveRepository.findCntByPhotoId(photoId);
         photo.setLoveCnt(loveCnt);
+        loveCheckResponseDto.setTotalLoveCnt(loveCnt);
         photoRepository.save(photo);
 
         return new ResponseEntity<>(loveCheckResponseDto, HttpStatus.OK);
