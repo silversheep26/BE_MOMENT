@@ -22,7 +22,10 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p")
     List<OnlyPhotoResponseDto> getAllOnlyPhoto();
 
-    @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p where p.users.id = :hostId order by p.loveCnt desc ")
+//    @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p where p.users.id = :hostId order by p.loveCnt desc ")
+//    List<OnlyPhotoResponseDto> getAllOnlyPhotoByHostId(@Param("hostId") Long hostId);
+
+    @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p where p.users.id = :hostId order by p.createdAt desc")
     List<OnlyPhotoResponseDto> getAllOnlyPhotoByHostId(@Param("hostId") Long hostId);
 
 //    boolean existsByIdAndUsersId(Long photoId, Long userId);
