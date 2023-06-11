@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +21,13 @@ public class RedisService {
     private final ObjectMapper objectMapper;
 
     public void setRefreshValues(String userId, String key) {
-        redisTemplate.opsForHash().put("Refresh",userId,key);
-        redisTemplate.expire("Refresh",Duration.ofSeconds(172800));
+        redisTemplate.opsForValue().set("Refresh"+userId,key);
+        redisTemplate.expire("Refresh"+userId,Duration.ofSeconds(172800));
     }
 
     public void setCodeValues(String userId, String key) {
-        redisTemplate.opsForHash().put("Code", userId, key);
-        redisTemplate.expire("Code",Duration.ofSeconds(300));
+        redisTemplate.opsForValue().set("Code"+userId, key);
+        redisTemplate.expire("Code"+userId,Duration.ofSeconds(300));
     }
 
     public void setChatValues(Chat chat,Long chatRoomId,String chatId){
@@ -36,20 +37,20 @@ public class RedisService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        redisTemplate.opsForHash().put("Chat"+chatRoomId,chatId,chatAsJson);
-        redisTemplate.expire("Chat"+chatRoomId,Duration.ofSeconds(259200));
+        redisTemplate.opsForValue().set("Chat"+chatRoomId+"ChatId"+chatId,chatAsJson);
+        redisTemplate.expire("Chat"+chatRoomId+"ChatId"+chatId,Duration.ofSeconds(259200));
     }
 
     public String getRefreshToken(String userId){
-        return (String) redisTemplate.opsForHash().get("Refresh",userId);
+        return redisTemplate.opsForValue().get("Refresh"+userId);
     }
 
     public String getCode(String userId){
-        return (String) redisTemplate.opsForHash().get("Code",userId);
+        return redisTemplate.opsForValue().get("Code"+userId);
     }
 
     public Chat getChat(Long chatRoomId,String chatId){
-        String chatJson = (String) redisTemplate.opsForHash().get("Chat" + chatRoomId, chatId);
+        String chatJson = redisTemplate.opsForValue().get("Chat" + chatRoomId+ "ChatId"+ chatId);
         try {
             return objectMapper.readValue(chatJson, Chat.class);
         } catch (JsonProcessingException e) {
@@ -66,11 +67,11 @@ public class RedisService {
     }
 
     private List<Chat> getChats(Long chatRoomId){
-        List<Object> chats = redisTemplate.opsForHash().values("Chat" + chatRoomId);
+        Set<String> chats = redisTemplate.keys("Chat" + chatRoomId + "*");
         ArrayList<Chat> chatList = new ArrayList<>();
-        for (Object c : chats) {
+        for (String c : chats) {
             try {
-                Chat chat = objectMapper.readValue((String) c, Chat.class);
+                Chat chat = objectMapper.readValue(c, Chat.class);
                 chatList.add(chat);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
