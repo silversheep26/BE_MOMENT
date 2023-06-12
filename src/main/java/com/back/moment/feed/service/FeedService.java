@@ -111,30 +111,7 @@ public class FeedService {
         return new ResponseEntity<>(loveCheckResponseDto, HttpStatus.OK);
     }
 
-//    @Transactional
-//    public ResponseEntity<String> recommendUser(String nickName, Users users){
-//        Users recommendedUser = usersRepository.findByNickName(nickName).orElseThrow(
-//                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
-//        );
-//
-//        Recommend recommend = new Recommend(users, recommendedUser);
-//        Recommend existRecommend = recommendRepository.existRecommend(users.getNickName(), nickName);
-//
-//        String message;
-//
-//        if(existRecommend != null){
-//            recommendRepository.delete(existRecommend);
-//            message = "추천 취소";
-//        } else{
-//            recommendRepository.save(recommend);
-//            message = "추천 등록";
-//        }
-//        int recommendCnt = recommendRepository.countByRecommendedId(recommendedUser.getId());
-//        recommendedUser.setRecommendCnt(recommendCnt);
-//        usersRepository.save(recommendedUser);
-//
-//        return new ResponseEntity<>(message, HttpStatus.OK);
-//    }
+
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
@@ -151,17 +128,18 @@ public class FeedService {
         List<Photo> currentPagePhotos1 = allPhoto.subList(startIndex, endIndex);
         List<Photo> currentPagePhotos2 = allPhotoByLove.subList(startIndex, endIndex);
 
-        List<PhotoFeedResponseDto> responsePhotoList1 = createResponsePhotoList(currentPagePhotos1, users);
-        List<PhotoFeedResponseDto> responsePhotoList2 = createResponsePhotoList(currentPagePhotos2, users);
-
         boolean hasMorePages = endIndex < allPhoto.size();
 
         int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
 
-        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList1, responsePhotoList2, hasMorePages, currentPage, totalPages), HttpStatus.OK);
+        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(currentPagePhotos1, users);
+        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(currentPagePhotos2, users);
+
+        FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2, hasMorePages, currentPage, totalPages);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    private List<PhotoFeedResponseDto> createResponsePhotoList(List<Photo> photos, Users users) {
+    private Page<PhotoFeedResponseDto> createResponsePhotoPage(List<Photo> photos, Users users) {
         List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
         List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users != null ? users.getId() : null);
         Map<Long, Boolean> photoLoveMap = new HashMap<>();
@@ -179,8 +157,9 @@ public class FeedService {
             responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
         }
 
-        return responsePhotoList;
+        return new PageImpl<>(responsePhotoList);
     }
+
 
 
 
