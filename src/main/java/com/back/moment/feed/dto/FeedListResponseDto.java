@@ -12,15 +12,9 @@ import java.util.List;
 public class FeedListResponseDto {
     private Page<PhotoFeedResponseDto> photoList1;
     private Page<PhotoFeedResponseDto> photoList2;
-    private boolean hasMorePages;
-    int currentPage;
-    int totalPages;
 
-    public FeedListResponseDto(Page<PhotoFeedResponseDto> photoList1, Page<PhotoFeedResponseDto> photoList2, boolean hasMorePages, int currentPage, int totalPages) {
+    public FeedListResponseDto(Page<PhotoFeedResponseDto> photoList1, Page<PhotoFeedResponseDto> photoList2) {
         this.photoList1 = photoList1;
         this.photoList2 = photoList2;
-        this.hasMorePages = hasMorePages;
-        this.currentPage = currentPage;
-        this.totalPages = totalPages;
     }
 }
