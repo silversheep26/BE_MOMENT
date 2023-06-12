@@ -55,11 +55,6 @@ public class ChatController {
      */
     @MessageMapping("/chat/send")
     public void enterChatRoom(ChatRequestDto chatRequestDto){
-        if(chatRequestDto.getChatRoomId()==null){
-            Long chatRoomId = chatService.createChatRoom(chatRequestDto); // 첫 채팅이면 , 채팅방을 우선 만들고 채팅방의 Id값을 반환한다.
-            chatRequestDto.setChatRoomId(chatRoomId); // Dto에 채팅Id를 넣어준다.
-            msgOperation.convertAndSend("/sub/chat/room",chatRoomId); // 우선적으로 채팅방의 Id 메시지를 한번 보낸다. 프론트에서 채팅방의 아이디를 받아서 사용하게끔
-        }
         ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
         msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
         msgOperation.convertAndSend("/sub/alarm/"+chatRequestDto.getReceiverId(),chatResponseDto); // 알림 기능
@@ -82,20 +77,5 @@ public class ChatController {
     @MessageMapping("/chat/save/{chatRoomId}")
     public void saveChatList(@DestinationVariable("chatRoomId") Long chatRoomId){
         chatService.saveChatList(chatRoomId);
-    }
-
-    //PostMan 연습 컨트롤러
-    @PostMapping("/chat/send")
-    public ResponseEntity<ChatResponseDto> saveChat(@RequestBody ChatRequestDto chatRequestDto){
-        if(chatRequestDto.getChatRoomId()==null){
-            Long chatRoomId = chatService.createChatRoom(chatRequestDto);
-            chatRequestDto.setChatRoomId(chatRoomId);
-        }
-        return ResponseEntity.ok(chatService.saveChat(chatRequestDto));
-    }
-    //PostMan 연습 컨트롤러
-    @PostMapping("/chat/read")
-    public void readChatTwo(ChatResponseDto chatResponseDto){
-        chatService.markAsRead(chatResponseDto);
     }
 }

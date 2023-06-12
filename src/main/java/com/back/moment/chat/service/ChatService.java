@@ -75,7 +75,8 @@ public class ChatService {
                                                           userTwo.getNickName());
             return ResponseEntity.ok(chatRoomResponseDto);
         } else {
-            chatRoomResponseDto = new ChatRoomResponseDto(null,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            Long chatRoomId = createChatRoom(userOne.getId(), userTwoId);
+            chatRoomResponseDto = new ChatRoomResponseDto(chatRoomId,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
             return ResponseEntity.ok(chatRoomResponseDto);
         }
     }
@@ -83,9 +84,9 @@ public class ChatService {
     방을 생성하는 로직이다.
     생성하고  chatRoom의 Id를 반환한다.
      */
-    public Long createChatRoom(ChatRequestDto chatRequestDto){
-        Users userOne = userRepository.findById(chatRequestDto.getSenderId()).orElseThrow(()-> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        Users userTwo = userRepository.findById(chatRequestDto.getReceiverId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+    public Long createChatRoom(Long hostId,Long guestId){
+        Users userOne = userRepository.findById(hostId).orElseThrow(()-> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+        Users userTwo = userRepository.findById(guestId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
         ChatRoom chatRoom = ChatRoom.of(userOne, userTwo,LocalDateTime.now());
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
         return savedChatRoom.getId();
