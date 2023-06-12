@@ -1,12 +1,14 @@
 package com.back.moment.boards.dto;
 
 import com.back.moment.boards.entity.Board;
+import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class ModelBoardListResponseDto {
     private  String nickName;
     private  String boardImgUrl;
     private LocalDateTime createdTime;
-    private List<String> tag_boardList;
+    private List<TagResponseDto> tag_boardList;
 
     public ModelBoardListResponseDto(Board board) {
         this.boardId = board.getId();

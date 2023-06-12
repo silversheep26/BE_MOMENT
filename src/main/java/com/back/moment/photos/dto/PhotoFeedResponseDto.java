@@ -1,5 +1,6 @@
 package com.back.moment.photos.dto;
 
+import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class PhotoFeedResponseDto {
     private RoleEnum role;
     private int loveCnt;
     private String content;
-    private List<String> tag_photoList;
+    private List<TagResponseDto> tag_photoList;
     private boolean loveCheck;
     private LocalDateTime createdTime;
 

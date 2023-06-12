@@ -2,6 +2,7 @@ package com.back.moment.photos.entity;
 
 import com.back.moment.boards.entity.Tag_Board;
 import com.back.moment.common.TimeStamped;
+import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
@@ -61,11 +64,12 @@ public class Photo extends TimeStamped {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getTagListWithWell(){
-        List<String> tagList = new ArrayList<>();
+    public List<TagResponseDto> getTagListWithWell(){
+        List<TagResponseDto> tagList = new ArrayList<>();
         for(Tag_Photo tag_photo : tag_photoList){
             String tag = tag_photo.getPhotoHashTag().getHashTag();
-            tagList.add("#" + tag);
+            TagResponseDto tagResponseDto = new TagResponseDto(tag_photo.getPhotoHashTag().getId(), "#" + tag);
+            tagList.add(tagResponseDto);
         }
         return tagList;
     }
