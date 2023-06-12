@@ -118,24 +118,24 @@ public class FeedService {
         List<Photo> allPhoto = photoRepository.getAllPhotoWithTag();
         List<Photo> allPhotoByLove = photoRepository.getAllPhotoWithTagByLove();
 
-        int currentPage = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
+//        int currentPage = pageable.getPageNumber();
+//        int pageSize = pageable.getPageSize();
+//
+//        // Calculate the start and end index for the current page
+//        int startIndex = currentPage * pageSize;
+//        int endIndex = Math.min(startIndex + pageSize, allPhoto.size());
+//
+//        List<Photo> currentPagePhotos1 = allPhoto.subList(startIndex, endIndex);
+//        List<Photo> currentPagePhotos2 = allPhotoByLove.subList(startIndex, endIndex);
+//
+//        boolean hasMorePages = endIndex < allPhoto.size();
+//
+//        int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
 
-        // Calculate the start and end index for the current page
-        int startIndex = currentPage * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, allPhoto.size());
+        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, allPhoto, users);
+        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, allPhotoByLove, users);
 
-        List<Photo> currentPagePhotos1 = allPhoto.subList(startIndex, endIndex);
-        List<Photo> currentPagePhotos2 = allPhotoByLove.subList(startIndex, endIndex);
-
-        boolean hasMorePages = endIndex < allPhoto.size();
-
-        int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
-
-        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, currentPagePhotos1, users);
-        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, currentPagePhotos2, users);
-
-        FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2, hasMorePages, currentPage, totalPages);
+        FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
@@ -157,7 +157,34 @@ public class FeedService {
             responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
         }
 
-        return new PageImpl<>(responsePhotoList, pageable, responsePhotoList.size());
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = Math.min(startIndex + pageable.getPageSize(), photos.size());
+        List<PhotoFeedResponseDto> pageItems = responsePhotoList.subList(startIndex, endIndex);
+
+        int totalPages = (int) Math.ceil((double) photos.size() / pageable.getPageSize());
+
+        boolean isFirstPage = startIndex == 0;
+        boolean isLastPage = endIndex >= photos.size();
+
+        Page<PhotoFeedResponseDto> page = new PageImpl<>(pageItems, pageable, photos.size());
+        Pageable modifiedPageable = isLastPage ? pageable.withPage(totalPages - 1) : pageable;
+
+        return new PageImpl<>(pageItems, modifiedPageable, photos.size()) {
+            @Override
+            public boolean isFirst() {
+                return isFirstPage;
+            }
+
+            @Override
+            public boolean isLast() {
+                return isLastPage;
+            }
+
+            @Override
+            public int getTotalPages() {
+                return totalPages;
+            }
+        };
     }
 
 
