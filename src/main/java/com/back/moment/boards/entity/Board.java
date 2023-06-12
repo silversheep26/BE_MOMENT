@@ -1,6 +1,7 @@
 package com.back.moment.boards.entity;
 
 import com.back.moment.boards.dto.BoardRequestDto;
+import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.common.TimeStamped;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
@@ -84,11 +85,12 @@ public class Board extends TimeStamped {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getTagListWithWell(){
-        List<String> tagList = new ArrayList<>();
+    public List<TagResponseDto> getTagListWithWell(){
+        List<TagResponseDto> tagList = new ArrayList<>();
         for(Tag_Board tag_board : tag_boardList){
             String tag = tag_board.getBoardHashTag().getHashTag();
-            tagList.add("#" + tag);
+            TagResponseDto tagResponseDto = new TagResponseDto(tag_board.getBoardHashTag().getId(), "#" + tag);
+            tagList.add(tagResponseDto);
         }
         return tagList;
     }
