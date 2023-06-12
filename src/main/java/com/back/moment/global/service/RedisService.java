@@ -67,12 +67,14 @@ public class RedisService {
     }
 
     private List<Chat> getChats(Long chatRoomId){
-        Set<String> chats = redisTemplate.keys("Chat" + chatRoomId + "*");
+        Set<String> chatKeys = redisTemplate.keys("Chat" + chatRoomId + "*");
         ArrayList<Chat> chatList = new ArrayList<>();
-        for (String c : chats) {
+        for (String c : chatKeys) {
             try {
-                Chat chat = objectMapper.readValue(c, Chat.class);
+                String chatJson = redisTemplate.opsForValue().get(c);
+                Chat chat = objectMapper.readValue(chatJson, Chat.class);
                 chatList.add(chat);
+                deleteValues(c);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
