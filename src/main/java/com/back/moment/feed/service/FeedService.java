@@ -138,65 +138,50 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
-        List<Photo> getAllPhoto = photoRepository.getAllPhotoWithTag();
+        List<Photo> allPhoto = photoRepository.getAllPhotoWithTag();
+        List<Photo> allPhotoByLove = photoRepository.getAllPhotoWithTagByLove();
 
         int currentPage = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
 
         // Calculate the start and end index for the current page
         int startIndex = currentPage * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, getAllPhoto.size());
+        int endIndex = Math.min(startIndex + pageSize, allPhoto.size());
 
-        List<Photo> currentPagePhotos = getAllPhoto.subList(startIndex, endIndex);
+        List<Photo> currentPagePhotos1 = allPhoto.subList(startIndex, endIndex);
+        List<Photo> currentPagePhotos2 = allPhotoByLove.subList(startIndex, endIndex);
 
-        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(currentPagePhotos.size());
+        List<PhotoFeedResponseDto> responsePhotoList1 = createResponsePhotoList(currentPagePhotos1, users);
+        List<PhotoFeedResponseDto> responsePhotoList2 = createResponsePhotoList(currentPagePhotos2, users);
 
-        if (users != null) {
-            List<Long> photoIdList = getAllPhoto.stream().map(Photo::getId).collect(Collectors.toList());
-            List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users.getId());
-            Map<Long, Boolean> photoLoveMap = new HashMap<>();
+        boolean hasMorePages = endIndex < allPhoto.size();
 
-            for (Object[] result : photoLoveList) {
-                Long photoId = (Long) result[0];
-                Boolean isLoved = (Boolean) result[1];
-                photoLoveMap.put(photoId, isLoved);
-            }
+        int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
 
-            for (Photo photo : currentPagePhotos) {
-                boolean isLoved = photoLoveMap.getOrDefault(photo.getId(), false);
-                responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
-            }
-        } else {
-            for (Photo photo : currentPagePhotos) {
-                responsePhotoList.add(new PhotoFeedResponseDto(photo, false));
-            }
+        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList1, responsePhotoList2, hasMorePages, currentPage, totalPages), HttpStatus.OK);
+    }
+
+    private List<PhotoFeedResponseDto> createResponsePhotoList(List<Photo> photos, Users users) {
+        List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
+        List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users != null ? users.getId() : null);
+        Map<Long, Boolean> photoLoveMap = new HashMap<>();
+
+        for (Object[] result : photoLoveList) {
+            Long photoId = (Long) result[0];
+            Boolean isLoved = (Boolean) result[1];
+            photoLoveMap.put(photoId, isLoved);
         }
 
-//        // Sort the responsePhotoList by loveCnt in descending order
-//        responsePhotoList.sort(Comparator.comparingInt(PhotoFeedResponseDto::getLoveCnt).reversed());
-//
-//        // Get the top three photos
-//        List<PhotoFeedResponseDto> topThreePhotos = responsePhotoList.stream()
-//                .limit(4)
-//                .toList();
-//
-//        // Get the remaining photos
-//        List<PhotoFeedResponseDto> remainingPhotos = responsePhotoList.stream()
-//                .skip(4)
-//                .sorted(Comparator.comparing(PhotoFeedResponseDto::getCreatedTime).reversed())
-//                .toList();
-//
-//        // Add the top three photos and remaining photos to the response list
-//        List<PhotoFeedResponseDto> finalPhotoList = new ArrayList<>();
-//        finalPhotoList.addAll(topThreePhotos);
-//        finalPhotoList.addAll(remainingPhotos);
+        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(photos.size());
 
-        boolean hasMorePages = endIndex < getAllPhoto.size();
+        for (Photo photo : photos) {
+            boolean isLoved = photoLoveMap.getOrDefault(photo.getId(), false);
+            responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
+        }
 
-        int totalPages = (int) Math.ceil((double) getAllPhoto.size() / pageSize) - 1;
-
-        return new ResponseEntity<>(new FeedListResponseDto(responsePhotoList, hasMorePages, currentPage, totalPages), HttpStatus.OK);
+        return responsePhotoList;
     }
+
 
 
 
