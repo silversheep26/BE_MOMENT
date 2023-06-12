@@ -26,5 +26,6 @@ echo "> Now Nginx proxies to ${TARGET_PORT}."
 
 # nginx를 reload 해준다.
 sudo service nginx reload
-
+sudo iptables -t nat -D PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${CURRENT_PORT}
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port ${TARGET_PORT}
 echo "> Nginx reloaded."
