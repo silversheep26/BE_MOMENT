@@ -19,6 +19,9 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.createdAt desc")
     List<Photo> getAllPhotoWithTag();
 
+    @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.loveCnt desc")
+    List<Photo> getAllPhotoWithTagByLove();
+
     @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p")
     List<OnlyPhotoResponseDto> getAllOnlyPhoto();
 
