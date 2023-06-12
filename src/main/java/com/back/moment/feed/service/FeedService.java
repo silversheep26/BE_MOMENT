@@ -132,14 +132,14 @@ public class FeedService {
 
         int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
 
-        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(currentPagePhotos1, users);
-        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(currentPagePhotos2, users);
+        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, currentPagePhotos1, users);
+        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, currentPagePhotos2, users);
 
         FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2, hasMorePages, currentPage, totalPages);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    private Page<PhotoFeedResponseDto> createResponsePhotoPage(List<Photo> photos, Users users) {
+    private Page<PhotoFeedResponseDto> createResponsePhotoPage(Pageable pageable, List<Photo> photos, Users users) {
         List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
         List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users != null ? users.getId() : null);
         Map<Long, Boolean> photoLoveMap = new HashMap<>();
@@ -157,7 +157,7 @@ public class FeedService {
             responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
         }
 
-        return new PageImpl<>(responsePhotoList);
+        return new PageImpl<>(responsePhotoList, pageable, responsePhotoList.size());
     }
 
 
