@@ -6,7 +6,7 @@ PROJECT_ROOT="/home/ubuntu/moments" # 프로젝트 루트
 JAR_FILE="$PROJECT_ROOT/build/libs/moment-0.0.1-SNAPSHOT.jar" # JAR_FILE (어쩌구저쩌구.jar)
 
 # service_url.inc 에서 현재 서비스를 하고 있는 WAS의 포트 번호 가져오기
-CURRENT_PORT=$(cat /etc/nginx/conf.d/service-url.inc | grep -Po '[0-9]+' | tail -1)
+CURRENT_PORT=$(cat /home/ubuntu/service-url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
 
 echo "> Current port of running WAS is ${CURRENT_PORT}."
