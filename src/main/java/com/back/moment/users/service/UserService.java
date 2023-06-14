@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,6 @@ public class UserService {
     public static final String BEARER_PREFIX = "Bearer ";
     private final S3Uploader s3Uploader;
     private final JwtUtil jwtUtil;
-    //    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
 
     @Transactional

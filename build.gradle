@@ -1,3 +1,10 @@
+buildscript { //QUERY DSL 관련
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.6'
@@ -17,6 +24,8 @@ configurations {
 repositories {
     mavenCentral()
 }
+
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -71,6 +80,15 @@ dependencies {
     // swagger 적용
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+    //QUERY DSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    // 다른 필요한 JPA 구현체 의존성 추가
+
+    annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+
 }
 
 //tasks.named('test') {
@@ -86,3 +104,11 @@ task buildZip(type: Zip) {
 }
 
 assemble.dependsOn buildZip
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
+}
