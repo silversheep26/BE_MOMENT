@@ -69,7 +69,7 @@ public class UserService {
             throw new ApiException(ExceptionEnum.DUPLICATED_NICKNAME);
         }
         if (findEmail.isPresent()) {
-            throw new ApiException(ExceptionEnum.DUPLICATED_USER_NAME);
+            throw new ApiException(ExceptionEnum.EXIST_MAIL);
         }
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());
