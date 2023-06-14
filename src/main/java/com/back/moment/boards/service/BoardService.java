@@ -179,6 +179,25 @@ public class BoardService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<Void> updateBoard(Long boardId, UpdateBoardRequestDto update, Users users){
+        Board board = existBoard(boardId);
+        if(!Objects.equals(board.getUsers().getId(), users.getId()))
+            throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
+
+        board.updateBoard(update);
+        boardRepository.save(board);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<BoardListResponseDto> searchBoard(String category, String keyWord){
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     // 유저 존재 확인
     public void existUser(String email){
         usersRepository.findByEmail(email).orElseThrow(

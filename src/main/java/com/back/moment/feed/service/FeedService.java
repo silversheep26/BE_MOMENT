@@ -47,38 +47,51 @@ public class FeedService {
     private final UsersRepository usersRepository;
 
     @Transactional
-    public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTag, MultipartFile image, Users users) throws IOException {
-        List<String> hashTags;
-        if(users.getRole() != RoleEnum.NONE) {
+    public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
+        if (users.getRole() == RoleEnum.NONE) {
+            throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
+        }
+
+        List<Photo> uploadedPhotos = new ArrayList<>();
+
+        // Upload and save each image
+        for (MultipartFile image : images) {
             String imageUrl = s3Uploader.upload(image);
+
             Photo photo = new Photo(users, imageUrl);
             photo.updateContents(contents);
             photoRepository.save(photo);
+            uploadedPhotos.add(photo);
+        }
 
-            if(photoHashTag != null) {
-                hashTags = photoHashTag.stream()
-                        .filter(tag -> tag.startsWith("#"))
-                        .collect(Collectors.toList());
+        // Process photo hash tags
+        if (photoHashTags != null && !photoHashTags.isEmpty()) {
+            List<String> validHashTags = photoHashTags.stream()
+                    .filter(tag -> tag.startsWith("#"))
+                    .toList();
 
-                for (String hashTag : hashTags) {
-                    String photoHashTagString = hashTag.substring(1);
-                    PhotoHashTag existTag = photoHashTagRepository.findByHashTag(photoHashTagString);
-                    if (existTag != null) {
-                        Tag_Photo tag_photo = new Tag_Photo(existTag, photo);
-                        tag_photoRepository.save(tag_photo);
-                    } else {
-                        PhotoHashTag photoHashTagTable = new PhotoHashTag(photoHashTagString);
-                        photoHashTagRepository.save(photoHashTagTable);
-                        Tag_Photo tag_photo = new Tag_Photo(photoHashTagTable, photo);
-                        tag_photoRepository.save(tag_photo);
-                    }
+            for (String hashTag : validHashTags) {
+                String photoHashTagString = hashTag.substring(1);
+                PhotoHashTag existTag = photoHashTagRepository.findByHashTag(photoHashTagString);
+                PhotoHashTag photoHashTagTable;
+
+                if (existTag != null) {
+                    photoHashTagTable = existTag;
+                } else {
+                    photoHashTagTable = new PhotoHashTag(photoHashTagString);
+                    photoHashTagRepository.save(photoHashTagTable);
+                }
+
+                for (Photo photo : uploadedPhotos) {
+                    Tag_Photo tag_photo = new Tag_Photo(photoHashTagTable, photo);
+                    tag_photoRepository.save(tag_photo);
                 }
             }
-        } else{
-            throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
+
         return ResponseEntity.ok(null);
     }
+
 
     @Transactional
     public ResponseEntity<LoveCheckResponseDto> lovePhoto(Long photoId, Users users) {

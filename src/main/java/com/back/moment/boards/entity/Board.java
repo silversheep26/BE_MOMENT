@@ -1,6 +1,7 @@
 package com.back.moment.boards.entity;
 
 import com.back.moment.boards.dto.BoardRequestDto;
+import com.back.moment.boards.dto.UpdateBoardRequestDto;
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.common.TimeStamped;
 import com.back.moment.users.entity.RoleEnum;
@@ -93,5 +94,26 @@ public class Board extends TimeStamped {
             tagList.add(tagResponseDto);
         }
         return tagList;
+    }
+
+    public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto){
+        if (updateBoardRequestDto.getTitle() != null) {
+            this.title = updateBoardRequestDto.getTitle();
+        }
+        if (updateBoardRequestDto.getContent() != null) {
+            this.content = updateBoardRequestDto.getContent();
+        }
+        if (updateBoardRequestDto.getLocation() != null) {
+            this.location = updateBoardRequestDto.getLocation();
+        }
+        if (updateBoardRequestDto.getPay() != null) {
+            this.pay = updateBoardRequestDto.getPay();
+        }
+        if (updateBoardRequestDto.getApply() != null) {
+            this.apply = updateBoardRequestDto.getApply();
+        }
+        if (updateBoardRequestDto.getDeadLine() != null) {
+            this.deadLine = updateBoardRequestDto.getDeadLine();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.back.moment.boards.controller;
 import com.back.moment.boards.dto.BoardDetailResponseDto;
 import com.back.moment.boards.dto.BoardListResponseDto;
 import com.back.moment.boards.dto.BoardRequestDto;
+import com.back.moment.boards.dto.UpdateBoardRequestDto;
 import com.back.moment.boards.service.BoardService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +55,14 @@ public class BoardController {
         return boardService.deleteBoard(boardId, userDetails.getUsers());
     }
 
+    // 게시글 수정
+    @PutMapping("/{boardId}")
+    public ResponseEntity<Void> updateBoard(@PathVariable Long boardId,
+                                            @RequestBody UpdateBoardRequestDto update,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.updateBoard(boardId, update, userDetails.getUsers());
+    }
+
 }
 
-/*
-test
- */
+
