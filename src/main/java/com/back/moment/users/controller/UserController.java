@@ -1,5 +1,7 @@
 package com.back.moment.users.controller;
 
+import com.back.moment.email.dto.EmailRequestDto;
+import com.back.moment.email.service.EmailService;
 import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -27,6 +29,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final EmailService emailService;
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,4 +82,9 @@ public class UserController {
 //        return emailService.codeCheck(codeRequestDto);
 //    }
 
+    // 비밀번호 찾기
+    @PostMapping("/password")
+    public ResponseEntity<Void> sendNewPassword(@RequestPart(name = "emailRequestDto") EmailRequestDto emailRequestDto) {
+        return emailService.sendMessageForPassword(emailRequestDto);
+    }
 }

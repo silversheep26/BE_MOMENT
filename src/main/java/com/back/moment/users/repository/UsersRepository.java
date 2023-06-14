@@ -20,6 +20,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByEmail(String email);
     Optional<Users> findByNickName(String nickName);
     Optional<Users> findByKakaoId(Long id);
+    boolean existsByEmailAndKakaoIdContaining(String email, Long kakaodId);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u where u.role = :role ORDER BY u.totalLoveCnt DESC")
     List<ForMainResponseDto> findTop4ByRole(@Param("role") RoleEnum role, Pageable pageable);
