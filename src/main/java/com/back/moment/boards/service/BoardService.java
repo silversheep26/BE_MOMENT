@@ -7,6 +7,7 @@ import com.back.moment.boards.entity.Tag_Board;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.boards.repository.BoardHashTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
+import com.back.moment.boards.repository.boardSearch.BoardSearch;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.s3.S3Uploader;
@@ -14,6 +15,7 @@ import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ public class BoardService {
     private final Tag_BoardRepository tag_boardRepository;
     private final UsersRepository usersRepository;
     private final S3Uploader s3Uploader;
+    private final BoardSearch boardSearch;
 
     // 게시글 생성
     @Transactional
@@ -192,10 +195,10 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity<BoardListResponseDto> searchBoard(String category, String keyWord){
+    public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, Pageable pageable){
+        Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(location, userNickName, keyword, pageable);
 
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(boardPage);
     }
 
     // 유저 존재 확인

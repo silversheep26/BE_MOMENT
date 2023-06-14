@@ -1,12 +1,10 @@
 package com.back.moment.boards.controller;
 
-import com.back.moment.boards.dto.BoardDetailResponseDto;
-import com.back.moment.boards.dto.BoardListResponseDto;
-import com.back.moment.boards.dto.BoardRequestDto;
-import com.back.moment.boards.dto.UpdateBoardRequestDto;
+import com.back.moment.boards.dto.*;
 import com.back.moment.boards.service.BoardService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -63,6 +61,15 @@ public class BoardController {
         return boardService.updateBoard(boardId, update, userDetails.getUsers());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam String location,
+                                                                        @RequestParam String userNickName,
+                                                                        @RequestParam String keyWord,
+                                                                        @RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "5") int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return boardService.searchBoard(location, userNickName, keyWord, pageable);
+    }
 }
 
 
