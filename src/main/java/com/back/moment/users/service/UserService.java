@@ -109,8 +109,9 @@ public class UserService {
 
         try {
             Users users = usersRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("없는 이메일 입니다.")
+                () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
             );
+
             if (!passwordEncoder.matches(password, users.getPassword())) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
