@@ -10,6 +10,7 @@ public class ErrorResponse {
 
     private String message;
     private int status;
+    private String code;
     private String detail;
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ExceptionEnum e) {
@@ -18,6 +19,7 @@ public class ErrorResponse {
                 .body(ErrorResponse.builder()
                         .message(e.getDetailMsg())
                         .status(e.getStatus().value())
+                        .code(e.getCode())
                         .build());
     }
 
