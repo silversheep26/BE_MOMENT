@@ -35,7 +35,7 @@ public enum ExceptionEnum {
     NOT_FOUND_ROLE(HttpStatus.NOT_FOUND, "404_5", "Role이 결정되지 않았습니다."),
 
     // 409 Conflict
-    DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "409", "중복된 이메일이 존재합니다."),
+//    DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "409", "중복된 이메일이 존재합니다."),
     DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "409", "중복된 닉네임이 존재합니다."),
 
     // 500
