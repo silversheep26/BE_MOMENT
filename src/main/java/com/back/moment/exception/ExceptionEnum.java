@@ -25,6 +25,7 @@ public enum ExceptionEnum {
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),
     LOGIN(HttpStatus.UNAUTHORIZED, "401_1", "로그인 후 이용가능합니다."),
+    EXIST_KAKAO(HttpStatus.UNAUTHORIZED, "401_2", "카카오 가입자는 비밀번호 변경이 불가능합니다."),
 
     // 404 Not Found
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "404_1", "게시글이 존재하지 않습니다."),

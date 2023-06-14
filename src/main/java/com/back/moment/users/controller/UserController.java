@@ -1,5 +1,7 @@
 package com.back.moment.users.controller;
 
+import com.back.moment.email.dto.EmailRequestDto;
+import com.back.moment.email.service.EmailService;
 import com.back.moment.oauth.KakaoService;
 import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +30,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final EmailService emailService;
 
     @PostMapping(value = "/signup", consumes = {MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,4 +83,7 @@ public class UserController {
 //        return emailService.codeCheck(codeRequestDto);
 //    }
 
-}
+    @PostMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestPart EmailRequestDto emailRequestDto) {
+        return emailService.sendMessageForPassword(emailRequestDto);
+    }}

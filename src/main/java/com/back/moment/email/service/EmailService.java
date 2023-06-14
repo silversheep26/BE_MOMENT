@@ -11,6 +11,7 @@ import com.back.moment.users.repository.UsersRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import javax.swing.Spring;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class EmailService {
 //    private final EmailRepository emailRepository;
     private final UsersRepository usersRepository;
     private final RedisService redisService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${spring.mail.username}")
     private String id;
@@ -119,6 +122,65 @@ public class EmailService {
 //        if (!email.getCode().equals(codeRequestDto.getCode())) {
 //            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
 //        }
+        return ResponseEntity.ok(null);
+    }
+
+
+
+
+
+    // 비밀번호 변
+    // 비밀번호 만들기
+    public MimeMessage createMessageForPassword(String to, String password) throws MessagingException, UnsupportedEncodingException {
+        log.info("보내는 대상 : " + to);
+        log.info("인증 번호 : " + password);
+        MimeMessage message = javaMailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, to); // to 보내는 대상
+        message.setSubject("Moment 변경 비밀번호: "); //메일 제목
+
+        // 메일 내용 메일의 subtype을 html로 지정하여 html문법 사용 가능
+        String msg = "";
+        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
+        msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 생성된 비밀번호로 로그인 후 비밀번호를 변경해주세요.</p>";
+        msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
+        msg += password;
+        msg += "</td></tr></tbody></table></div>";
+
+        message.setText(msg, "utf-8", "html"); //내용, charset타입, subtype
+        message.setFrom(new InternetAddress(id, "Moment 고객센터")); //보내는 사람의 메일 주소, 보내는 사람 이름
+
+        return message;
+    }
+
+    // 새 비밀번호 만들기
+    public static String createPassword() {
+        String password = "";
+        for (int i = 0; i < 12; i++) {
+            password += (char) ((Math.random() * 26) + 97);
+        }
+        return password;
+    }
+
+    public ResponseEntity<Void> sendMessageForPassword(EmailRequestDto emailRequestDto) {
+        Users users = usersRepository.findByEmail(emailRequestDto.getEmail()).orElseThrow(
+            () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
+        );
+
+        if(users.getKakaoId() != null) throw new ApiException(ExceptionEnum.EXIST_KAKAO); // 카카오 아이디 있는 사람은 불가
+        String password = createPassword(); // 비밀번호 생성
+        MimeMessage message = null;
+        try {
+            message = createMessageForPassword(emailRequestDto.getEmail(), password); // 전송 메시지 작성 메서드 호출
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
+        }
+        try {
+            javaMailSender.send(message); // 메일 발송
+        } catch (MailException es) {
+            throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
+        }
+        users.setPassword(passwordEncoder.encode(password));
+        log.info("비밀번호 : " + password);
         return ResponseEntity.ok(null);
     }
 }
