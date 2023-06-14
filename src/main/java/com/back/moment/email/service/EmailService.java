@@ -167,10 +167,7 @@ public class EmailService {
             () -> new ApiException(ExceptionEnum.NOT_MATCH_USERS)
         );
 
-//        boolean existEmail = usersRepository.existsByEmail(emailRequestDto.getEmail());
-        boolean existEmailAndKakao = usersRepository.existsByEmailAndKakaoIdContaining(emailRequestDto.getEmail(), users.getKakaoId());
-//        if(!existEmail) throw new ApiException(ExceptionEnum.NOT_FOUND_USER); // 없는 email인 경우
-        if(existEmailAndKakao) throw new ApiException(ExceptionEnum.EXIST_KAKAO); // 카카오 아이디 있는 사람은 불가
+        if(users.getKakaoId() != null) throw new ApiException(ExceptionEnum.EXIST_KAKAO); // 카카오 아이디 있는 사람은 불가
         String password = createPassword(); // 비밀번호 생성
         MimeMessage message = null;
         try {
