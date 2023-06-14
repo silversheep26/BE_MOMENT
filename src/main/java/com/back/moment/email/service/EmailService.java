@@ -40,7 +40,6 @@ public class EmailService {
     private final RedisService redisService;
     private final PasswordEncoder passwordEncoder;
 
-
     @Value("${spring.mail.username}")
     private String id;
 

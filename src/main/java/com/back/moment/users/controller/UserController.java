@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -82,9 +83,7 @@ public class UserController {
 //        return emailService.codeCheck(codeRequestDto);
 //    }
 
-    // 비밀번호 찾기
     @PostMapping("/password")
-    public ResponseEntity<Void> sendNewPassword(@RequestPart(name = "emailRequestDto") EmailRequestDto emailRequestDto) {
+    public ResponseEntity<Void> changePassword(@RequestPart EmailRequestDto emailRequestDto) {
         return emailService.sendMessageForPassword(emailRequestDto);
-    }
-}
+    }}
