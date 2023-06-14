@@ -19,6 +19,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,8 @@ public class EmailService {
 //    private final EmailRepository emailRepository;
     private final UsersRepository usersRepository;
     private final RedisService redisService;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Value("${spring.mail.username}")
     private String id;
@@ -180,7 +183,7 @@ public class EmailService {
         } catch (MailException es) {
             throw new ApiException(ExceptionEnum.FAIL_MAIL_SEND);
         }
-        users.setPassword(password);
+        users.setPassword(passwordEncoder.encode(password));
         log.info("비밀번호 : " + password);
         return ResponseEntity.ok(null);
     }
