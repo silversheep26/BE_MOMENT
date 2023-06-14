@@ -2,6 +2,7 @@ package com.back.moment.boards.repository;
 
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.boards.entity.Board;
+import com.back.moment.boards.repository.boardSearch.BoardSearch;
 import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardSearch {
     @Query("select new com.back.moment.boards.dto.MyPageBoardListResponseDto(b) from Board b order by b.createdAt desc")
     List<MyPageBoardListResponseDto> selectAllBoardList();
 

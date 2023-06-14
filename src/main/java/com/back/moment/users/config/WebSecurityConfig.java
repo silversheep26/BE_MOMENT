@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers("/emails/**").permitAll()
                 .requestMatchers("/main", "/home").permitAll()
-                .requestMatchers("/feeds", "/boards").permitAll()
+                .requestMatchers("/feeds", "/boards", "/boards/search").permitAll()
                 .requestMatchers("/party/test-vepo").permitAll()
                 .requestMatchers("/test").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
@@ -118,7 +118,7 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry){
                 registry.addMapping("/**")
                     .allowedOrigins("*")
-                    .allowedOrigins("http://localhost:8080", "http://localhost:3000","https://moment-chi.vercel.app",
+                    .allowedOrigins("http://localhost:8080", "http://localhost:3000","https://www.momentapp.site","https://moment-chi.vercel.app",
                         "http://moment-photo.ap-northeast-2.amazonaws.com",  // s3
                         "http://moment.cadbf9mahvf5.ap-northeast-2.rds.amazonaws.com")    // db(rds)
 //                        .allowedOriginPatterns("*")
