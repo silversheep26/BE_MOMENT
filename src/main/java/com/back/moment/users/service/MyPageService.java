@@ -13,7 +13,6 @@ import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
 import com.back.moment.users.dto.UpdateRequestDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +81,7 @@ public class MyPageService {
             users.setPassword(password);
         }
         if(updateRequestDto.getRole() != null && !updateRequestDto.getRole().isEmpty()){
-            RoleEnum role = RoleEnum.valueOf(updateRequestDto.getRole());
+            String role = updateRequestDto.getRole();
             users.setRole(role);
         }
         if(profileImg != null) {

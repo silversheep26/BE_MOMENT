@@ -16,7 +16,6 @@ import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;
@@ -72,7 +71,7 @@ public class UserService {
         Users users = new Users();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String gender = requestDto.getGender();
-        RoleEnum role = requestDto.getRole();
+        String role = requestDto.getRole();
 
         users.saveUsers(requestDto, password, gender, role);
         usersRepository.save(users);

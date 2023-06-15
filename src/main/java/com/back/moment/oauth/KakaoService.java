@@ -6,7 +6,6 @@ import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;
@@ -93,8 +92,7 @@ public class KakaoService {
     @Transactional
     public ResponseEntity<Void> saveRole(Users users, String role){
         Users findUser = usersRepository.findById(users.getId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        RoleEnum roleEnum = RoleEnum.valueOf(role);
-        findUser.setRole(roleEnum);
+        findUser.setRole(role);
         return ResponseEntity.ok(null);
     }
 

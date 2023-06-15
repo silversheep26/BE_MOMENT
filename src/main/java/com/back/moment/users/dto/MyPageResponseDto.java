@@ -2,7 +2,6 @@ package com.back.moment.users.dto;
 
 import com.back.moment.boards.dto.MyPageBoardListResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class MyPageResponseDto {
     private String profileUrl;
     private String nickName;
     private Long hostId;
-    private RoleEnum role;
+    private String role;
     private int boardCnt;
     private int totalPhotoLoveCnt;
     private boolean checkKakaoId = false;

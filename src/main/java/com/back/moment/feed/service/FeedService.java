@@ -16,7 +16,6 @@ import com.back.moment.photos.repository.PhotoHashTagRepository;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.s3.S3Uploader;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +47,7 @@ public class FeedService {
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
-        if (users.getRole() == RoleEnum.NONE) {
+        if (users.getRole() == "NONE") {
             throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
 

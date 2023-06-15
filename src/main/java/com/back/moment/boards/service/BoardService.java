@@ -11,7 +11,6 @@ import com.back.moment.boards.repository.boardSearch.BoardSearch;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.s3.S3Uploader;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class BoardService {
     @Transactional
     public ResponseEntity<Void> createBoard(BoardRequestDto boardRequestDto, Users users, MultipartFile boardImg){
         Board board = new Board();
-        if(users.getRole() != RoleEnum.NONE) {
+        if(users.getRole() != null) {
 
             board.saveBoard(boardRequestDto, users);
             if (!boardImg.isEmpty()) {
@@ -93,8 +92,8 @@ public class BoardService {
     @Transactional(readOnly = true)
     public ResponseEntity<BoardListResponseDto> getAllBoards(Pageable pageable) {
 
-        List<Board> modelBoardList = boardRepository.getModelBoardListByHostIdWithFetch(RoleEnum.MODEL);
-        List<Board> photographerBoardList = boardRepository.getPhotographerBoardListByHostIdWithFetch(RoleEnum.PHOTOGRAPHER);
+        List<Board> modelBoardList = boardRepository.getModelBoardListByHostIdWithFetch("MODEL");
+        List<Board> photographerBoardList = boardRepository.getPhotographerBoardListByHostIdWithFetch("PHOTOGRAPHER");
         Page<ModelBoardListResponseDto> modelBoardPage;
         Page<PhotographerBoardListResponseDto> photographerBoardPage;
 
@@ -194,8 +193,8 @@ public class BoardService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Transactional
-    public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, RoleEnum role, Pageable pageable){
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, String role, Pageable pageable){
         System.out.println("------");
         Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(location, userNickName, keyword, role, pageable);
 

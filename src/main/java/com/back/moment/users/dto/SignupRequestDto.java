@@ -1,6 +1,5 @@
 package com.back.moment.users.dto;
 
-import com.back.moment.users.entity.RoleEnum;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -26,6 +25,6 @@ public class SignupRequestDto {
 
     private String gender;
 
-    private RoleEnum role;
+    private String role;
 
 }

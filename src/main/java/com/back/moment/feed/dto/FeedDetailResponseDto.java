@@ -2,7 +2,6 @@ package com.back.moment.feed.dto;
 
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.photos.entity.Photo;
-import com.back.moment.users.entity.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +21,7 @@ public class FeedDetailResponseDto {
     private String profileUrl;
     private String nickName;
     private String contents;
-    private RoleEnum role;
+    private String role;
     private boolean checkLove = false;
     private List<TagResponseDto> tag_photoList;
     private LocalDateTime createdTime;

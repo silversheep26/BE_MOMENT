@@ -2,7 +2,6 @@ package com.back.moment.photos.dto;
 
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.photos.entity.Photo;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class PhotoFeedResponseDto {
     private String photoUrl;
     private String nickName;
     private String profileImgUrl;
-    private RoleEnum role;
+    private String role;
     private int loveCnt;
     private String content;
     private List<TagResponseDto> tag_photoList;
