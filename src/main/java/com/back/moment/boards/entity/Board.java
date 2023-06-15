@@ -96,24 +96,12 @@ public class Board extends TimeStamped {
         return tagList;
     }
 
-    public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto){
-        if (updateBoardRequestDto.getTitle() != null) {
-            this.title = updateBoardRequestDto.getTitle();
-        }
-        if (updateBoardRequestDto.getContent() != null) {
-            this.content = updateBoardRequestDto.getContent();
-        }
-        if (updateBoardRequestDto.getLocation() != null) {
-            this.location = updateBoardRequestDto.getLocation();
-        }
-        if (updateBoardRequestDto.getPay() != null) {
-            this.pay = updateBoardRequestDto.getPay();
-        }
-        if (updateBoardRequestDto.getApply() != null) {
-            this.apply = updateBoardRequestDto.getApply();
-        }
-        if (updateBoardRequestDto.getDeadLine() != null) {
-            this.deadLine = updateBoardRequestDto.getDeadLine();
-        }
+    public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto) {
+        this.title = updateBoardRequestDto.getTitle() != null ? updateBoardRequestDto.getTitle() : this.getTitle();
+        this.content = updateBoardRequestDto.getContent() != null ? updateBoardRequestDto.getContent() : this.getContent();
+        this.location = updateBoardRequestDto.getLocation() != null ? updateBoardRequestDto.getLocation() : this.getLocation();
+        this.pay = updateBoardRequestDto.getPay() != null ? updateBoardRequestDto.getPay() : this.getPay();
+        this.apply = updateBoardRequestDto.getApply() != null ? updateBoardRequestDto.getApply() : this.getApply();
+        this.deadLine = updateBoardRequestDto.getDeadLine() != null ? updateBoardRequestDto.getDeadLine() : this.getDeadLine();
     }
 }

@@ -31,7 +31,7 @@ public class BoardSearchImpl implements BoardSearch{
     }
 
     @Override
-    public Page<BoardSearchListResponseDto> searchBoards(String location, String userNickName, String keyWord, Pageable pageable){
+    public Page<BoardSearchListResponseDto> searchBoards(String location, String userNickName, String keyWord, RoleEnum role, Pageable pageable){
         QBoard board = QBoard.board;
         QUsers users = QUsers.users;
         QTag_Board tag_board = QTag_Board.tag_Board;
@@ -42,8 +42,13 @@ public class BoardSearchImpl implements BoardSearch{
                 .from(board)
                 .leftJoin(board.users, users)
                 .leftJoin(board.tag_boardList, tag_board)
-                .leftJoin(tag_board.boardHashTag, boardHashTag)
-                .where(users.role.eq(RoleEnum.PHOTOGRAPHER).or(users.role.eq(RoleEnum.MODEL)));
+                .leftJoin(tag_board.boardHashTag, boardHashTag);
+
+        if (role != null) {
+            query.where(users.role.eq(role));
+        } else {
+            query.where(users.role.eq(RoleEnum.PHOTOGRAPHER).or(users.role.eq(RoleEnum.MODEL)));
+        }
 
         if(location != null){
             query.where(board.location.eq(location));
