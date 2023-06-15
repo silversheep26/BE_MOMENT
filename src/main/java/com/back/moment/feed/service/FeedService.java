@@ -47,7 +47,7 @@ public class FeedService {
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
-        if (users.getRole() == RoleEnum.NONE) {
+        if (users.getRole() == "NONE") {
             throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
 

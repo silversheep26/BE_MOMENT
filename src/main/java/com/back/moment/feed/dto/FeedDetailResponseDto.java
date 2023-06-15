@@ -21,7 +21,7 @@ public class FeedDetailResponseDto {
     private String profileUrl;
     private String nickName;
     private String contents;
-    private RoleEnum role;
+    private String role;
     private boolean checkLove = false;
     private List<TagResponseDto> tag_photoList;
     private LocalDateTime createdTime;

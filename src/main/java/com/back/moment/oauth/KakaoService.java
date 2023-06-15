@@ -92,8 +92,7 @@ public class KakaoService {
     @Transactional
     public ResponseEntity<Void> saveRole(Users users, String role){
         Users findUser = usersRepository.findById(users.getId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        RoleEnum roleEnum = RoleEnum.valueOf(role);
-        findUser.setRole(roleEnum);
+        findUser.setRole(role);
         return ResponseEntity.ok(null);
     }
 
