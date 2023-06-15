@@ -7,7 +7,6 @@ import com.back.moment.mainPage.dto.BeforeLogInResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.users.dto.ForMainResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +46,13 @@ public class MainService {
         List<MyPageBoardListResponseDto> topFourBoard;
 
         List<ForMainResponseDto> top4;
-        RoleEnum targetRole = null;
+        String targetRole = null;
 
         if (users != null && users.getRole() != null) {
-            if (users.getRole() == RoleEnum.MODEL) {
-                targetRole = RoleEnum.PHOTOGRAPHER;
-            } else if (users.getRole() == RoleEnum.PHOTOGRAPHER) {
-                targetRole = RoleEnum.MODEL;
+            if (users.getRole() == "MODEL") {
+                targetRole = "PHOTOGRAPHER";
+            } else if (users.getRole() == "PHOTOGRAPHER") {
+                targetRole = "MODEL";
             }
         }
 

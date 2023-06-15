@@ -6,7 +6,6 @@ import com.back.moment.boards.entity.QBoard;
 import com.back.moment.boards.entity.QBoardHashTag;
 import com.back.moment.boards.entity.QTag_Board;
 import com.back.moment.users.entity.QUsers;
-import com.back.moment.users.entity.RoleEnum;
 import com.mongodb.internal.connection.QueryResult;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPQLQuery;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Repository
 @Primary
 public class BoardSearchImpl implements BoardSearch{
@@ -31,7 +31,7 @@ public class BoardSearchImpl implements BoardSearch{
     }
 
     @Override
-    public Page<BoardSearchListResponseDto> searchBoards(String location, String userNickName, String keyWord, RoleEnum role, Pageable pageable){
+    public Page<BoardSearchListResponseDto> searchBoards(String location, String userNickName, String keyWord, String role, Pageable pageable){
         QBoard board = QBoard.board;
         QUsers users = QUsers.users;
         QTag_Board tag_board = QTag_Board.tag_Board;
@@ -44,11 +44,6 @@ public class BoardSearchImpl implements BoardSearch{
                 .leftJoin(board.tag_boardList, tag_board)
                 .leftJoin(tag_board.boardHashTag, boardHashTag);
 
-        if (role != null) {
-            query.where(users.role.eq(role));
-        } else {
-            query.where(users.role.eq(RoleEnum.PHOTOGRAPHER).or(users.role.eq(RoleEnum.MODEL)));
-        }
 
         if(location != null){
             query.where(board.location.eq(location));
@@ -59,6 +54,14 @@ public class BoardSearchImpl implements BoardSearch{
         if(keyWord != null){
             query.where(boardHashTag.hashTag.eq(keyWord));
         }
+        if (role != null) {
+            switch (role) {
+                case "PHOTOGRAPHER" -> query.where(board.role.eq("PHOTOGRAPHER"));
+                case "MODEL" -> query.where(board.role.eq("MODEL"));
+                case "BOTH" -> query.where(board.role.in("PHOTOGRAPHER", "MODEL"));
+            }
+        }
+
 
         QueryResults<Board> results = query
                 .offset(pageable.getOffset())

@@ -4,7 +4,6 @@ import com.back.moment.boards.dto.BoardRequestDto;
 import com.back.moment.boards.dto.UpdateBoardRequestDto;
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.common.TimeStamped;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -52,12 +51,12 @@ public class Board extends TimeStamped {
     private String boardImgUrl;
 
     @Column
-    private RoleEnum role;
+    private String role;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
 
-    public Board(Users users, String title, String content, String location, String pay, String apply, String deadLine, String boardImgUrl, RoleEnum role) {
+    public Board(Users users, String title, String content, String location, String pay, String apply, String deadLine, String boardImgUrl, String role) {
         this.users = users;
         this.title = title;
         this.content = content;

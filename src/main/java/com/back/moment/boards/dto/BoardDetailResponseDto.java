@@ -3,7 +3,6 @@ package com.back.moment.boards.dto;
 import com.back.moment.boards.entity.Board;
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import java.util.Comparator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class BoardDetailResponseDto {
     private String pay;
     private String apply;
     private String deadLine;
-    private RoleEnum role;
+    private String role;
     private List<TagResponseDto> tag_boardList;
     private String profileUrl;
     private String boardImgUrl;

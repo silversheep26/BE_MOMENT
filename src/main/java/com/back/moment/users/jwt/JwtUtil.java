@@ -2,7 +2,6 @@ package com.back.moment.users.jwt;
 
 import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.TokenDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -60,7 +59,7 @@ public class JwtUtil {
     }
 
     // 액세스 토큰 및 리프레시 토큰 생성
-    public TokenDto createAllToken(Users user, RoleEnum role) {
+    public TokenDto createAllToken(Users user, String role) {
         return new TokenDto(createToken(user, "Access"), createToken(user, "Refresh"));
     }
 

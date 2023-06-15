@@ -2,7 +2,6 @@ package com.back.moment.boards.controller;
 
 import com.back.moment.boards.dto.*;
 import com.back.moment.boards.service.BoardService;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,7 +65,7 @@ public class BoardController {
     public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam(required = false) String location,
                                                                         @RequestParam(required = false) String userNickName,
                                                                         @RequestParam(required = false) String keyWord,
-                                                                        @RequestParam(required = false) RoleEnum role,
+                                                                        @RequestParam(required = false) String role,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "5") int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());

@@ -6,7 +6,6 @@ import com.back.moment.global.service.RedisService;
 import com.back.moment.users.dto.KakaoUserInfoDto;
 import com.back.moment.users.dto.TokenDto;
 import com.back.moment.users.dto.UserInfoResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;

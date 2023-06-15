@@ -7,7 +7,6 @@ import com.back.moment.boards.repository.BoardHashTagRepository;
 import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.s3.S3Uploader;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import org.junit.jupiter.api.Test;
@@ -57,7 +56,7 @@ class BoardServiceTest {
         BoardRequestDto boardRequestDto = new BoardRequestDto();
         Users users = new Users();
         MultipartFile boardImg = new MockMultipartFile("boardImg", new byte[0]);
-        users.setRole(RoleEnum.MODEL);
+        users.setRole("MODEL");
 
         // 필요한 mock 동작을 when().thenReturn()을 사용하여 설정
 
@@ -81,9 +80,9 @@ class BoardServiceTest {
         // 포토그래퍼 게시판 데이터 추가
 
         // boardRepository의 getModelBoardListByHostIdWithFetch 메서드가 호출될 때 mock 데이터 반환하도록 설정
-        when(boardRepository.getModelBoardListByHostIdWithFetch(RoleEnum.MODEL)).thenReturn(modelBoardList);
+        when(boardRepository.getModelBoardListByHostIdWithFetch("MODEL")).thenReturn(modelBoardList);
         // boardRepository의 getPhotographerBoardListByHostIdWithFetch 메서드가 호출될 때 mock 데이터 반환하도록 설정
-        when(boardRepository.getPhotographerBoardListByHostIdWithFetch(RoleEnum.PHOTOGRAPHER)).thenReturn(photographerBoardList);
+        when(boardRepository.getPhotographerBoardListByHostIdWithFetch("PHOTOGRAPHER")).thenReturn(photographerBoardList);
 
         // 테스트할 메서드 호출
         ResponseEntity<BoardListResponseDto> response = boardService.getAllBoards(pageable);

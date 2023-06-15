@@ -1,7 +1,6 @@
 package com.back.moment.users.repository;
 
 import com.back.moment.users.dto.ForMainResponseDto;
-import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.entity.Users;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -22,7 +21,7 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByKakaoId(Long id);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u where u.role = :role ORDER BY u.totalLoveCnt DESC")
-    List<ForMainResponseDto> findTop4ByRole(@Param("role") RoleEnum role, Pageable pageable);
+    List<ForMainResponseDto> findTop4ByRole(@Param("role") String role, Pageable pageable);
 
     @Query("select new com.back.moment.users.dto.ForMainResponseDto(u) from Users u ORDER BY u.totalLoveCnt DESC")
     List<ForMainResponseDto> findTop4(Pageable pageable);
