@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -140,10 +140,15 @@ class ChatServiceTest {
         user2.setId(userTwoIdLong);
         user2.setNickName("테스트 유저");
         user2.setProfileImg("프로필 이미지 url");
+        ChatRoom chatRoom = ChatRoom.of(user1, user2, LocalDateTime.now());
+        chatRoom.setId(1L);
         when(userRepository.findById(userTwoIdLong)).thenReturn(Optional.of(user2));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         when(chatRoomRepository.findChatRoomByUsers(userOneIdLong,userTwoIdLong)).thenReturn(Optional.empty());
+        lenient().when(chatRoomRepository.save(any(ChatRoom.class))).thenReturn(chatRoom);
+        lenient().when(chatService.createChatRoom(1L,2L)).thenReturn(1L);
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatRoomId())
-                .isEqualTo(null);
+                .isEqualTo(1L);
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatList())
                 .isEqualTo(new ArrayList<>());
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getReceiverId())
@@ -164,7 +169,7 @@ class ChatServiceTest {
         chatRequestDto.setSenderId(senderId);
         chatRequestDto.setReceiverId(receiverId);
         when(userRepository.findById(senderId)).thenReturn(Optional.empty());
-//        assertThatThrownBy(()->chatService.createChatRoom(chatRequestDto)).isInstanceOf(ApiException.class);
+        assertThatThrownBy(()->chatService.createChatRoom(1L,2L)).isInstanceOf(ApiException.class);
     }
     @Test
     @DisplayName("채팅방 생성 실패 테스트, receiver 존재하지 않는 경우")
@@ -180,7 +185,7 @@ class ChatServiceTest {
         chatRequestDto.setReceiverId(receiverId);
         when(userRepository.findById(senderId)).thenReturn(Optional.of(users));
         when(userRepository.findById(receiverId)).thenReturn(Optional.empty());
-//        assertThatThrownBy(()->chatService.createChatRoom(chatRequestDto)).isInstanceOf(ApiException.class);
+        assertThatThrownBy(()->chatService.createChatRoom(1L,2L)).isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -203,7 +208,7 @@ class ChatServiceTest {
         ChatRoom chatRoom = ChatRoom.of(userOne, userTwo, now);
         chatRoom.setId(1L);
         when(chatRoomRepository.save(any(ChatRoom.class))).thenReturn(chatRoom);
-//        assertThat(chatService.createChatRoom(chatRequestDto)).isEqualTo(chatRoom.getId());
+        assertThat(chatService.createChatRoom(1L,2L)).isEqualTo(chatRoom.getId());
     }
 
     @Test
