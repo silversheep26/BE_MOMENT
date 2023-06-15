@@ -2,6 +2,7 @@ package com.back.moment.boards.controller;
 
 import com.back.moment.boards.dto.*;
 import com.back.moment.boards.service.BoardService;
+import com.back.moment.users.entity.RoleEnum;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,13 +63,14 @@ public class BoardController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam String location,
-                                                                        @RequestParam String userNickName,
-                                                                        @RequestParam String keyWord,
+    public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam(required = false) String location,
+                                                                        @RequestParam(required = false) String userNickName,
+                                                                        @RequestParam(required = false) String keyWord,
+                                                                        @RequestParam(required = false) RoleEnum role,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "5") int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return boardService.searchBoard(location, userNickName, keyWord, pageable);
+        return boardService.searchBoard(location, userNickName, keyWord, role, pageable);
     }
 }
 
