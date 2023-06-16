@@ -6,7 +6,6 @@ import com.back.moment.boards.entity.QBoard;
 import com.back.moment.boards.entity.QBoardHashTag;
 import com.back.moment.boards.entity.QTag_Board;
 import com.back.moment.users.entity.QUsers;
-import com.mongodb.internal.connection.QueryResult;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -45,14 +44,14 @@ public class BoardSearchImpl implements BoardSearch{
                 .leftJoin(tag_board.boardHashTag, boardHashTag);
 
 
-        if(location != null){
-            query.where(board.location.eq(location));
+        if (location != null) {
+            query.where(board.location.like("%" + location + "%"));
         }
-        if(userNickName != null){
-            query.where(users.nickName.eq(userNickName));
+        if (userNickName != null) {
+            query.where(users.nickName.like("%" + userNickName + "%"));
         }
-        if(keyWord != null){
-            query.where(boardHashTag.hashTag.eq(keyWord));
+        if (keyWord != null) {
+            query.where(boardHashTag.hashTag.like("%" + keyWord + "%"));
         }
         if (role != null) {
             switch (role) {

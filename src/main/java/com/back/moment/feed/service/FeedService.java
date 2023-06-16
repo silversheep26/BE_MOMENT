@@ -15,6 +15,9 @@ import com.back.moment.photos.entity.Tag_Photo;
 import com.back.moment.photos.repository.PhotoHashTagRepository;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
+import com.back.moment.photos.repository.getAll.GetAllPhoto;
+import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
+import com.back.moment.photos.repository.getPhoto.GetPhoto;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -44,21 +47,26 @@ public class FeedService {
     private final PhotoHashTagRepository photoHashTagRepository;
     //    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
+    private final GetAllPhoto getAllPhoto;
+    private final GetAllPhotoByLove getAllPhotoByLove;
+    private final GetPhoto getPhoto;
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
-        if (users.getRole() == "NONE") {
+        if (Objects.equals(users.getRole(), "NONE")) {
             throw new ApiException(ExceptionEnum.NOT_FOUND_ROLE);
         }
 
         List<Photo> uploadedPhotos = new ArrayList<>();
 
+        int uploadCount = photoRepository.countByUsers(users) + 1;
         // Upload and save each image
         for (MultipartFile image : images) {
             String imageUrl = s3Uploader.upload(image);
 
             Photo photo = new Photo(users, imageUrl);
             photo.updateContents(contents);
+            photo.setUploadCnt(uploadCount);
             photoRepository.save(photo);
             uploadedPhotos.add(photo);
         }
@@ -127,22 +135,8 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
-        List<Photo> allPhoto = photoRepository.getAllPhotoWithTag();
-        List<Photo> allPhotoByLove = photoRepository.getAllPhotoWithTagByLove();
-
-//        int currentPage = pageable.getPageNumber();
-//        int pageSize = pageable.getPageSize();
-//
-//        // Calculate the start and end index for the current page
-//        int startIndex = currentPage * pageSize;
-//        int endIndex = Math.min(startIndex + pageSize, allPhoto.size());
-//
-//        List<Photo> currentPagePhotos1 = allPhoto.subList(startIndex, endIndex);
-//        List<Photo> currentPagePhotos2 = allPhotoByLove.subList(startIndex, endIndex);
-//
-//        boolean hasMorePages = endIndex < allPhoto.size();
-//
-//        int totalPages = (int) Math.ceil((double) allPhoto.size() / pageSize) - 1;
+        List<Photo> allPhoto = getAllPhoto.getAllPhoto();
+        List<Photo> allPhotoByLove = getAllPhotoByLove.getAllPhotoWithTagByLove();
 
         Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, allPhoto, users);
         Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, allPhotoByLove, users);
@@ -209,10 +203,14 @@ public class FeedService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
         );
 
-        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo);
-        feedDetailResponseDto.setCheckLove(loveRepository.checkLove(photo.getId(), users.getId()));
+        List<Photo> photoList = getPhoto.findPhotosByCreatedAtAndUsers(photo.getUploadCnt(), photo.getUsers());
+        List<String> photoUrlList = new ArrayList<>();
+        for(Photo eachPhoto : photoList){
+            photoUrlList.add(eachPhoto.getImagUrl());
+        }
 
-//        if(recommendRepository.existsByRecommendedIdAndRecommenderId(photo.getUsers().getId(), users.getId())) feedDetailResponseDto.setCheckRecommend(true);
+        FeedDetailResponseDto feedDetailResponseDto = new FeedDetailResponseDto(photo, photoUrlList);
+        feedDetailResponseDto.setCheckLove(loveRepository.checkLove(photo.getId(), users.getId()));
 
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
     }

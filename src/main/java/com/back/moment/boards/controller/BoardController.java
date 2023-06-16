@@ -26,15 +26,9 @@ public class BoardController {
         return boardService.createBoard(boardRequestDto, userDetails.getUsers(), boardImg);
     }
 
-//    @GetMapping("") //게시글 전체 조회
-//    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails,
-//                                                                   @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-//        return boardService.getAllBoards(userDetails.getUsers(), pageable);
-//    }
 
     @GetMapping("")
     public ResponseEntity<BoardListResponseDto> getBoardsByPage(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
