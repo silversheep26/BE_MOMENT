@@ -5,5 +5,5 @@ import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import java.util.List;
 
 public interface GetAllOnlyPhoto {
-    List<OnlyPhotoResponseDto> findAllOnlyPhoto();
+    List<OnlyPhotoResponseDto> findAllOnlyPhoto(Long userId);
 }
