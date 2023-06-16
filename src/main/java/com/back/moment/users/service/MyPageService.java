@@ -84,6 +84,10 @@ public class MyPageService {
             String role = updateRequestDto.getRole();
             users.setRole(role);
         }
+        if(!updateRequestDto.getContent().isEmpty()){
+            users.setContent(updateRequestDto.getContent());
+        }
+
         if(profileImg != null) {
             String profileUrl = s3Uploader.upload(profileImg);
             users.setProfileImg(profileUrl);

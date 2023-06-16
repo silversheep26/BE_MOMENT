@@ -1,26 +1,26 @@
 package com.back.moment.photos.repository;
 
-import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.repository.getAll.GetAllPhoto;
+import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
+import com.back.moment.photos.repository.getPhoto.GetPhoto;
 import com.back.moment.users.entity.Users;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PhotoRepository extends JpaRepository<Photo, Long> {
+public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto, GetAllPhotoByLove, GetPhoto {
 //    @Query("select new com.back.moment.photos.dto.PhotoFeedResponseDto(p) from Photo p")
 //    Page<PhotoFeedResponseDto> getAllPhoto(Pageable pageable);
 
-    @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.createdAt desc")
-    List<Photo> getAllPhotoWithTag();
-
-    @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.loveCnt desc")
-    List<Photo> getAllPhotoWithTagByLove();
+//    @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.createdAt desc")
+//    List<Photo> getAllPhotoWithTag();
+//
+//    @Query("select distinct p from Photo p left join fetch p.tag_photoList pt left join fetch pt.photoHashTag ptp order by p.loveCnt desc")
+//    List<Photo> getAllPhotoWithTagByLove();
 
     @Query("select new com.back.moment.photos.dto.OnlyPhotoResponseDto(p) from Photo p")
     List<OnlyPhotoResponseDto> getAllOnlyPhoto();
@@ -41,4 +41,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     void deleteAllByUsersId(Long usersId);
 
     List<Photo> findByUsers(Users users);
+
+    int countByUsers(Users users);
 }

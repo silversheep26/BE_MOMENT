@@ -44,6 +44,9 @@ public class Users {
     private int totalLoveCnt;
 
     @Column
+    private String content;
+
+    @Column
     //@Enumerated(value = EnumType.STRING)
     private String role;  // 모델 또는 작가
 

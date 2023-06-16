@@ -49,6 +49,9 @@ public class Photo extends TimeStamped {
     @OneToMany(mappedBy = "photo", cascade = CascadeType.REMOVE)
     private List<Tag_Photo> tag_photoList = new ArrayList<>();
 
+    @Column
+    private Integer uploadCnt;
+
     public Photo(Users users, String imagUrl) {
         this.users = users;
         this.imagUrl = imagUrl;
