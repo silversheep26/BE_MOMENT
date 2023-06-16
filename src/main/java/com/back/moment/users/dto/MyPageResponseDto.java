@@ -17,6 +17,7 @@ public class MyPageResponseDto {
     private String nickName;
     private Long hostId;
     private String role;
+    private String content;
     private int boardCnt;
     private int totalPhotoLoveCnt;
     private boolean checkKakaoId = false;
@@ -29,6 +30,7 @@ public class MyPageResponseDto {
         this.nickName = users.getNickName();
         this.hostId = users.getId();
         this.role = users.getRole();
+        this.content = users.getContent();
         this.boardCnt = users.getBoardList().size();
         this.totalPhotoLoveCnt = users.getTotalLoveCnt();
 //        this.recommendCnt = users.getRecommendedList().size();

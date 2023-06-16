@@ -84,7 +84,7 @@ public class MyPageService {
             String role = updateRequestDto.getRole();
             users.setRole(role);
         }
-        if(updateRequestDto.getContent().isEmpty()){
+        if(!updateRequestDto.getContent().isEmpty()){
             users.setContent(updateRequestDto.getContent());
         }
 
