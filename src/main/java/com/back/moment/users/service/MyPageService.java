@@ -50,7 +50,7 @@ public class MyPageService {
                 .map(MyPageBoardListResponseDto::new)
                 .toList();
 
-        List<OnlyPhotoResponseDto> photoList = getAllOnlyPhoto.findAllOnlyPhoto();
+        List<OnlyPhotoResponseDto> photoList = getAllOnlyPhoto.findAllOnlyPhoto(host.getId());
 
         MyPageResponseDto myPageResponseDto = new MyPageResponseDto(host, myPageBoardListResponseDtoList, photoList);
 

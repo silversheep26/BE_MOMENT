@@ -24,7 +24,7 @@ public class GetAllOnlyPhotoImpl implements GetAllOnlyPhoto {
     }
 
     @Override
-    public List<OnlyPhotoResponseDto> findAllOnlyPhoto() {
+    public List<OnlyPhotoResponseDto> findAllOnlyPhoto(Long userId) {
         QPhoto photo = QPhoto.photo;
         QTag_Photo tag_photo = QTag_Photo.tag_Photo;
         QPhotoHashTag photoHashTag = QPhotoHashTag.photoHashTag;
@@ -41,7 +41,8 @@ public class GetAllOnlyPhotoImpl implements GetAllOnlyPhoto {
                 .leftJoin(photoWithTags).on(photo.createdAt.eq(photoWithTags.createdAt), photo.users.eq(photoWithTags.users))
                 .leftJoin(photoWithTags.tag_photoList, tag_photoWithTags)
                 .leftJoin(tag_photoWithTags.photoHashTag, photoHashTagWithTags)
-                .groupBy(photo.users, photo.uploadCnt)
+                .where(photo.users.id.eq(userId))
+                .groupBy(photo.uploadCnt)
                 .orderBy(photo.createdAt.desc());
 
         List<Photo> photos = query.fetch();
