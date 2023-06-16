@@ -16,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class FeedDetailResponseDto {
     private Long hostId;
-    private String photoUrl;
+    private List<String> photoUrls;
     private int photoLoveCnt;
     private String profileUrl;
     private String nickName;
@@ -26,9 +26,9 @@ public class FeedDetailResponseDto {
     private List<TagResponseDto> tag_photoList;
     private LocalDateTime createdTime;
 
-    public FeedDetailResponseDto(Photo photo) {
+    public FeedDetailResponseDto(Photo photo, List<String> photoUrlList) {
         this.hostId = photo.getUsers().getId();
-        this.photoUrl = photo.getImagUrl();
+        this.photoUrls = photoUrlList;
         this.photoLoveCnt = photo.getLoveCnt();
         this.profileUrl = photo.getUsers().getProfileImg();
         this.nickName = photo.getUsers().getNickName();
