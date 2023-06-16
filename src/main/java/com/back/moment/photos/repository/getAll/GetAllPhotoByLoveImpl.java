@@ -40,7 +40,7 @@ public class GetAllPhotoByLoveImpl implements GetAllPhotoByLove{
                 .leftJoin(photoWithTags.tag_photoList, tag_photoWithTags)
                 .leftJoin(tag_photoWithTags.photoHashTag, photoHashTagWithTags)
                 .groupBy(photo.users, photo.uploadCnt) // 그룹화 추가
-                .orderBy(photo.createdAt.desc());
+                .orderBy(photo.loveCnt.desc());
 
         return query.fetch();
     }
