@@ -23,13 +23,17 @@ public class GetPhotoImpl implements GetPhoto{
     }
 
     @Override
-    public List<Photo> findPhotosByCreatedAtAndUsers(int uploadCnt, Users users) {
+    public List<Photo> findPhotosByCreatedAtAndUsers(Integer uploadCnt, Users users) {
         QPhoto photo = QPhoto.photo;
 
         JPQLQuery<Photo> query = queryFactory
                 .select(photo)
                 .from(photo)
-                .where(photo.uploadCnt.eq(uploadCnt).and(photo.users.eq(users)));
+                .where(photo.users.eq(users));
+
+        if (uploadCnt != null) {
+            query = query.where(photo.uploadCnt.eq(uploadCnt));
+        }
 
         return query.fetch();
     }

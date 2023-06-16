@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GetPhoto {
-    List<Photo> findPhotosByCreatedAtAndUsers(int uploadCnt, Users users);
+    List<Photo> findPhotosByCreatedAtAndUsers(Integer uploadCnt, Users users);
 }
