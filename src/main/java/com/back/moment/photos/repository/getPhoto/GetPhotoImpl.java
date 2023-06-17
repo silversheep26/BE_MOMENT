@@ -33,6 +33,8 @@ public class GetPhotoImpl implements GetPhoto{
 
         if (uploadCnt != null) {
             query = query.where(photo.uploadCnt.eq(uploadCnt));
+        }  else {
+            query = query.where(photo.uploadCnt.isNull()); // uploadCnt가 null이 아닌 경우만 필터링
         }
 
         return query.fetch();
