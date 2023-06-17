@@ -10,6 +10,7 @@ import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.entity.Tag_Photo;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
+import com.back.moment.photos.repository.getAllOnlyPhoto.GetAllOnlyPhoto;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.MyPageResponseDto;
 import com.back.moment.users.dto.UpdateRequestDto;
@@ -35,6 +36,7 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
     private final Tag_PhotoRepository tag_photoRepository;
     private final S3Uploader s3Uploader;
+    private final GetAllOnlyPhoto getAllOnlyPhoto;
 
     // 마이페이지 조회
     @Transactional(readOnly = true)
@@ -48,7 +50,7 @@ public class MyPageService {
                 .map(MyPageBoardListResponseDto::new)
                 .toList();
 
-        List<OnlyPhotoResponseDto> photoList = photoRepository.getAllOnlyPhotoByHostId(host.getId());
+        List<OnlyPhotoResponseDto> photoList = getAllOnlyPhoto.findAllOnlyPhoto(host.getId());
 
         MyPageResponseDto myPageResponseDto = new MyPageResponseDto(host, myPageBoardListResponseDtoList, photoList);
 

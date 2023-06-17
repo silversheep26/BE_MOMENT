@@ -5,6 +5,8 @@ import static com.back.moment.users.jwt.JwtUtil.REFRESH_KEY;
 
 import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.repository.BoardRepository;
+import com.back.moment.chat.entity.ChatRoom;
+import com.back.moment.chat.repository.ChatRoomRepository;
 import com.back.moment.email.service.EmailService;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
@@ -44,6 +46,7 @@ public class UserService {
     private String secretKey; // 암호화/복호화에 필요
 
     private final UsersRepository usersRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final PhotoRepository photoRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
@@ -199,6 +202,11 @@ public class UserService {
         s3Uploader.deleteBatch(urlsToDelete);
 
         // Delete the users entity
+        List<ChatRoom> findAllChatRoom = chatRoomRepository.findAllByHostOrGuest(users, users);
+        for (ChatRoom chatRoom : findAllChatRoom) {
+            chatRoomRepository.deleteById(chatRoom.getId());
+        }
+
         usersRepository.delete(users);
 
         return ResponseEntity.ok(null);
