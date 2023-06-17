@@ -32,7 +32,7 @@ public class MyPageBoardListResponseDto {
         this.profileImgUrl = board.getUsers().getProfileImg();
         this.location = board.getLocation();
         this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt().plusHours(9L);
+        this.createdTime = board.getCreatedAt();
         this.tag_boardList = board.getTagListWithWell();
     }
 }
