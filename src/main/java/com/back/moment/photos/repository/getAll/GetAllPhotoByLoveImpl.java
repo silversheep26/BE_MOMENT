@@ -1,16 +1,25 @@
 package com.back.moment.photos.repository.getAll;
 
-import com.back.moment.photos.entity.Photo;
+import com.back.moment.global.service.RedisService;
+import com.back.moment.photos.entity.*;
 import com.back.moment.photos.entity.QPhoto;
 import com.back.moment.photos.entity.QPhotoHashTag;
 import com.back.moment.photos.entity.QTag_Photo;
+import com.back.moment.users.entity.QUsers;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Primary;
+
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @Primary

@@ -18,6 +18,7 @@ import com.back.moment.photos.repository.Tag_PhotoRepository;
 import com.back.moment.photos.repository.getAll.GetAllPhoto;
 import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
 import com.back.moment.photos.repository.getPhoto.GetPhoto;
+import com.back.moment.photos.repository.getPhotoWhoLove.GetPhotoWhoLove;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -45,11 +46,11 @@ public class FeedService {
     private final LoveRepository loveRepository;
     private final Tag_PhotoRepository tag_photoRepository;
     private final PhotoHashTagRepository photoHashTagRepository;
-    //    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
     private final GetAllPhoto getAllPhoto;
     private final GetAllPhotoByLove getAllPhotoByLove;
     private final GetPhoto getPhoto;
+    private final GetPhotoWhoLove getPhotoWhoLove;
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
@@ -147,21 +148,11 @@ public class FeedService {
 
     private Page<PhotoFeedResponseDto> createResponsePhotoPage(Pageable pageable, List<Photo> photos, Users users) {
         List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
-        List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users != null ? users.getId() : null);
-        Map<Long, Boolean> photoLoveMap = new HashMap<>();
+        Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
 
-        for (Object[] result : photoLoveList) {
-            Long photoId = (Long) result[0];
-            Boolean isLoved = (Boolean) result[1];
-            photoLoveMap.put(photoId, isLoved);
-        }
-
-        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(photos.size());
-
-        for (Photo photo : photos) {
-            boolean isLoved = photoLoveMap.getOrDefault(photo.getId(), false);
-            responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
-        }
+        List<PhotoFeedResponseDto> responsePhotoList = photos.stream()
+                .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
+                .collect(Collectors.toList());
 
         int startIndex = (int) pageable.getOffset();
         int endIndex = Math.min(startIndex + pageable.getPageSize(), photos.size());
@@ -172,25 +163,9 @@ public class FeedService {
         boolean isFirstPage = startIndex == 0;
         boolean isLastPage = endIndex >= photos.size();
 
-        Page<PhotoFeedResponseDto> page = new PageImpl<>(pageItems, pageable, photos.size());
         Pageable modifiedPageable = isLastPage ? pageable.withPage(totalPages - 1) : pageable;
 
-        return new PageImpl<>(pageItems, modifiedPageable, photos.size()) {
-            @Override
-            public boolean isFirst() {
-                return isFirstPage;
-            }
-
-            @Override
-            public boolean isLast() {
-                return isLastPage;
-            }
-
-            @Override
-            public int getTotalPages() {
-                return totalPages;
-            }
-        };
+        return new PageImpl<>(pageItems, modifiedPageable, photos.size());
     }
 
 

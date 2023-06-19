@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class Photo extends TimeStamped {
     private List<Love> loveList = new ArrayList<>();
 
     @Column
-    private String contents = "사진 한줄 요약";
+    private String contents;
 
     @ColumnDefault("0")
     private int loveCnt;
@@ -51,6 +52,9 @@ public class Photo extends TimeStamped {
 
     @Column
     private Integer uploadCnt;
+
+    @Transient
+    private List<String> tags;
 
     public Photo(Users users, String imagUrl) {
         this.users = users;
@@ -75,5 +79,9 @@ public class Photo extends TimeStamped {
             tagList.add(tagResponseDto);
         }
         return tagList;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

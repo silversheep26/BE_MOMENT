@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface Tag_PhotoRepository extends JpaRepository<Tag_Photo, Long> {
-    void deleteAllByPhotoId(@Param("photoId") Long photoId);
+//    void deleteAllByPhotoId(@Param("photoId") Long photoId);
     List<Tag_Photo> findByPhotoId(Long photoId);
 
 //    @Query("select tp.photoHashTag.id from Tag_Photo tp where tp.photo.id = :phtoId")
