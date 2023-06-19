@@ -85,4 +85,9 @@ public class FeedController {
     public ResponseEntity<List<UsersInLoveListResponseDto>> whoLoveCheck(@PathVariable Long photoId){
         return feedService.whoLoveCheck(photoId);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<Void> forTest(){
+        return feedService.forTest();
+    }
 }
