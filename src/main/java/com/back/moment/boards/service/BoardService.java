@@ -188,10 +188,8 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, String role, Pageable pageable){
-        System.out.println("------");
         Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(location, userNickName, keyword, role, pageable);
 
-        System.out.println("------");
         return ResponseEntity.ok(boardPage);
     }
 

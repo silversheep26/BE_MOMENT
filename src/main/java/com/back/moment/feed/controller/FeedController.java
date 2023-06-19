@@ -5,8 +5,10 @@ import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.dto.LoveCheckResponseDto;
 import com.back.moment.feed.service.FeedService;
+import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -58,6 +60,16 @@ public class FeedController {
     @GetMapping("/{photoId}")
     public ResponseEntity<FeedDetailResponseDto> getFeed(@PathVariable Long photoId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return feedService.getFeed(photoId, userDetails.getUsers());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PhotoFeedResponseDto>> photoSearch(@RequestParam(required = false) String userNickName,
+                                                                  @RequestParam(required = false) String tag,
+                                                                  @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "16") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return feedService.searchPhoto(tag, userNickName, pageable, userDetails != null ? userDetails.getUsers() : null);
     }
 
     // feed 내용 작성
