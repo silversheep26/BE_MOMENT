@@ -72,11 +72,11 @@ public class ChatService {
                                                           chatListDto,
                                                           userTwo.getProfileImg(),
                                                           userTwoId,
-                                                          userTwo.getNickName());
+                                                          userTwo.getNickName(),userTwo.getRole());
             return ResponseEntity.ok(chatRoomResponseDto);
         } else {
             Long chatRoomId = createChatRoom(userOne.getId(), userTwoId);
-            chatRoomResponseDto = new ChatRoomResponseDto(chatRoomId,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            chatRoomResponseDto = new ChatRoomResponseDto(chatRoomId,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName(),userTwo.getRole());
             return ResponseEntity.ok(chatRoomResponseDto);
         }
     }

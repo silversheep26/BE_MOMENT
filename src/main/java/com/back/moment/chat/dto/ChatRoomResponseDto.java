@@ -12,4 +12,5 @@ public class ChatRoomResponseDto {
     private String receiverProfileImg;
     private Long receiverId;
     private String receiverNickName;
+    private String receiverRole;
 }
