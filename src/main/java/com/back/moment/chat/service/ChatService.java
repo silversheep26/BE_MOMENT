@@ -72,11 +72,11 @@ public class ChatService {
                                                           chatListDto,
                                                           userTwo.getProfileImg(),
                                                           userTwoId,
-                                                          userTwo.getNickName());
+                                                          userTwo.getNickName(),userTwo.getRole());
             return ResponseEntity.ok(chatRoomResponseDto);
         } else {
             Long chatRoomId = createChatRoom(userOne.getId(), userTwoId);
-            chatRoomResponseDto = new ChatRoomResponseDto(chatRoomId,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName());
+            chatRoomResponseDto = new ChatRoomResponseDto(chatRoomId,new ArrayList<>(), userTwo.getProfileImg(), userTwoId, userTwo.getNickName(),userTwo.getRole());
             return ResponseEntity.ok(chatRoomResponseDto);
         }
     }
@@ -128,14 +128,14 @@ public class ChatService {
                                                                               ChatResponseDto.from(chat),
                                                                               chatRoom.getGuest().getProfileImg(),
                                                                               chatRoom.getGuest().getId(),
-                                                                              chatRoom.getGuest().getNickName(),true);
+                                                                              chatRoom.getGuest().getNickName(),chatRoom.getGuest().getRole(),true);
                     }else{
                         chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
                                                                               chat.getCreatedAt(),
                                                                               ChatResponseDto.from(chat),
                                                                               chatRoom.getGuest().getProfileImg(),
                                                                               chatRoom.getGuest().getId(),
-                                                                              chatRoom.getGuest().getNickName(),false);
+                                                                              chatRoom.getGuest().getNickName(),chatRoom.getGuest().getRole(),false);
                     }
 
                 } else{
@@ -153,14 +153,14 @@ public class ChatService {
                                                                               ChatResponseDto.from(chat),
                                                                               chatRoom.getHost().getProfileImg(),
                                                                               chatRoom.getHost().getId(),
-                                                                              chatRoom.getHost().getNickName(),true);
+                                                                              chatRoom.getHost().getNickName(),chatRoom.getHost().getRole(),true);
                     }else{
                         chatRoomInfoResponseDto = new ChatRoomInfoResponseDto(chatRoom.getId(),
                                                                               chat.getCreatedAt(),
                                                                               ChatResponseDto.from(chat),
                                                                               chatRoom.getHost().getProfileImg(),
                                                                               chatRoom.getHost().getId(),
-                                                                              chatRoom.getHost().getNickName(),false);
+                                                                              chatRoom.getHost().getNickName(),chatRoom.getHost().getRole(),false);
                     }
                 } else{
                     chat = null;

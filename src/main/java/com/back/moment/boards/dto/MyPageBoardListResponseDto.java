@@ -17,8 +17,10 @@ public class MyPageBoardListResponseDto {
     private String role;
     private String nickName;
     private int totalLoveCnt;
-    private String profileImgUrl;
+    private String hostProfileUrl;
+    private String deadLine;
     private String location;
+    private String pay;
     private String boardImgUrl;
     private LocalDateTime createdTime;
     private List<TagResponseDto> tag_boardList;
@@ -29,8 +31,10 @@ public class MyPageBoardListResponseDto {
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
         this.totalLoveCnt = board.getUsers().getTotalLoveCnt();
-        this.profileImgUrl = board.getUsers().getProfileImg();
+        this.hostProfileUrl = board.getUsers().getProfileImg();
+        this.deadLine = board.getDeadLine();
         this.location = board.getLocation();
+        this.pay = board.getPay();
         this.boardImgUrl = board.getBoardImgUrl();
         this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();

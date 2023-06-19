@@ -100,7 +100,6 @@ public class FeedService {
                 }
             }
         }
-
         return ResponseEntity.ok(null);
     }
 
@@ -212,7 +211,7 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<UsersInLoveListResponseDto>> whoLoveCheck(Long photoId, Pageable pageable) {
+    public ResponseEntity<List<UsersInLoveListResponseDto>> whoLoveCheck(Long photoId) {
         Photo photo = existPhoto(photoId);
 
         List<Love> loveList = photo.getLoveList();
@@ -222,19 +221,14 @@ public class FeedService {
         loveList.sort(comparator);
 
 
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), loveList.size());
-        List<Love> pagedLoveList = loveList.subList(start, end);
 
         List<UsersInLoveListResponseDto> usersInLoveListResponseDtoList = new ArrayList<>();
-        for (Love love : pagedLoveList) {
+        for (Love love : loveList) {
             UsersInLoveListResponseDto usersInLoveListResponseDto = new UsersInLoveListResponseDto(love.getUsers());
             usersInLoveListResponseDtoList.add(usersInLoveListResponseDto);
         }
 
-        Page<UsersInLoveListResponseDto> page = new PageImpl<>(usersInLoveListResponseDtoList, pageable, loveList.size());
-
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(usersInLoveListResponseDtoList);
     }
 
 
@@ -242,5 +236,10 @@ public class FeedService {
         return photoRepository.findExistPhoto(photoId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Void> forTest(){
+        return ResponseEntity.ok().build();
     }
 }

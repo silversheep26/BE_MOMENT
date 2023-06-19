@@ -5,7 +5,7 @@ import com.back.moment.chat.dto.ChatResponseDto;
 import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
 import com.back.moment.chat.dto.ChatRoomResponseDto;
 import com.back.moment.chat.service.ChatService;
-import com.back.moment.sse.SseController;
+import com.back.moment.sse.NotificationService;
 import com.back.moment.users.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import java.util.Queue;
 public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate msgOperation;
-    private final SseController sseController;
+    private final NotificationService notificationService;
 
     /*
     채팅방에 입장 , DM 을 보내는 화면에 들어갔을때 요청을 보내면
@@ -59,7 +59,7 @@ public class ChatController {
     public void enterChatRoom(ChatRequestDto chatRequestDto){
         ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
         msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
-        sseController.sendNotification(chatResponseDto.getReceiverId(),chatResponseDto);
+        notificationService.notify(chatResponseDto.getReceiverId(),chatResponseDto);
     }
     /*
     1. pub/chat/send 준비 , 보낼데이터(채팅) 첫채팅이면 chatRoomId = null

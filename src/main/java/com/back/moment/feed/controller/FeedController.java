@@ -82,10 +82,12 @@ public class FeedController {
     }
 
     @GetMapping("/love-check/{photoId}")
-    public ResponseEntity<Page<UsersInLoveListResponseDto>> whoLoveCheck(@PathVariable Long photoId,
-                                                                         @RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "10") int size){
-        Pageable pageable = PageRequest.of(page, size);
-        return feedService.whoLoveCheck(photoId, pageable);
+    public ResponseEntity<List<UsersInLoveListResponseDto>> whoLoveCheck(@PathVariable Long photoId){
+        return feedService.whoLoveCheck(photoId);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<Void> forTest(){
+        return feedService.forTest();
     }
 }
