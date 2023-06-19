@@ -15,6 +15,7 @@ import com.back.moment.photos.entity.Tag_Photo;
 import com.back.moment.photos.repository.PhotoHashTagRepository;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
+import com.back.moment.photos.repository.feedSearch.FeedSearch;
 import com.back.moment.photos.repository.getAll.GetAllPhoto;
 import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
 import com.back.moment.photos.repository.getPhoto.GetPhoto;
@@ -51,6 +52,7 @@ public class FeedService {
     private final GetAllPhotoByLove getAllPhotoByLove;
     private final GetPhoto getPhoto;
     private final GetPhotoWhoLove getPhotoWhoLove;
+    private final FeedSearch feedSearch;
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
@@ -188,6 +190,13 @@ public class FeedService {
         feedDetailResponseDto.setCheckLove(loveRepository.checkLove(photo.getId(), users.getId()));
 
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<PhotoFeedResponseDto>> searchPhoto(String tag, String userNickName, Pageable pageable, Users users){
+        Long currentUserId = (users != null) ? users.getId() : null;
+        Page<PhotoFeedResponseDto> photoPage = feedSearch.feedSearch(userNickName, tag, pageable, currentUserId);
+        return ResponseEntity.ok(photoPage);
     }
 
     @Transactional

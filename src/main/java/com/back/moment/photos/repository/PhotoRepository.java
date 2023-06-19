@@ -2,6 +2,7 @@ package com.back.moment.photos.repository;
 
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.repository.feedSearch.FeedSearch;
 import com.back.moment.photos.repository.getAll.GetAllPhoto;
 import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
 import com.back.moment.photos.repository.getPhoto.GetPhoto;
@@ -13,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto, GetAllPhotoByLove, GetPhoto, GetPhotoWhoLove {
+public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto, GetAllPhotoByLove, GetPhoto, GetPhotoWhoLove, FeedSearch {
 //    @Query("select new com.back.moment.photos.dto.PhotoFeedResponseDto(p) from Photo p")
 //    Page<PhotoFeedResponseDto> getAllPhoto(Pageable pageable);
 
