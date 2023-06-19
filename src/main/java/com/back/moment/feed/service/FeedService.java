@@ -1,11 +1,13 @@
 package com.back.moment.feed.service;
 
+import com.back.moment.boards.entity.Board;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.dto.LoveCheckResponseDto;
+import com.back.moment.feed.dto.UsersInLoveListResponseDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -15,9 +17,11 @@ import com.back.moment.photos.entity.Tag_Photo;
 import com.back.moment.photos.repository.PhotoHashTagRepository;
 import com.back.moment.photos.repository.PhotoRepository;
 import com.back.moment.photos.repository.Tag_PhotoRepository;
+import com.back.moment.photos.repository.feedSearch.FeedSearch;
 import com.back.moment.photos.repository.getAll.GetAllPhoto;
 import com.back.moment.photos.repository.getAll.GetAllPhotoByLove;
 import com.back.moment.photos.repository.getPhoto.GetPhoto;
+import com.back.moment.photos.repository.getPhotoWhoLove.GetPhotoWhoLove;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -45,11 +49,12 @@ public class FeedService {
     private final LoveRepository loveRepository;
     private final Tag_PhotoRepository tag_photoRepository;
     private final PhotoHashTagRepository photoHashTagRepository;
-    //    private final RecommendRepository recommendRepository;
     private final UsersRepository usersRepository;
     private final GetAllPhoto getAllPhoto;
     private final GetAllPhotoByLove getAllPhotoByLove;
     private final GetPhoto getPhoto;
+    private final GetPhotoWhoLove getPhotoWhoLove;
+    private final FeedSearch feedSearch;
 
     @Transactional
     public ResponseEntity<Void> uploadImages(String contents, List<String> photoHashTags, List<MultipartFile> images, Users users) throws IOException {
@@ -147,21 +152,11 @@ public class FeedService {
 
     private Page<PhotoFeedResponseDto> createResponsePhotoPage(Pageable pageable, List<Photo> photos, Users users) {
         List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
-        List<Object[]> photoLoveList = photoRepository.checkLoveList(photoIdList, users != null ? users.getId() : null);
-        Map<Long, Boolean> photoLoveMap = new HashMap<>();
+        Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
 
-        for (Object[] result : photoLoveList) {
-            Long photoId = (Long) result[0];
-            Boolean isLoved = (Boolean) result[1];
-            photoLoveMap.put(photoId, isLoved);
-        }
-
-        List<PhotoFeedResponseDto> responsePhotoList = new ArrayList<>(photos.size());
-
-        for (Photo photo : photos) {
-            boolean isLoved = photoLoveMap.getOrDefault(photo.getId(), false);
-            responsePhotoList.add(new PhotoFeedResponseDto(photo, isLoved));
-        }
+        List<PhotoFeedResponseDto> responsePhotoList = photos.stream()
+                .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
+                .collect(Collectors.toList());
 
         int startIndex = (int) pageable.getOffset();
         int endIndex = Math.min(startIndex + pageable.getPageSize(), photos.size());
@@ -172,25 +167,9 @@ public class FeedService {
         boolean isFirstPage = startIndex == 0;
         boolean isLastPage = endIndex >= photos.size();
 
-        Page<PhotoFeedResponseDto> page = new PageImpl<>(pageItems, pageable, photos.size());
         Pageable modifiedPageable = isLastPage ? pageable.withPage(totalPages - 1) : pageable;
 
-        return new PageImpl<>(pageItems, modifiedPageable, photos.size()) {
-            @Override
-            public boolean isFirst() {
-                return isFirstPage;
-            }
-
-            @Override
-            public boolean isLast() {
-                return isLastPage;
-            }
-
-            @Override
-            public int getTotalPages() {
-                return totalPages;
-            }
-        };
+        return new PageImpl<>(pageItems, modifiedPageable, photos.size());
     }
 
 
@@ -199,9 +178,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedDetailResponseDto> getFeed(Long photoId, Users users){
-        Photo photo = photoRepository.findById(photoId).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
-        );
+        Photo photo = existPhoto(photoId);
 
         List<Photo> photoList = getPhoto.findPhotosByCreatedAtAndUsers(photo.getUploadCnt(), photo.getUsers());
         List<String> photoUrlList = new ArrayList<>();
@@ -215,11 +192,16 @@ public class FeedService {
         return new ResponseEntity<>(feedDetailResponseDto, HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<PhotoFeedResponseDto>> searchPhoto(String tag, String userNickName, Pageable pageable, Users users){
+        Long currentUserId = (users != null) ? users.getId() : null;
+        Page<PhotoFeedResponseDto> photoPage = feedSearch.feedSearch(userNickName, tag, pageable, currentUserId);
+        return ResponseEntity.ok(photoPage);
+    }
+
     @Transactional
     public ResponseEntity<Void> writeContents(Long photoId, String content, Users users){
-        Photo photo = photoRepository.findById(photoId).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
-        );
+        Photo photo = existPhoto(photoId);
         if(!Objects.equals(photo.getUsers().getId(), users.getId()))
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
 
@@ -229,8 +211,36 @@ public class FeedService {
         return ResponseEntity.ok(null);
     }
 
-//    private boolean isPhotoLoved(Photo photo, Users currentUser) {
-//        return currentUser.getLoveList().stream()
-//                .anyMatch(love -> love.getPhoto().equals(photo));
-//    }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<UsersInLoveListResponseDto>> whoLoveCheck(Long photoId, Pageable pageable) {
+        Photo photo = existPhoto(photoId);
+
+        List<Love> loveList = photo.getLoveList();
+
+        Comparator<Love> comparator = Comparator.comparing(Love::getId, Comparator.reverseOrder());
+
+        loveList.sort(comparator);
+
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), loveList.size());
+        List<Love> pagedLoveList = loveList.subList(start, end);
+
+        List<UsersInLoveListResponseDto> usersInLoveListResponseDtoList = new ArrayList<>();
+        for (Love love : pagedLoveList) {
+            UsersInLoveListResponseDto usersInLoveListResponseDto = new UsersInLoveListResponseDto(love.getUsers());
+            usersInLoveListResponseDtoList.add(usersInLoveListResponseDto);
+        }
+
+        Page<UsersInLoveListResponseDto> page = new PageImpl<>(usersInLoveListResponseDtoList, pageable, loveList.size());
+
+        return ResponseEntity.ok(page);
+    }
+
+
+    public Photo existPhoto(Long photoId){
+        return photoRepository.findExistPhoto(photoId).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
+        );
+    }
 }

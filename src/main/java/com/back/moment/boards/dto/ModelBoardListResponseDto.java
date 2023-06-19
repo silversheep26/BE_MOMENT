@@ -13,10 +13,14 @@ import java.util.Map;
 @NoArgsConstructor
 public class ModelBoardListResponseDto {
     private Long boardId;
-    private  String title;
-    private  String role;
-    private  String nickName;
-    private  String boardImgUrl;
+    private String title;
+    private String role;
+    private String nickName;
+    private String deadLine;
+    private String location;
+    private String pay;
+    private String boardImgUrl;
+    private String hostProfileUrl;
     private LocalDateTime createdTime;
     private List<TagResponseDto> tag_boardList;
 
@@ -25,8 +29,12 @@ public class ModelBoardListResponseDto {
         this.title = board.getTitle();
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
+        this.deadLine = board.getDeadLine();
+        this.location = board.getLocation();
+        this.pay = board.getPay();
         this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt();
+        this.hostProfileUrl = board.getUsers().getProfileImg();
+        this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();
     }
 }

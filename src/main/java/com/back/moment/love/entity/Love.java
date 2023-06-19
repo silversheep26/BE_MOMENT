@@ -1,5 +1,6 @@
 package com.back.moment.love.entity;
 
+import com.back.moment.common.TimeStamped;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,17 +11,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Love {
+public class Love extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private Users users;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Photo photo;
 

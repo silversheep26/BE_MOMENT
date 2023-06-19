@@ -81,13 +81,6 @@ public class BoardService {
         return ResponseEntity.ok(null);
     }
 
-    // 게시글 전체 조회
-//    @Transactional(readOnly = true)
-//    public ResponseEntity<Page<BoardListResponseDto>> getAllBoards(Users users, Pageable pageable){
-//        existUser(users.getEmail());
-//        Page<BoardListResponseDto> boardList = boardRepository.selectAllBoard(pageable);
-//        return new ResponseEntity<>(boardList, HttpStatus.OK);
-//    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<BoardListResponseDto> getAllBoards(Pageable pageable) {
@@ -195,10 +188,8 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, String role, Pageable pageable){
-        System.out.println("------");
         Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(location, userNickName, keyword, role, pageable);
 
-        System.out.println("------");
         return ResponseEntity.ok(boardPage);
     }
 
