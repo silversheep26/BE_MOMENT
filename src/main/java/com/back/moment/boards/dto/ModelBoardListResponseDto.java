@@ -26,7 +26,7 @@ public class ModelBoardListResponseDto {
         this.role = board.getUsers().getRole();
         this.nickName = board.getUsers().getNickName();
         this.boardImgUrl = board.getBoardImgUrl();
-        this.createdTime = board.getCreatedAt();
+        this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();
     }
 }

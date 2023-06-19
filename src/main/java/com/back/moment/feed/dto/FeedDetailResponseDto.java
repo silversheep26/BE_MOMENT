@@ -35,6 +35,6 @@ public class FeedDetailResponseDto {
         this.role = photo.getUsers().getRole();
         this.contents = photo.getContents();
         this.tag_photoList = photo.getTagListWithWell();
-        this.createdTime = photo.getCreatedAt();
+        this.createdTime = photo.getCreatedAt().plusHours(9);
     }
 }

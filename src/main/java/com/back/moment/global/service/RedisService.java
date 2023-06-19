@@ -2,10 +2,14 @@ package com.back.moment.global.service;
 
 import com.back.moment.chat.entity.Chat;
 import com.back.moment.chat.repository.ChatRepository;
+import com.back.moment.photos.entity.Photo;
+import com.back.moment.photos.entity.Tag_Photo;
+import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
