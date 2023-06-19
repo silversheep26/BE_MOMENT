@@ -1,11 +1,13 @@
 package com.back.moment.feed.service;
 
+import com.back.moment.boards.entity.Board;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.dto.LoveCheckResponseDto;
+import com.back.moment.feed.dto.UsersInLoveListResponseDto;
 import com.back.moment.love.entity.Love;
 import com.back.moment.love.repository.LoveRepository;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
@@ -176,9 +178,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedDetailResponseDto> getFeed(Long photoId, Users users){
-        Photo photo = photoRepository.findById(photoId).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
-        );
+        Photo photo = existPhoto(photoId);
 
         List<Photo> photoList = getPhoto.findPhotosByCreatedAtAndUsers(photo.getUploadCnt(), photo.getUsers());
         List<String> photoUrlList = new ArrayList<>();
@@ -201,9 +201,7 @@ public class FeedService {
 
     @Transactional
     public ResponseEntity<Void> writeContents(Long photoId, String content, Users users){
-        Photo photo = photoRepository.findById(photoId).orElseThrow(
-                () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
-        );
+        Photo photo = existPhoto(photoId);
         if(!Objects.equals(photo.getUsers().getId(), users.getId()))
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
 
@@ -213,8 +211,36 @@ public class FeedService {
         return ResponseEntity.ok(null);
     }
 
-//    private boolean isPhotoLoved(Photo photo, Users currentUser) {
-//        return currentUser.getLoveList().stream()
-//                .anyMatch(love -> love.getPhoto().equals(photo));
-//    }
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<UsersInLoveListResponseDto>> whoLoveCheck(Long photoId, Pageable pageable) {
+        Photo photo = existPhoto(photoId);
+
+        List<Love> loveList = photo.getLoveList();
+
+        Comparator<Love> comparator = Comparator.comparing(Love::getId, Comparator.reverseOrder());
+
+        loveList.sort(comparator);
+
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), loveList.size());
+        List<Love> pagedLoveList = loveList.subList(start, end);
+
+        List<UsersInLoveListResponseDto> usersInLoveListResponseDtoList = new ArrayList<>();
+        for (Love love : pagedLoveList) {
+            UsersInLoveListResponseDto usersInLoveListResponseDto = new UsersInLoveListResponseDto(love.getUsers());
+            usersInLoveListResponseDtoList.add(usersInLoveListResponseDto);
+        }
+
+        Page<UsersInLoveListResponseDto> page = new PageImpl<>(usersInLoveListResponseDtoList, pageable, loveList.size());
+
+        return ResponseEntity.ok(page);
+    }
+
+
+    public Photo existPhoto(Long photoId){
+        return photoRepository.findExistPhoto(photoId).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
+        );
+    }
 }
