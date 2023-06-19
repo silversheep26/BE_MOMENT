@@ -19,6 +19,7 @@ public class BoardSearchListResponseDto {
     private String location;
     private String pay;
     private  String boardImgUrl;
+    private String hostProfileUrl;
     private LocalDateTime createdTime;
     private List<TagResponseDto> tag_boardList;
 
@@ -31,6 +32,7 @@ public class BoardSearchListResponseDto {
         this.location = board.getLocation();
         this.pay = board.getPay();
         this.boardImgUrl = board.getBoardImgUrl();
+        this.hostProfileUrl = board.getUsers().getProfileImg();
         this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();
     }
