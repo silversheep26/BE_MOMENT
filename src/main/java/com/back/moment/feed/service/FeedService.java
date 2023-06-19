@@ -237,4 +237,9 @@ public class FeedService {
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Void> forTest(){
+        return ResponseEntity.ok().build();
+    }
 }
