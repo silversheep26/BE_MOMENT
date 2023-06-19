@@ -1,5 +1,6 @@
 package com.back.moment.photos.repository;
 
+import com.back.moment.boards.entity.Board;
 import com.back.moment.photos.dto.OnlyPhotoResponseDto;
 import com.back.moment.photos.entity.Photo;
 import com.back.moment.photos.repository.feedSearch.FeedSearch;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto, GetAllPhotoByLove, GetPhoto, GetPhotoWhoLove, FeedSearch {
 //    @Query("select new com.back.moment.photos.dto.PhotoFeedResponseDto(p) from Photo p")
@@ -43,6 +45,9 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto
 //    void deleteAllByUsersId(Long usersId);
 
     List<Photo> findByUsers(Users users);
+
+    @Query("SELECT DISTINCT p FROM Photo p LEFT JOIN FETCH p.tag_photoList tp left JOIN FETCH tp.photoHashTag tpl WHERE p.id = :photoId")
+    Optional<Photo> findExistPhoto(@Param("photoId") Long photoId);
 
     int countByUsers(Users users);
 }

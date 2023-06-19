@@ -4,6 +4,7 @@ import com.back.moment.feed.dto.FeedDetailResponseDto;
 import com.back.moment.feed.dto.FeedListResponseDto;
 //import com.back.moment.feed.dto.FeedRequestDto;
 import com.back.moment.feed.dto.LoveCheckResponseDto;
+import com.back.moment.feed.dto.UsersInLoveListResponseDto;
 import com.back.moment.feed.service.FeedService;
 import com.back.moment.photos.dto.PhotoFeedResponseDto;
 import com.back.moment.users.security.UserDetailsImpl;
@@ -80,4 +81,11 @@ public class FeedController {
         return feedService.writeContents(photoId, content, userDetails.getUsers());
     }
 
+    @GetMapping("/love-check/{photoId}")
+    public ResponseEntity<Page<UsersInLoveListResponseDto>> whoLoveCheck(@PathVariable Long photoId,
+                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return feedService.whoLoveCheck(photoId, pageable);
+    }
 }

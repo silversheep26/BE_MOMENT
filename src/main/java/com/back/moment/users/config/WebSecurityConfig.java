@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/ws-edit/**").permitAll()
                 .requestMatchers("/emails/**").permitAll()
                 .requestMatchers("/main", "/home").permitAll()
-                .requestMatchers("/feeds", "/boards", "/boards/search", "/feeds/search").permitAll()
+                .requestMatchers("/feeds", "/boards", "/boards/search", "/feeds/search", "/feeds/love-check/**").permitAll()
                 .requestMatchers("/party/test-vepo").permitAll()
                 .requestMatchers("/test").permitAll()
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
