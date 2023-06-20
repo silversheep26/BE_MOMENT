@@ -16,14 +16,8 @@ public interface MatchingApplyRepository extends JpaRepository<MatchingApply, Lo
 
 	int countAllByBoardId(Long boardId);
 
-	void deleteByBoardIdAndApplicantId(Long boardId, Long applicantId);
-
-	//boolean existsByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
-
 	MatchingApply findByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
 
-
-	@Query("select m from MatchingApply m where m.board.id = :boardId and m.applicant.id <> :userId")
-	List<MatchingApply> findAllMatchingApplyWhereIsNotUserId(@Param("boardId") Long boardId, @Param("userId") Long userId);
-
+	@Query("select ma from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
+	List<MatchingApply> findApplyWithFalse(@Param("boardId") Long boardId);
 }
