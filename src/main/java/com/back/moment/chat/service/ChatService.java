@@ -1,9 +1,6 @@
 package com.back.moment.chat.service;
 
-import com.back.moment.chat.dto.ChatRequestDto;
-import com.back.moment.chat.dto.ChatResponseDto;
-import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
-import com.back.moment.chat.dto.ChatRoomResponseDto;
+import com.back.moment.chat.dto.*;
 import com.back.moment.chat.entity.Chat;
 import com.back.moment.chat.entity.ChatRoom;
 import com.back.moment.chat.repository.ChatRepository;
@@ -197,5 +194,10 @@ public class ChatService {
             findChatRoom.updateGuestEntryTime(LocalDateTime.now());
         }
         return ResponseEntity.ok("success");
+    }
+
+    public ChatDetailResponseDto createChatDetailResponseDto(ChatResponseDto chatResponseDto) {
+        Users receiver = userRepository.findById(chatResponseDto.getReceiverId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+        return ChatDetailResponseDto.from(chatResponseDto,receiver);
     }
 }
