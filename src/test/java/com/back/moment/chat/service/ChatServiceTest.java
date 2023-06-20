@@ -79,7 +79,7 @@ class ChatServiceTest {
         when(chatRepository.findByChatRoomIdAndCreatedAtAfter(chatRoom.getId(),chatRoom.getHostEntryTime()))
                 .thenReturn(chatList);
         List<ChatResponseDto> chatResponseDtoList = chatList.stream().map(ChatResponseDto::from).collect(Collectors.toList());
-        ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto(chatRoom.getId(), chatResponseDtoList, user2.getProfileImg(), userTwoIdLong, user2.getNickName());
+        ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto(chatRoom.getId(), chatResponseDtoList, user2.getProfileImg(), userTwoIdLong, user2.getNickName(),user2.getRole());
         chatResponseDtoList.sort(Comparator.comparing(ChatResponseDto::getCreatedAt).reversed());
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatRoomId())
                 .isEqualTo(chatRoomResponseDto.getChatRoomId());
@@ -116,7 +116,7 @@ class ChatServiceTest {
         when(chatRepository.findByChatRoomIdAndCreatedAtAfter(chatRoom.getId(),chatRoom.getGuestEntryTime()))
                 .thenReturn(chatList);
         List<ChatResponseDto> chatResponseDtoList = chatList.stream().map(ChatResponseDto::from).collect(Collectors.toList());
-        ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto(chatRoom.getId(), chatResponseDtoList, user2.getProfileImg(), userTwoIdLong, user2.getNickName());
+        ChatRoomResponseDto chatRoomResponseDto = new ChatRoomResponseDto(chatRoom.getId(), chatResponseDtoList, user2.getProfileImg(), userTwoIdLong, user2.getNickName(),user2.getRole());
         chatResponseDtoList.sort(Comparator.comparing(ChatResponseDto::getCreatedAt).reversed());
         assertThat(chatService.enterChatRoom(user1,userTwoIdLong).getBody().getChatRoomId())
                 .isEqualTo(chatRoomResponseDto.getChatRoomId());
@@ -279,13 +279,13 @@ class ChatServiceTest {
                     ChatResponseDto.from(chat1),
                     chatRoom.getHost().getProfileImg(),
                     chatRoom.getHost().getId(),
-                    chatRoom.getHost().getNickName(), true);
+                    chatRoom.getHost().getNickName(),chatRoom.getHost().getRole(), true);
         ChatRoomInfoResponseDto chatRoomInfoResponseDto2 = new ChatRoomInfoResponseDto(chatRoom2.getId()
                 , chat2.getCreatedAt(),
                 ChatResponseDto.from(chat2),
                 chatRoom2.getHost().getProfileImg(),
                 chatRoom2.getHost().getId(),
-                chatRoom2.getHost().getNickName(), true);
+                chatRoom2.getHost().getNickName(), chatRoom2.getHost().getRole(),true);
         Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
             @Override
             public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
@@ -321,7 +321,7 @@ class ChatServiceTest {
                 ChatResponseDto.from(chat1),
                 chatRoom.getHost().getProfileImg(),
                 chatRoom.getHost().getId(),
-                chatRoom.getHost().getNickName(), false);
+                chatRoom.getHost().getNickName(),chatRoom.getHost().getRole(),false);
         Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
             @Override
             public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
@@ -372,7 +372,7 @@ class ChatServiceTest {
                 ChatResponseDto.from(chat1),
                 chatRoom.getGuest().getProfileImg(),
                 chatRoom.getGuest().getId(),
-                chatRoom.getGuest().getNickName(), true);
+                chatRoom.getGuest().getNickName(), chatRoom.getGuest().getRole(),true);
         Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
             @Override
             public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
@@ -406,7 +406,7 @@ class ChatServiceTest {
                 ChatResponseDto.from(chat1),
                 chatRoom.getGuest().getProfileImg(),
                 chatRoom.getGuest().getId(),
-                chatRoom.getGuest().getNickName(), false);
+                chatRoom.getGuest().getNickName(), chatRoom.getGuest().getNickName(),false);
         Queue<ChatRoomInfoResponseDto> chatRoomInfoDtoQueue = new PriorityQueue<>(new Comparator<ChatRoomInfoResponseDto>() {
             @Override
             public int compare(ChatRoomInfoResponseDto o1, ChatRoomInfoResponseDto o2) {
