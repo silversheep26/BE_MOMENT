@@ -33,6 +33,9 @@ public class MatchingApply extends TimeStamped {
 	@JoinColumn(name = "applicant_id")
 	private Users applicant;
 
+	@Column(nullable = false)
+	private boolean matchedCheck = false;
+
 	public MatchingApply(Board board, Users applicant) {
 		this.board = board;
 		this.applicant = applicant;

@@ -73,10 +73,8 @@ public class MatchingService {
 			throw new ApiException(ExceptionEnum.UNAUTHORIZED);
 		}
 		Users applyUser = usersRepository.findById(applyUserId).orElseThrow(()->new ApiException(ExceptionEnum.NOT_FOUND_USER));
-		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, applyUserId);
 		Matching matching = new Matching(boardId, applyUser, users);
 		matchingRepository.save(matching);
-		matchingApplyRepository.delete(matchingApply);
 		board.setMatching(true);
 //		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllMatchingApplyWhereIsNotUserId(
 //			boardId, applyUserId);
@@ -89,13 +87,14 @@ public class MatchingService {
 	// 해당 게시글에 매칭 요청 리스트
 	// 매칭이 된 게시물이라면 , 매칭이 완료된 게시물이면 , 버튼을 보이지 않아야함
 	// 매칭이 안된 게시물이면 , 매칭요청 리스트보기가 있어야함
+	// 리펙토링 필요
 	@Transactional(readOnly = true)
 	public ResponseEntity<List<MatchApplyResponseDto>> matchingApplyList(Long boardId, Users users) {
 		Board board = existBoard(boardId);
 		usersRepository.findById(users.getId())
 				.orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
 		List<MatchApplyResponseDto> matchApplyResponseDtoList = new ArrayList<>();
-		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
+		List<MatchingApply> matchingApplyList = matchingApplyRepository.findApplyWithFalse(boardId);
 		for (MatchingApply matchingApply : matchingApplyList) {
 			matchApplyResponseDtoList.add(new MatchApplyResponseDto(boardId, matchingApply.getApplicant().getId(),
 					matchingApply.getApplicant().getNickName(),
