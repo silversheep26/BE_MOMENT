@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class ChatDetailResponseDto {
-    private String receiverNickName;
-    private String receiverProfileImg;
+    private String senderNickName;
+    private String senderProfileImg;
     private String message;
     private LocalDateTime createdAt;
     private Long chatRoomId;
