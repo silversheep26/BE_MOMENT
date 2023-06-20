@@ -73,8 +73,10 @@ public class MatchingService {
 			throw new ApiException(ExceptionEnum.UNAUTHORIZED);
 		}
 		Users applyUser = usersRepository.findById(applyUserId).orElseThrow(()->new ApiException(ExceptionEnum.NOT_FOUND_USER));
+		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, applyUserId);
 		Matching matching = new Matching(boardId, applyUser, users);
 		matchingRepository.save(matching);
+		matchingApplyRepository.delete(matchingApply);
 		board.setMatching(true);
 //		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllMatchingApplyWhereIsNotUserId(
 //			boardId, applyUserId);
