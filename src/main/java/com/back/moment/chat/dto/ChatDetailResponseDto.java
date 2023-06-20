@@ -13,13 +13,13 @@ public class ChatDetailResponseDto {
     private String senderProfileImg;
     private String message;
     private LocalDateTime createdAt;
-    private Long chatRoomId;
+    private Long senderId;
 
     public static ChatDetailResponseDto from(ChatResponseDto chat, Users users){
         return new ChatDetailResponseDto(users.getNickName(),
                                         users.getProfileImg(),
                                         chat.getMessage(),
                                         chat.getCreatedAt(),
-                                        chat.getChatRoomId());
+                                        users.getId());
     }
 }
