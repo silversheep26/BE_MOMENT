@@ -148,6 +148,17 @@ public class MatchingService {
 		return ResponseEntity.ok(matchingBoardResponseDtos);
 	}
 
+	public ResponseEntity<Void> deleteMatchingApply(Long boardId, Long applyUserId, Users users){
+		Board board = existBoard(boardId);
+		if (!board.getUsers().getId().equals(users.getId())){
+			throw new ApiException(ExceptionEnum.UNAUTHORIZED);
+		}
+
+		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, applyUserId);
+		matchingApplyRepository.delete(matchingApply);
+
+		return ResponseEntity.ok(null);
+	}
 
 	public Board existBoard(Long boardId){
 		return boardRepository.findExistBoard(boardId).orElseThrow(
