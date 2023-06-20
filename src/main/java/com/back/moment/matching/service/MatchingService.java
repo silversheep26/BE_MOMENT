@@ -39,7 +39,7 @@ public class MatchingService {
 		if (board.getUsers().getId().equals(users.getId())){  // 같으면 마이페이지 보내기
 			throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
 		}
-		int matchingApplyCnt = matchingApplyRepository.countAllByBoardId(boardId);
+		int matchingApplyCnt = matchingApplyRepository.countAllMatchingWithFalse(boardId);
 		MatchingApply existMatchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, users.getId());
 		// 이전에 매칭 신청 안 한 경우
 		if(board.getMatchingFull() == null || !board.getMatchingFull()) {
@@ -116,7 +116,7 @@ public class MatchingService {
 		for (Board board : boardList) {
 			Matching existMatching = matchingRepository.findByBoardId(board.getId());
 			String whoMatch = existMatching != null ? existMatching.getApplicant().getNickName() : null;
-			int totalApplicantCnt = matchingApplyRepository.countAllByBoardId(board.getId());
+			int totalApplicantCnt = matchingApplyRepository.countAllMatchingWithFalse(board.getId());
 			MatchingBoardResponseDto matchingBoardResponseDto = new MatchingBoardResponseDto(board, totalApplicantCnt, whoMatch);
 			matchingBoardResponseDtos.add(matchingBoardResponseDto);
 		}
@@ -135,7 +135,7 @@ public class MatchingService {
 			Matching existMatching = matchingRepository.findByBoardId(matchingApply.getBoard().getId());
 			boolean hasMatching = existMatching != null;
 			boolean alreadyMatch = hasMatching && existMatching.getApplicant().equals(matchingApply.getApplicant());
-			int totalApplicantCnt = matchingApplyRepository.countAllByBoardId(matchingApply.getBoard().getId());
+			int totalApplicantCnt = matchingApplyRepository.countAllMatchingWithFalse(matchingApply.getBoard().getId());
 
 			matchingApply.getBoard().setMatching(!hasMatching);
 
