@@ -84,7 +84,7 @@ public class ChatService {
     public Long createChatRoom(Long hostId,Long guestId){
         Users userOne = userRepository.findById(hostId).orElseThrow(()-> new ApiException(ExceptionEnum.NOT_FOUND_USER));
         Users userTwo = userRepository.findById(guestId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo,LocalDateTime.now());
+        ChatRoom chatRoom = ChatRoom.of(userOne, userTwo,LocalDateTime.now().plusHours(9));
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
         return savedChatRoom.getId();
     }
@@ -93,7 +93,7 @@ public class ChatService {
     채팅은 MongoDB에 저장한다.
      */
     public ChatResponseDto saveChat(ChatRequestDto chatRequestDto){
-        Chat chat = ChatRequestDto.toEntity(chatRequestDto,LocalDateTime.now());
+        Chat chat = ChatRequestDto.toEntity(chatRequestDto,LocalDateTime.now().plusHours(9));
         redisService.setChatValues(chat, chat.getChatRoomId(),chat.getUuid());
         if(redisService.getChat(chat.getChatRoomId(),chat.getUuid())==null) throw new ApiException(ExceptionEnum.FAIL_CHAT_SAVE);
         return ChatResponseDto.from(chat);
@@ -189,9 +189,9 @@ public class ChatService {
     public ResponseEntity<String> deleteChatRoom(Users user,Long chatRoomId){
         ChatRoom findChatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_CHATROOM));
         if(findChatRoom.getHost().getId().equals(user.getId())){
-            findChatRoom.updateHostEntryTime(LocalDateTime.now());
+            findChatRoom.updateHostEntryTime(LocalDateTime.now().plusHours(9));
         }else{
-            findChatRoom.updateGuestEntryTime(LocalDateTime.now());
+            findChatRoom.updateGuestEntryTime(LocalDateTime.now().plusHours(9));
         }
         return ResponseEntity.ok("success");
     }
