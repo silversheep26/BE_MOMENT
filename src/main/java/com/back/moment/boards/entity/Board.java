@@ -54,10 +54,10 @@ public class Board extends TimeStamped {
     @Column
     private String role;
 
-    @Column
+    @Column(nullable = false)
     private Boolean matching = false;// 매칭 여부
 
-    @Column
+    @Column(nullable = false)
     private Boolean matchingFull = false;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
