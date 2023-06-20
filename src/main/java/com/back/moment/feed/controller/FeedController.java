@@ -66,11 +66,12 @@ public class FeedController {
     @GetMapping("/search")
     public ResponseEntity<Page<PhotoFeedResponseDto>> photoSearch(@RequestParam(required = false) String userNickName,
                                                                   @RequestParam(required = false) String tag,
+                                                                  @RequestParam(required = false) String contents,
                                                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                   @RequestParam(defaultValue = "0") int page,
                                                                   @RequestParam(defaultValue = "16") int size){
         Pageable pageable = PageRequest.of(page, size);
-        return feedService.searchPhoto(tag, userNickName, pageable, userDetails != null ? userDetails.getUsers() : null);
+        return feedService.searchPhoto(tag, userNickName, contents, pageable, userDetails != null ? userDetails.getUsers() : null);
     }
 
     // feed 내용 작성

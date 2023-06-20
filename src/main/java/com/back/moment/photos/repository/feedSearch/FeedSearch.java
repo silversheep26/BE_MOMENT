@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface FeedSearch {
-    Page<PhotoFeedResponseDto> feedSearch(String userNickName, String tag, Pageable pageable, Long currentUserId);
+    Page<PhotoFeedResponseDto> feedSearch(String userNickName, String tag, String contents, Pageable pageable, Long currentUserId);
 }

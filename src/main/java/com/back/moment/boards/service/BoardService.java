@@ -193,8 +193,8 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String location, String userNickName, String keyword, String role, Pageable pageable){
-        Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(location, userNickName, keyword, role, pageable);
+    public ResponseEntity<Page<BoardSearchListResponseDto>> searchBoard(String title, String location, String userNickName, String keyword, String role, Pageable pageable){
+        Page<BoardSearchListResponseDto> boardPage = boardSearch.searchBoards(title, location, userNickName, keyword, role, pageable);
 
         return ResponseEntity.ok(boardPage);
     }

@@ -192,9 +192,9 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<PhotoFeedResponseDto>> searchPhoto(String tag, String userNickName, Pageable pageable, Users users){
+    public ResponseEntity<Page<PhotoFeedResponseDto>> searchPhoto(String tag, String userNickName, String contents, Pageable pageable, Users users){
         Long currentUserId = (users != null) ? users.getId() : null;
-        Page<PhotoFeedResponseDto> photoPage = feedSearch.feedSearch(userNickName, tag, pageable, currentUserId);
+        Page<PhotoFeedResponseDto> photoPage = feedSearch.feedSearch(userNickName, tag, contents, pageable, currentUserId);
         return ResponseEntity.ok(photoPage);
     }
 
