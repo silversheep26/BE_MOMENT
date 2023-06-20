@@ -18,6 +18,8 @@ public class MatchingApplyBoardResponseDto {
 	private String nickName;
 	private String profileImgUrl;
 	private String location;
+	private String pay;
+	private String deadLine;
 	private String boardImgUrl;
 	private LocalDateTime createdTime;
 	private List<TagResponseDto> tag_boardList;
@@ -33,6 +35,8 @@ public class MatchingApplyBoardResponseDto {
 		this.nickName = board.getUsers().getNickName();
 		this.profileImgUrl = board.getUsers().getProfileImg();
 		this.location = board.getLocation();
+		this.pay = board.getPay();
+		this.deadLine = board.getDeadLine();
 		this.boardImgUrl = board.getBoardImgUrl();
 		this.createdTime = board.getCreatedAt();
 		this.tag_boardList = board.getTagListWithWell();
