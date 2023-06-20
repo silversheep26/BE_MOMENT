@@ -37,20 +37,20 @@ public class MatchingController {
 	}
 
 	// 매칭 요청 리스트 보기
-	@GetMapping("/applyList/{boardId}")
+	@GetMapping("/apply-list/{boardId}")
 	public ResponseEntity<List<MatchApplyResponseDto>> matchingApplyList(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.matchingApplyList(boardId, userDetails.getUsers());
 	}
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 받은 매칭 신청 게시글 보기
-	@GetMapping("/acceptList")
+	@GetMapping("/accept-list")
 	public ResponseEntity<List<MatchingBoardResponseDto>> getMatchedList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.getMatchedList(userDetails.getUsers());
 	}
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 신청한 매칭 게시글 보기
-	@GetMapping("/applyList")
+	@GetMapping("/apply-list")
 	public ResponseEntity<List<MatchingApplyBoardResponseDto>> getMatchingApplyList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.getMatchingApplyList(userDetails.getUsers());
