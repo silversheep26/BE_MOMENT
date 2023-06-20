@@ -56,14 +56,15 @@ public class BoardController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam(required = false) String location,
+    public ResponseEntity<Page<BoardSearchListResponseDto>> boardSearch(@RequestParam(required = false) String title,
+                                                                        @RequestParam(required = false) String location,
                                                                         @RequestParam(required = false) String userNickName,
                                                                         @RequestParam(required = false) String keyWord,
                                                                         @RequestParam(required = false) String role,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "5") int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return boardService.searchBoard(location, userNickName, keyWord, role, pageable);
+        return boardService.searchBoard(title, location, userNickName, keyWord, role, pageable);
     }
 }
 

@@ -31,7 +31,7 @@ public class FeedSearchImpl implements FeedSearch{
     }
 
     @Override
-    public Page<PhotoFeedResponseDto> feedSearch(String userNickName, String tag, Pageable pageable, Long currentUserId) {
+    public Page<PhotoFeedResponseDto> feedSearch(String userNickName, String tag, String contents, Pageable pageable, Long currentUserId) {
         QPhoto photo = QPhoto.photo;
         QUsers users = QUsers.users;
         QTag_Photo tag_photo = QTag_Photo.tag_Photo;
@@ -54,6 +54,9 @@ public class FeedSearchImpl implements FeedSearch{
             } else {
                 conditions = photoHashTag.hashTag.like("%" + tag + "%");
             }
+        }
+        if (contents != null){
+            conditions = photo.contents.like("%" + contents + "%");
         }
 
         if (conditions != null) {
