@@ -197,7 +197,7 @@ public class ChatService {
     }
 
     public ChatDetailResponseDto createChatDetailResponseDto(ChatResponseDto chatResponseDto) {
-        Users receiver = userRepository.findById(chatResponseDto.getReceiverId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-        return ChatDetailResponseDto.from(chatResponseDto,receiver);
+        Users sender = userRepository.findById(chatResponseDto.getSenderId()).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+        return ChatDetailResponseDto.from(chatResponseDto,sender);
     }
 }
