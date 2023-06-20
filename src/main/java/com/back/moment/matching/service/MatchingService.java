@@ -44,11 +44,14 @@ public class MatchingService {
 		// 이전에 매칭 신청 안 한 경우
 		if(board.getMatchingFull() == null || !board.getMatchingFull()) {
 			if (existMatchingApply == null) {
-				if(matchingApplyCnt + 1 >= 5){
-					board.setMatchingFull(true);
+				if (matchingApplyCnt < 5) { // 5명보다 적게 매칭 신청된 경우
+					MatchingApply matchingApply = new MatchingApply(board, users);
+					matchingApplyRepository.save(matchingApply);
+
+					if (matchingApplyCnt == 4) {
+						board.setMatchingFull(true); // 4명이 매칭 신청된 경우에만 matchingFull을 true로 변경
+					}
 				}
-				MatchingApply matchingApply = new MatchingApply(board, users);
-				matchingApplyRepository.save(matchingApply);
 			} else { // 이미 매칭요청을 했으면 , 매칭 취소 : db 에서 삭제
 				matchingApplyRepository.delete(existMatchingApply);
 			}
