@@ -22,6 +22,8 @@ public enum ExceptionEnum {
     NOT_FOUND_CHATROOM(HttpStatus.BAD_REQUEST,"400_8","채팅방을 찾을수 없습니다."),
     NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST,"400_9", "비밀번호가 일치하지 않습니다."),
     FAIL_CHAT_SAVE(HttpStatus.BAD_REQUEST,"400_10","채팅 저장에 실패하였습니다."),
+    OVER_MATCHING_COUNT(HttpStatus.BAD_REQUEST,"400_11","매칭 인원 초과"),
+
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),
     LOGIN(HttpStatus.UNAUTHORIZED, "401_1", "로그인 후 이용가능합니다."),
