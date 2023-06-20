@@ -1,5 +1,6 @@
 package com.back.moment.matching.controller;
 
+import com.back.moment.matching.dto.MatchAcceptResponseDto;
 import com.back.moment.matching.dto.MatchApplyResponseDto;
 import com.back.moment.matching.dto.MatchingApplyBoardResponseDto;
 import com.back.moment.matching.dto.MatchingBoardResponseDto;
@@ -30,8 +31,8 @@ public class MatchingController {
 	}
 
 	// 매칭 수락
-	@PostMapping("/accept/{boardId}")
-	public ResponseEntity<Void> matchAcceptBoard(@PathVariable Long boardId,@RequestBody Long applyUserId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+	@PostMapping("/accept/{boardId}/{applyUserId}")
+	public ResponseEntity<MatchAcceptResponseDto> matchAcceptBoard(@PathVariable Long boardId, @PathVariable Long applyUserId, @AuthenticationPrincipal UserDetailsImpl userDetails){
 		return matchingService.matchAcceptBoard(boardId, applyUserId, userDetails.getUsers());
 	}
 
@@ -42,14 +43,14 @@ public class MatchingController {
 	}
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 받은 매칭 신청 게시글 보기
-	@GetMapping("/acceptList/{hostId}")
-	public ResponseEntity<List<MatchingBoardResponseDto>> getMatchingList(@PathVariable Long hostId,
+	@GetMapping("/acceptList")
+	public ResponseEntity<List<MatchingBoardResponseDto>> getMatchedList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
-		return matchingService.getMatchingList(hostId, userDetails.getUsers());
+		return matchingService.getMatchedList(userDetails.getUsers());
 	}
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 신청한 매칭 게시글 보기
-	@GetMapping("/accept")
+	@GetMapping("/applyList")
 	public ResponseEntity<List<MatchingApplyBoardResponseDto>> getMatchingApplyList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.getMatchingApplyList(userDetails.getUsers());

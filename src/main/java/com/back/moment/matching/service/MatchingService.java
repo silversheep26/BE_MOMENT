@@ -86,15 +86,15 @@ public class MatchingService {
 	// 매칭이 안된 게시물이면 , 매칭요청 리스트보기가 있어야함
 	@Transactional(readOnly = true)
 	public ResponseEntity<List<MatchApplyResponseDto>> matchingApplyList(Long boardId, Users users) {
-		Board board = boardRepository.findById(boardId)	.orElseThrow(() -> new ApiException(ExceptionEnum.BAD_REQUEST));
+		Board board = existBoard(boardId);
 		usersRepository.findById(users.getId())
-			.orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
+				.orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
 		List<MatchApplyResponseDto> matchApplyResponseDtoList = new ArrayList<>();
 		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
 		for (MatchingApply matchingApply : matchingApplyList) {
 			matchApplyResponseDtoList.add(new MatchApplyResponseDto(matchingApply.getApplicant().getId(),
-																	matchingApply.getApplicant().getNickName(),
-																	matchingApply.getApplicant().getProfileImg()));
+					matchingApply.getApplicant().getNickName(),
+					matchingApply.getApplicant().getProfileImg()));
 		}
 		return ResponseEntity.ok(matchApplyResponseDtoList);
 	}
