@@ -14,7 +14,8 @@ public interface MatchingApplyRepository extends JpaRepository<MatchingApply, Lo
 
 	List<MatchingApply> findAllByApplicant(Users users);
 
-	int countAllByBoardId(Long boardId);
+	@Query("select count(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
+	int countAllMatchingWithFalse(Long boardId);
 
 	MatchingApply findByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
 

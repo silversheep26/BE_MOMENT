@@ -175,9 +175,12 @@ public class BoardService {
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
         }
         List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
-        matchingApplyRepository.deleteAll(matchingApplyList);
+        if(matchingApplyList != null)
+            matchingApplyRepository.deleteAll(matchingApplyList);
+
         Matching matching = matchingRepository.findByBoardId(boardId);
-        matchingRepository.delete(matching);
+        if(matching != null)
+            matchingRepository.delete(matching);
 
         s3Uploader.delete(board.getBoardImgUrl());
         boardRepository.deleteById(boardId);
