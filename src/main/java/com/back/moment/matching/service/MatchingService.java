@@ -78,7 +78,7 @@ public class MatchingService {
 //
 //		matchingApplyRepository.deleteAll(matchingApplyList);
 
-		return ResponseEntity.ok(new MatchAcceptResponseDto(applyUser.getNickName(), users.getNickName()));
+		return ResponseEntity.ok(new MatchAcceptResponseDto(boardId, applyUser.getNickName(), users.getNickName()));
 	}
 
 	// 해당 게시글에 매칭 요청 리스트
@@ -92,7 +92,7 @@ public class MatchingService {
 		List<MatchApplyResponseDto> matchApplyResponseDtoList = new ArrayList<>();
 		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
 		for (MatchingApply matchingApply : matchingApplyList) {
-			matchApplyResponseDtoList.add(new MatchApplyResponseDto(matchingApply.getApplicant().getId(),
+			matchApplyResponseDtoList.add(new MatchApplyResponseDto(boardId, matchingApply.getApplicant().getId(),
 					matchingApply.getApplicant().getNickName(),
 					matchingApply.getApplicant().getProfileImg()));
 		}
