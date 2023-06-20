@@ -14,6 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class BoardDetailResponseDto {
     private Long hostId;
+    private Long boardId;
     private String nickName;
     private String title;
     private String content;
@@ -29,6 +30,7 @@ public class BoardDetailResponseDto {
 
     public BoardDetailResponseDto(Board board){
         this.hostId = board.getUsers().getId();
+        this.boardId = board.getId();
         this.nickName = board.getUsers().getNickName();
         this.title = board.getTitle();
         this.content = board.getContent();
