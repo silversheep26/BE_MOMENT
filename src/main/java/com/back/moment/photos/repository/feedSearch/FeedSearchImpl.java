@@ -57,7 +57,9 @@ public class FeedSearchImpl implements FeedSearch{
         }
 
         if (conditions != null) {
-            query.where(conditions);
+            query.where(conditions)
+                    .groupBy(photo.users, photo.uploadCnt) // 그룹화 추가
+                    .orderBy(photo.createdAt.desc());;
         }
 
         query.offset(pageable.getOffset())
