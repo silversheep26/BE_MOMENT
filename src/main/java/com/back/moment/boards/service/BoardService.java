@@ -10,6 +10,8 @@ import com.back.moment.boards.repository.Tag_BoardRepository;
 import com.back.moment.boards.repository.boardSearch.BoardSearch;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
+import com.back.moment.matching.entity.MatchingApply;
+import com.back.moment.matching.repository.MatchingApplyRepository;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
@@ -37,6 +39,7 @@ public class BoardService {
     private final UsersRepository usersRepository;
     private final S3Uploader s3Uploader;
     private final BoardSearch boardSearch;
+    private final MatchingApplyRepository matchingApplyRepository;
 
     // 게시글 생성
     @Transactional
@@ -168,6 +171,9 @@ public class BoardService {
         if(!Objects.equals(users.getId(), board.getUsers().getId())) {
             throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
         }
+        List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
+        matchingApplyRepository.deleteAll(matchingApplyList);
+
         s3Uploader.delete(board.getBoardImgUrl());
         boardRepository.deleteById(boardId);
 

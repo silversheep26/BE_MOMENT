@@ -18,9 +18,12 @@ public interface MatchingApplyRepository extends JpaRepository<MatchingApply, Lo
 
 	void deleteByBoardIdAndApplicantId(Long boardId, Long applicantId);
 
-	boolean existsByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
+	//boolean existsByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
+
+	MatchingApply findByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
 
 
 	@Query("select m from MatchingApply m where m.board.id = :boardId and m.applicant.id <> :userId")
 	List<MatchingApply> findAllMatchingApplyWhereIsNotUserId(@Param("boardId") Long boardId, @Param("userId") Long userId);
+
 }

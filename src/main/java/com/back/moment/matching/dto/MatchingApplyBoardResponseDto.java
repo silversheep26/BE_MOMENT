@@ -21,11 +21,13 @@ public class MatchingApplyBoardResponseDto {
 	private String boardImgUrl;
 	private LocalDateTime createdTime;
 	private boolean isMatched;
-
 	private List<TagResponseDto> tag_boardList;
 	private List<MatchApplyResponseDto> matchApplyDtoList = new ArrayList<>();
+	private boolean alreadyMatch;
+	private boolean matchingWith;
+	private int totalApplicantCnt;
 
-	public MatchingApplyBoardResponseDto(Board board) {
+	public MatchingApplyBoardResponseDto(Board board, boolean alreadyMatch, boolean matchingWith, int totalApplicantCnt) {
 		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.role = board.getUsers().getRole();
@@ -36,6 +38,9 @@ public class MatchingApplyBoardResponseDto {
 		this.createdTime = board.getCreatedAt();
 		this.isMatched = board.getMatching();
 		this.tag_boardList = board.getTagListWithWell();
+		this.alreadyMatch = alreadyMatch;
+		this.matchingWith = matchingWith;
+		this.totalApplicantCnt = totalApplicantCnt;
 	}
 
 }

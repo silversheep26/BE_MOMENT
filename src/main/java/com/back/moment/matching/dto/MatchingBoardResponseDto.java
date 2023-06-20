@@ -20,9 +20,11 @@ public class MatchingBoardResponseDto {
 	private LocalDateTime createdTime;
 	private List<TagResponseDto> tag_boardList;
 	private int totalApplicantCnt;
+	private Boolean matching;
+	private String whoMatch;
 
 
-	public MatchingBoardResponseDto(Board board, int totalApplicantCnt) {
+	public MatchingBoardResponseDto(Board board, int totalApplicantCnt, String whoMatch) {
 		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.role = board.getUsers().getRole();
@@ -33,5 +35,7 @@ public class MatchingBoardResponseDto {
 		this.createdTime = board.getCreatedAt();
 		this.tag_boardList = board.getTagListWithWell();
 		this.totalApplicantCnt = totalApplicantCnt;
+		this.matching = board.getMatching();
+		this.whoMatch = whoMatch;
 	}
 }
