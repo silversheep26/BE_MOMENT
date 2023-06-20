@@ -20,7 +20,6 @@ public class MatchingApplyBoardResponseDto {
 	private String location;
 	private String boardImgUrl;
 	private LocalDateTime createdTime;
-	private boolean isMatched;
 	private List<TagResponseDto> tag_boardList;
 	private List<MatchApplyResponseDto> matchApplyDtoList = new ArrayList<>();
 	private boolean alreadyMatch;
@@ -36,7 +35,6 @@ public class MatchingApplyBoardResponseDto {
 		this.location = board.getLocation();
 		this.boardImgUrl = board.getBoardImgUrl();
 		this.createdTime = board.getCreatedAt();
-		this.isMatched = board.getMatching();
 		this.tag_boardList = board.getTagListWithWell();
 		this.alreadyMatch = alreadyMatch;
 		this.matchingWith = matchingWith;
