@@ -33,7 +33,6 @@ public class MyPageController {
     @PutMapping(value = "/{hostId}", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updatePage(@PathVariable Long hostId,
                                            @Valid @RequestPart(value = "update", required = false) UpdateRequestDto updateRequestDto,
-                                           @Validated @RequestPart(value = "update", required = false) UpdateRequestDto updateRequestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @RequestPart(value = "profile", required = false) MultipartFile profileImg) throws IOException {
         return myPageService.updateMyPage(hostId, updateRequestDto, userDetails.getUsers(), profileImg);

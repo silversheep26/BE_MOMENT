@@ -4,6 +4,7 @@ import com.back.moment.boards.dto.BoardRequestDto;
 import com.back.moment.boards.dto.UpdateBoardRequestDto;
 import com.back.moment.global.dto.TagResponseDto;
 import com.back.moment.common.TimeStamped;
+import com.back.moment.matching.entity.MatchingApply;
 import com.back.moment.users.entity.Users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -52,6 +53,12 @@ public class Board extends TimeStamped {
 
     @Column
     private String role;
+
+    @Column
+    private Boolean matching = false;  // 매칭 여부
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<MatchingApply> matchingApplyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Tag_Board> tag_boardList = new ArrayList<>();
