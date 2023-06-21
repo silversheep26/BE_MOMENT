@@ -65,7 +65,7 @@ public class MatchingService {
 	// 수락자 : 마이페이지에서 수락하기 누르기 (매칭 수락) -> 보인다: 마이페이지 주인
 	// 우선 마이페이지 게시글에 대한 매칭요청 리스트 -> 매칭요청 리스트중에 각 매칭요청마다
 	// 해당 요청을 했던 유저정보가 이미 들어있을거잖아요?
-	// matchingapply delete
+	// matchingApply delete
 	public ResponseEntity<MatchAcceptResponseDto> matchAcceptBoard(Long boardId, Long applyUserId, Users users) {
 		Board board = existBoard(boardId);
 
@@ -78,10 +78,6 @@ public class MatchingService {
 		matchingRepository.save(matching);
 		matchingApply.setMatchedCheck(true);
 		board.setMatching(true);
-//		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllMatchingApplyWhereIsNotUserId(
-//			boardId, applyUserId);
-//
-//		matchingApplyRepository.deleteAll(matchingApplyList);
 
 		return ResponseEntity.ok(new MatchAcceptResponseDto(boardId, applyUser.getNickName(), users.getNickName()));
 	}
@@ -95,14 +91,8 @@ public class MatchingService {
 		Board board = existBoard(boardId);
 		usersRepository.findById(users.getId())
 				.orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
-		List<MatchApplyResponseDto> matchApplyResponseDtoList = new ArrayList<>();
-		List<MatchingApply> matchingApplyList = matchingApplyRepository.findApplyWithFalse(boardId);
-		for (MatchingApply matchingApply : matchingApplyList) {
-			matchApplyResponseDtoList.add(new MatchApplyResponseDto(boardId, matchingApply.getApplicant().getId(),
-					matchingApply.getApplicant().getNickName(),
-					matchingApply.getApplicant().getProfileImg()));
-		}
-		return ResponseEntity.ok(matchApplyResponseDtoList);
+		List<MatchApplyResponseDto> matchingApplyList = matchingApplyRepository.findApplyWithFalse(boardId);
+		return ResponseEntity.ok(matchingApplyList);
 	}
 
 
@@ -154,9 +144,7 @@ public class MatchingService {
 
 	public ResponseEntity<Void> deleteMatchingApply(Long boardId, Long applyUserId, Users users){
 		Board board = existBoard(boardId);
-		if (!board.getUsers().getId().equals(users.getId())){
-			throw new ApiException(ExceptionEnum.UNAUTHORIZED);
-		}
+		checkAuthorized(board, users);
 
 		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, applyUserId);
 		matchingApplyRepository.delete(matchingApply);
@@ -164,9 +152,28 @@ public class MatchingService {
 		return ResponseEntity.ok(null);
 	}
 
-	public Board existBoard(Long boardId){
+	public ResponseEntity<Void> deleteMatching(Long boardId, Users users){
+		Board board = existBoard(boardId);
+		checkAuthorized(board, users);
+
+		Matching matching = matchingRepository.findByBoardId(boardId);
+		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, matching.getApplicant().getId());
+		matchingApplyRepository.delete(matchingApply);
+		matchingRepository.delete(matching);
+		board.setMatching(false);
+
+		return ResponseEntity.ok(null);
+	}
+
+	private Board existBoard(Long boardId){
 		return boardRepository.findExistBoard(boardId).orElseThrow(
 			() -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
 		);
+	}
+
+	private void checkAuthorized(Board board, Users users){
+		if (!board.getUsers().getId().equals(users.getId())){
+			throw new ApiException(ExceptionEnum.UNAUTHORIZED);
+		}
 	}
 }

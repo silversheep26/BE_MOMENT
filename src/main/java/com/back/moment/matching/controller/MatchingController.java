@@ -57,4 +57,9 @@ public class MatchingController {
 													@AuthenticationPrincipal UserDetailsImpl userDetails){
 		return matchingService.deleteMatchingApply(boardId, applyUserId, userDetails.getUsers());
 	}
+
+	@DeleteMapping("/delete/matched/{boardId}")
+	public ResponseEntity<Void> deleteMatching(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+		return matchingService.deleteMatching(boardId, userDetails.getUsers());
+	}
 }
