@@ -1,9 +1,6 @@
 package com.back.moment.chat.controller;
 
-import com.back.moment.chat.dto.ChatRequestDto;
-import com.back.moment.chat.dto.ChatResponseDto;
-import com.back.moment.chat.dto.ChatRoomInfoResponseDto;
-import com.back.moment.chat.dto.ChatRoomResponseDto;
+import com.back.moment.chat.dto.*;
 import com.back.moment.chat.service.ChatService;
 import com.back.moment.sse.NotificationService;
 import com.back.moment.users.security.UserDetailsImpl;
@@ -58,8 +55,9 @@ public class ChatController {
     @MessageMapping("/chat/send")
     public void enterChatRoom(ChatRequestDto chatRequestDto){
         ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
+        ChatDetailResponseDto chatDetailResponseDto = chatService.createChatDetailResponseDto(chatResponseDto);
         msgOperation.convertAndSend("/sub/chat/room/"+chatRequestDto.getChatRoomId(),chatResponseDto);
-        notificationService.notify(chatResponseDto.getReceiverId(),chatResponseDto);
+        notificationService.notify(chatResponseDto.getReceiverId(),chatDetailResponseDto);
     }
     /*
     1. pub/chat/send 준비 , 보낼데이터(채팅) 첫채팅이면 chatRoomId = null

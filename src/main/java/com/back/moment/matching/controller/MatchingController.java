@@ -5,6 +5,7 @@ import com.back.moment.matching.dto.MatchApplyResponseDto;
 import com.back.moment.matching.dto.MatchingApplyBoardResponseDto;
 import com.back.moment.matching.dto.MatchingBoardResponseDto;
 import com.back.moment.matching.service.MatchingService;
+import com.back.moment.sse.NotificationService;
 import com.back.moment.users.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
