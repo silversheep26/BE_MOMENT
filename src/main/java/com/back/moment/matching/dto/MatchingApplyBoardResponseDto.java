@@ -15,7 +15,7 @@ public class MatchingApplyBoardResponseDto {
 	private String title;
 	private String role;
 	private String nickName;
-	private Long hostId;
+	private Long boardHostId;
 	private String profileImgUrl;
 	private String location;
 	private String pay;
@@ -33,7 +33,7 @@ public class MatchingApplyBoardResponseDto {
 		this.title = board.getTitle();
 		this.role = board.getUsers().getRole();
 		this.nickName = board.getUsers().getNickName();
-		this.hostId = board.getUsers().getId();
+		this.boardHostId = board.getUsers().getId();
 		this.profileImgUrl = board.getUsers().getProfileImg();
 		this.location = board.getLocation();
 		this.pay = board.getPay();
