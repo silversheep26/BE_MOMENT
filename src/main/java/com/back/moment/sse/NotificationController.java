@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    @CrossOrigin(origins = "https://www.momentapp.site")
+    @CrossOrigin(origins = "https://www.momentapp.site",methods = {RequestMethod.GET})
     @GetMapping(value = "/chat/alarm/{userId}",produces = "text/event-stream")
     public SseEmitter chatAlarm(@PathVariable Long userId, HttpServletResponse response){
         response.setHeader("Connection", "keep-alive");
