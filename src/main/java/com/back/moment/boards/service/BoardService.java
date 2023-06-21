@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -95,7 +97,10 @@ public class BoardService {
         Page<ModelBoardListResponseDto> modelBoardPage;
         Page<PhotographerBoardListResponseDto> photographerBoardPage;
 
-        modelBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
+        modelBoardList.sort(Comparator.comparing(board -> {
+            LocalDate deadLineDate = LocalDate.parse(board.getDeadLine());
+            return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
+        }));
 
         if (modelBoardList.size() > pageable.getOffset()) {
             int startIndex = (int) pageable.getOffset();
@@ -121,7 +126,11 @@ public class BoardService {
             modelTotalPages = modelBoardPage.getTotalPages();
         else modelTotalPages = modelBoardPage.getTotalPages() - 1;
 
-        photographerBoardList.sort(Comparator.comparing(Board::getCreatedAt).reversed());
+        photographerBoardList.sort(Comparator.comparing(board -> {
+            LocalDate deadLineDate = LocalDate.parse(board.getDeadLine());
+            return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
+        }));
+
         if (photographerBoardList.size() > pageable.getOffset()) {
             int startIndex = (int) pageable.getOffset();
             int endIndex = Math.min(startIndex + pageable.getPageSize(), photographerBoardList.size());
