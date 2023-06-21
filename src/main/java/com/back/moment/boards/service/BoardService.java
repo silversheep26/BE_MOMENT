@@ -33,6 +33,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,79 +94,69 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<BoardListResponseDto> getAllBoards(Pageable pageable) {
+        List<Board> modelBoardList = sortBoardList(boardRepository.getModelBoardListByHostIdWithFetch("MODEL"));
+        List<Board> photographerBoardList = sortBoardList(boardRepository.getPhotographerBoardListByHostIdWithFetch("PHOTOGRAPHER"));
 
-        List<Board> modelBoardList = boardRepository.getModelBoardListByHostIdWithFetch("MODEL");
-        List<Board> photographerBoardList = boardRepository.getPhotographerBoardListByHostIdWithFetch("PHOTOGRAPHER");
-        Page<ModelBoardListResponseDto> modelBoardPage;
-        Page<PhotographerBoardListResponseDto> photographerBoardPage;
+        Page<ModelBoardListResponseDto> modelBoardPage = createBoardPage(modelBoardList, pageable, ModelBoardListResponseDto::new);
+        Page<PhotographerBoardListResponseDto> photographerBoardPage = createBoardPage(photographerBoardList, pageable, PhotographerBoardListResponseDto::new);
 
-        modelBoardList.sort(Comparator.comparing(board -> {
-            LocalDate deadLineDate = LocalDate.parse(board.getDeadLine());
-            return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
-        }));
-
-        if (modelBoardList.size() > pageable.getOffset()) {
-            int startIndex = (int) pageable.getOffset();
-            int endIndex = Math.min(startIndex + pageable.getPageSize(), modelBoardList.size());
-            List<ModelBoardListResponseDto> modelBoardDtoList = modelBoardList.subList(startIndex, endIndex)
-                    .stream()
-                    .map(ModelBoardListResponseDto::new)
-                    .toList();
-            modelBoardPage = new PageImpl<>(modelBoardDtoList, pageable, modelBoardList.size());
-        } else{
-            modelBoardPage = new PageImpl<>(
-                    modelBoardList.stream()
-                            .map(ModelBoardListResponseDto::new)
-                            .toList(),
-                    pageable,
-                    modelBoardList.size()
-            );
-        }
         boolean modelHasMorePage = modelBoardPage.hasNext();
         int modelCurrentPage = modelBoardPage.getNumber();
-        int modelTotalPages;
-        if(modelBoardList.isEmpty())
-            modelTotalPages = modelBoardPage.getTotalPages();
-        else modelTotalPages = modelBoardPage.getTotalPages() - 1;
+        int modelTotalPages = modelBoardList.isEmpty() ? modelBoardPage.getTotalPages() : modelBoardPage.getTotalPages() - 1;
 
-        photographerBoardList.sort(Comparator.comparing(board -> {
-            LocalDate deadLineDate = LocalDate.parse(board.getDeadLine());
-            return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
-        }));
-
-        if (photographerBoardList.size() > pageable.getOffset()) {
-            int startIndex = (int) pageable.getOffset();
-            int endIndex = Math.min(startIndex + pageable.getPageSize(), photographerBoardList.size());
-            List<PhotographerBoardListResponseDto> photographerBoardDtoList = photographerBoardList.subList(startIndex, endIndex)
-                    .stream()
-                    .map(PhotographerBoardListResponseDto::new)
-                    .toList();
-            photographerBoardPage = new PageImpl<>(photographerBoardDtoList, pageable, photographerBoardList.size());
-        } else{
-            photographerBoardPage = new PageImpl<>(
-                    photographerBoardList.stream()
-                            .map(PhotographerBoardListResponseDto::new)
-                            .toList(),
-                    pageable,
-                    photographerBoardList.size()
-            );
-        }
         boolean photographerHasMorePage = photographerBoardPage.hasNext();
         int photographerCurrentPage = photographerBoardPage.getNumber();
-        int photographerTotalPages;
-        if(photographerBoardList.isEmpty())
-            photographerTotalPages = photographerBoardPage.getTotalPages();
-        else photographerTotalPages = photographerBoardPage.getTotalPages() - 1;
+        int photographerTotalPages = photographerBoardList.isEmpty() ? photographerBoardPage.getTotalPages() : photographerBoardPage.getTotalPages() - 1;
 
-        return new ResponseEntity<>(new BoardListResponseDto(modelBoardPage,
-                photographerBoardPage,
-                modelHasMorePage,
-                photographerHasMorePage,
-                modelCurrentPage,
-                modelTotalPages,
-                photographerCurrentPage,
-                photographerTotalPages), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new BoardListResponseDto(
+                        modelBoardPage,
+                        photographerBoardPage,
+                        modelHasMorePage,
+                        photographerHasMorePage,
+                        modelCurrentPage,
+                        modelTotalPages,
+                        photographerCurrentPage,
+                        photographerTotalPages
+                ),
+                HttpStatus.OK
+        );
     }
+
+    private List<Board> sortBoardList(List<Board> boardList) {
+        return boardList.stream()
+                .sorted(Comparator.comparing(board -> {
+                    LocalDate deadLineDate = Optional.ofNullable(board)
+                            .map(b -> (Board) b)
+                            .map(Board::getDeadLine)
+                            .map(LocalDate::parse)
+                            .orElse(LocalDate.now());
+                    return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
+                }).reversed())
+                .collect(Collectors.toList());
+    }
+
+
+    private <T> Page<T> createBoardPage(List<Board> boardList, Pageable pageable, Function<Board, T> dtoMapper) {
+        if (boardList.size() > pageable.getOffset()) {
+            int startIndex = (int) pageable.getOffset();
+            int endIndex = Math.min(startIndex + pageable.getPageSize(), boardList.size());
+            List<T> dtoList = boardList.subList(startIndex, endIndex)
+                    .stream()
+                    .map(dtoMapper)
+                    .toList();
+            return new PageImpl<>(dtoList, pageable, boardList.size());
+        } else {
+            return new PageImpl<>(
+                    boardList.stream()
+                            .map(dtoMapper)
+                            .toList(),
+                    pageable,
+                    boardList.size()
+            );
+        }
+    }
+
 
     // 게시글 상세 조회
     @Transactional(readOnly = true)
