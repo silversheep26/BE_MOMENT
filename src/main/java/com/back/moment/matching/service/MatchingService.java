@@ -4,14 +4,13 @@ import com.back.moment.boards.entity.Board;
 import com.back.moment.boards.repository.BoardRepository;
 import com.back.moment.exception.ApiException;
 import com.back.moment.exception.ExceptionEnum;
-import com.back.moment.matching.dto.MatchAcceptResponseDto;
-import com.back.moment.matching.dto.MatchApplyResponseDto;
-import com.back.moment.matching.dto.MatchingApplyBoardResponseDto;
-import com.back.moment.matching.dto.MatchingBoardResponseDto;
+import com.back.moment.matching.entity.MatchStatus;
+import com.back.moment.matching.dto.*;
 import com.back.moment.matching.entity.Matching;
 import com.back.moment.matching.entity.MatchingApply;
 import com.back.moment.matching.repository.MatchingApplyRepository;
 import com.back.moment.matching.repository.MatchingRepository;
+import com.back.moment.sse.NotificationService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class MatchingService {
 	private final UsersRepository usersRepository;
 	private final MatchingApplyRepository matchingApplyRepository;
 	private final MatchingRepository matchingRepository;
+	private final NotificationService notificationService;
 
 	// 신청자 : 게시글 상세에서 확인 가능 (매칭 요청) 이미 매칭 요청 한 경우 매칭 취소 : 매칭 신청 버튼을 누르면 발생하는 이벤트
 	public ResponseEntity<Void> matchApplyBoard(Long boardId, Users users) {
@@ -47,7 +47,7 @@ public class MatchingService {
 				if (matchingApplyCnt < 5) { // 5명보다 적게 매칭 신청된 경우
 					MatchingApply matchingApply = new MatchingApply(board, users);
 					matchingApplyRepository.save(matchingApply);
-
+					notificationService.notify(board.getUsers().getId(),new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(), MatchStatus.MATCH_APPLY));
 					if (matchingApplyCnt == 4) {
 						board.setMatchingFull(true); // 4명이 매칭 신청된 경우에만 matchingFull을 true로 변경
 					}
@@ -58,7 +58,6 @@ public class MatchingService {
 		} else{
 			throw new ApiException(ExceptionEnum.OVER_MATCHING_COUNT);
 		}
-
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -78,6 +77,7 @@ public class MatchingService {
 		matchingRepository.save(matching);
 		matchingApply.setMatchedCheck(true);
 		board.setMatching(true);
+		notificationService.notify(applyUserId,new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(),MatchStatus.MATCH_ACCEPT));
 
 		return ResponseEntity.ok(new MatchAcceptResponseDto(boardId, applyUser.getNickName(), users.getNickName()));
 	}
