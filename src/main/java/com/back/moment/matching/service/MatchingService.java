@@ -15,6 +15,8 @@ import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,7 +83,8 @@ public class MatchingService {
 
 		List<MatchingApply> RefusedMatchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
 		for(MatchingApply refusedMatchingApply : RefusedMatchingApplyList){
-			refusedMatchingApply.setApplyRefused(true);
+			if(!Objects.equals(refusedMatchingApply.getApplicant().getId(), applyUserId))
+				refusedMatchingApply.setApplyRefused(true);
 		}
 
 		notificationService.notify(applyUserId,new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(),MatchStatus.MATCH_ACCEPT));
