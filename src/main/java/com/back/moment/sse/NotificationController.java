@@ -2,10 +2,7 @@ package com.back.moment.sse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
@@ -13,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
+    @CrossOrigin(origins = "https://www.momentapp.site")
     @GetMapping(value = "/chat/alarm/{userId}",produces = "text/event-stream")
     public SseEmitter chatAlarm(@PathVariable Long userId, HttpServletResponse response){
         response.setHeader("Connection", "keep-alive");
