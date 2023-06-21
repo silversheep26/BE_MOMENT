@@ -52,7 +52,7 @@ public class MatchingController {
 		return matchingService.getMatchingApplyList(userDetails.getUsers());
 	}
 
-	@PutMapping("/delete/{boardId}/{applyUserId}")
+	@DeleteMapping("/delete/{boardId}/{applyUserId}")
 	public ResponseEntity<Void> deleteMatchingApply(@PathVariable Long boardId,
 													@PathVariable Long applyUserId,
 													@AuthenticationPrincipal UserDetailsImpl userDetails){
