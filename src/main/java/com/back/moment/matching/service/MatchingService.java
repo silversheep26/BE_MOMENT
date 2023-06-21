@@ -56,7 +56,11 @@ public class MatchingService {
 					}
 				}
 			} else { // 이미 매칭요청을 했으면 , 매칭 취소 : db 에서 삭제
-				matchingApplyRepository.delete(existMatchingApply);
+				if(!existMatchingApply.isApplyRefused())
+					matchingApplyRepository.delete(existMatchingApply);
+				else{
+					throw new ApiException(ExceptionEnum.APPLY_REFUSED);
+				}
 			}
 		} else{
 			throw new ApiException(ExceptionEnum.OVER_MATCHING_COUNT);
