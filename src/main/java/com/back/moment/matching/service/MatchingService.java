@@ -116,8 +116,9 @@ public class MatchingService {
 		for (Board board : boardList) {
 			Matching existMatching = matchingRepository.findByBoardId(board.getId());
 			String whoMatch = existMatching != null ? existMatching.getApplicant().getNickName() : null;
+			Long whoMatchId = existMatching != null ? existMatching.getApplicant().getId() : null;
 			int totalApplicantCnt = matchingApplyRepository.countAllMatchingWithFalse(board.getId());
-			MatchingBoardResponseDto matchingBoardResponseDto = new MatchingBoardResponseDto(board, totalApplicantCnt, whoMatch);
+			MatchingBoardResponseDto matchingBoardResponseDto = new MatchingBoardResponseDto(board, totalApplicantCnt, whoMatch, whoMatchId);
 			matchingBoardResponseDtos.add(matchingBoardResponseDto);
 		}
 
