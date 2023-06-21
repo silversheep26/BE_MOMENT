@@ -27,8 +27,9 @@ public class MatchingApplyBoardResponseDto {
 	private boolean alreadyMatch;
 	private boolean matchingWith;
 	private int totalApplicantCnt;
+	private boolean applyRefused;
 
-	public MatchingApplyBoardResponseDto(Board board, boolean alreadyMatch, boolean matchingWith, int totalApplicantCnt) {
+	public MatchingApplyBoardResponseDto(Board board, boolean alreadyMatch, boolean matchingWith, int totalApplicantCnt, boolean applyRefused) {
 		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.role = board.getUsers().getRole();
@@ -44,6 +45,7 @@ public class MatchingApplyBoardResponseDto {
 		this.alreadyMatch = alreadyMatch;
 		this.matchingWith = matchingWith;
 		this.totalApplicantCnt = totalApplicantCnt;
+		this.applyRefused = applyRefused;
 	}
 
 }

@@ -38,6 +38,9 @@ public class MatchingApply extends TimeStamped {
 	@Column(nullable = false)
 	private boolean matchedCheck = false;
 
+	@Column(nullable = false)
+	private boolean applyRefused = false;
+
 	public MatchingApply(Board board, Users applicant) {
 		this.board = board;
 		this.applicant = applicant;
