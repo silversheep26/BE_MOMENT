@@ -13,11 +13,15 @@ import com.back.moment.matching.repository.MatchingRepository;
 import com.back.moment.sse.NotificationService;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.repository.UsersRepository;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,29 +45,35 @@ public class MatchingService {
 		if (board.getUsers().getId().equals(users.getId())){  // 같으면 마이페이지 보내기
 			throw new ApiException(ExceptionEnum.NOT_MATCH_USERS);
 		}
+		LocalDate deadLineDate = LocalDate.parse(board.getDeadLine());
+		LocalDate nowDate = LocalDate.now();
 		int matchingApplyCnt = matchingApplyRepository.countAllMatchingWithFalseAndRefusedTrue(boardId);
 		MatchingApply existMatchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, users.getId());
 		// 이전에 매칭 신청 안 한 경우
-		if(board.getMatchingFull() == null || !board.getMatchingFull()) {
-			if (existMatchingApply == null) {
-				if (matchingApplyCnt < 5) { // 5명보다 적게 매칭 신청된 경우
-					MatchingApply matchingApply = new MatchingApply(board, users);
-					matchingApplyRepository.save(matchingApply);
-					// 매칭 요청 알림
-					notificationService.notify(board.getUsers().getId(),new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(), MatchStatus.MATCH_APPLY));
-					if (matchingApplyCnt == 4) {
-						board.setMatchingFull(true); // 4명이 매칭 신청된 경우에만 matchingFull을 true로 변경
+		if(nowDate.isBefore(deadLineDate)) {
+			if (board.getMatchingFull() == null || !board.getMatchingFull()) {
+				if (existMatchingApply == null) {
+					if (matchingApplyCnt < 5) { // 5명보다 적게 매칭 신청된 경우
+						MatchingApply matchingApply = new MatchingApply(board, users);
+						matchingApplyRepository.save(matchingApply);
+						// 매칭 요청 알림
+						notificationService.notify(board.getUsers().getId(), new MatchNotificationResponseDto(boardId, users.getId(), users.getNickName(), users.getProfileImg(), MatchStatus.MATCH_APPLY));
+						if (matchingApplyCnt == 4) {
+							board.setMatchingFull(true); // 4명이 매칭 신청된 경우에만 matchingFull을 true로 변경
+						}
+					}
+				} else { // 이미 매칭요청을 했으면 , 매칭 취소 : db 에서 삭제
+					if (!Objects.requireNonNull(existMatchingApply).isApplyRefused())
+						matchingApplyRepository.delete(existMatchingApply);
+					else {
+						throw new ApiException(ExceptionEnum.APPLY_REFUSED);
 					}
 				}
-			} else { // 이미 매칭요청을 했으면 , 매칭 취소 : db 에서 삭제
-				if(!existMatchingApply.isApplyRefused())
-					matchingApplyRepository.delete(existMatchingApply);
-				else{
-					throw new ApiException(ExceptionEnum.APPLY_REFUSED);
-				}
+			} else {
+				throw new ApiException(ExceptionEnum.OVER_MATCHING_COUNT);
 			}
-		} else{
-			throw new ApiException(ExceptionEnum.OVER_MATCHING_COUNT);
+		} else {
+			throw new ApiException(ExceptionEnum.DATE_OUT);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

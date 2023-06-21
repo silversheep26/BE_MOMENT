@@ -23,12 +23,14 @@ public enum ExceptionEnum {
     NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST,"400_9", "비밀번호가 일치하지 않습니다."),
     FAIL_CHAT_SAVE(HttpStatus.BAD_REQUEST,"400_10","채팅 저장에 실패하였습니다."),
     OVER_MATCHING_COUNT(HttpStatus.BAD_REQUEST,"400_11","매칭 인원 초과"),
+    DATE_OUT(HttpStatus.BAD_REQUEST, "400_12", "마감 날짜 초과"),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),
     LOGIN(HttpStatus.UNAUTHORIZED, "401_1", "로그인 후 이용가능합니다."),
     EXIST_KAKAO(HttpStatus.UNAUTHORIZED, "401_2", "카카오 가입자는 비밀번호 변경이 불가능합니다."),
     APPLY_REFUSED(HttpStatus.UNAUTHORIZED, "401_3", "현제 게시물의 매칭이 거절되었습니다."),
+
 
     // 404 Not Found
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "404_1", "게시글이 존재하지 않습니다."),
