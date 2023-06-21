@@ -94,10 +94,6 @@ public class UserService {
             }
         }
 
-//        if(!profileImg.isEmpty()) {
-//            String imgPath = s3Uploader.upload(profileImg);
-//            users.setProfileImg(imgPath);
-//        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -118,17 +114,6 @@ public class UserService {
             jwtUtil.init();
             // 토큰에 모델인지 작가인지 판단하는 role 입력
             TokenDto tokenDto = jwtUtil.createAllToken(users, users.getRole());
-
-//            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(loginRequestDto.getEmail());
-//
-//            if (refreshToken.isPresent()) {
-//                RefreshToken savedRefreshToken = refreshToken.get();
-//                RefreshToken updateToken = savedRefreshToken.updateToken(tokenDto.getRefreshToken().substring(7));
-//                refreshTokenRepository.save(updateToken);
-//            } else {
-//                RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken().substring(7), email);
-//                refreshTokenRepository.save(newToken);
-//            }
 
             String redisKey = tokenDto.getRefreshToken().substring(7);
             String refreshRedis = redisService.getRefreshToken(users.getEmail());
@@ -152,18 +137,6 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-//    @Transactional(readOnly = true)
-//    public ResponseEntity<Void> logout(HttpServletRequest request){
-//        String refreshToken = request.getHeader(REFRESH_KEY).substring(7);
-//
-//        if(!refreshToken.isEmpty() && redisService.getValues(refreshToken) != null){
-//            redisService.deleteValues(refreshToken);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//        return ResponseEntity.ok(null);
-//    }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(ACCESS_KEY, tokenDto.getAccessToken());

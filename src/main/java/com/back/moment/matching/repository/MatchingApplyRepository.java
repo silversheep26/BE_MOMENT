@@ -15,11 +15,11 @@ public interface MatchingApplyRepository extends JpaRepository<MatchingApply, Lo
 
 	List<MatchingApply> findAllByApplicant(Users users);
 
-	@Query("select count(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
-	int countAllMatchingWithFalse(Long boardId);
+	@Query("select count(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false and ma.applyRefused = false")
+	int countAllMatchingWithFalseAndRefusedTrue(Long boardId);
 
 	MatchingApply findByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
 
-	@Query("select new com.back.moment.matching.dto.MatchApplyResponseDto(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
-	List<MatchApplyResponseDto> findApplyWithFalse(@Param("boardId") Long boardId);
+	@Query("select new com.back.moment.matching.dto.MatchApplyResponseDto(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false and ma.applyRefused = false")
+	List<MatchApplyResponseDto> findApplyWithFalseAndRefusedTrue(@Param("boardId") Long boardId);
 }
