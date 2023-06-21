@@ -1,5 +1,6 @@
 package com.back.moment.matching.repository;
 
+import com.back.moment.matching.dto.MatchApplyResponseDto;
 import com.back.moment.matching.entity.MatchingApply;
 import com.back.moment.users.entity.Users;
 import java.util.List;
@@ -19,6 +20,6 @@ public interface MatchingApplyRepository extends JpaRepository<MatchingApply, Lo
 
 	MatchingApply findByBoardIdAndApplicantId(Long boardId, Long ApplicantId);
 
-	@Query("select ma from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
-	List<MatchingApply> findApplyWithFalse(@Param("boardId") Long boardId);
+	@Query("select new com.back.moment.matching.dto.MatchApplyResponseDto(ma) from MatchingApply ma where ma.board.id = :boardId and ma.matchedCheck = false")
+	List<MatchApplyResponseDto> findApplyWithFalse(@Param("boardId") Long boardId);
 }

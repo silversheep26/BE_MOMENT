@@ -1,5 +1,6 @@
 package com.back.moment.matching.dto;
 
+import com.back.moment.matching.entity.MatchingApply;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,11 @@ public class MatchApplyResponseDto {
 	private String userNickName;
 	private String userProfileImg;
 
-	public MatchApplyResponseDto(Long boardId, Long userId, String userNickName, String userProfileImg) {
-		this.boardId = boardId;
-		this.userId = userId;
-		this.userNickName = userNickName;
-		this.userProfileImg = userProfileImg;
+	public MatchApplyResponseDto(MatchingApply matchingApply) {
+		this.boardId = matchingApply.getBoard().getId();
+		this.userId = matchingApply.getApplicant().getId();
+		this.userNickName = matchingApply.getApplicant().getNickName();
+		this.userProfileImg = matchingApply.getApplicant().getProfileImg();
 	}
 }
 
