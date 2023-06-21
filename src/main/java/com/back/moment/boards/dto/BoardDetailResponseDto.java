@@ -27,8 +27,9 @@ public class BoardDetailResponseDto {
     private String profileUrl;
     private String boardImgUrl;
     private List<OnlyPhotoResponseDto> feedImgUrl;
+    private boolean checkApply;
 
-    public BoardDetailResponseDto(Board board){
+    public BoardDetailResponseDto(Board board, boolean checkApply){
         this.hostId = board.getUsers().getId();
         this.boardId = board.getId();
         this.nickName = board.getUsers().getNickName();
@@ -47,5 +48,6 @@ public class BoardDetailResponseDto {
             .sorted(Comparator.comparingInt(OnlyPhotoResponseDto::getLoveCnt).reversed())
             .limit(6)
             .toList();
+        this.checkApply = checkApply;
     }
 }

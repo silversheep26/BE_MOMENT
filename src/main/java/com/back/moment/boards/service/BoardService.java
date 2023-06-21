@@ -161,8 +161,11 @@ public class BoardService {
     @Transactional(readOnly = true)
     public ResponseEntity<BoardDetailResponseDto> getBoard(Long boardId, Users users){
         Board board = existBoard(boardId);
+        boolean checkApply = false;
+        MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, users.getId());
+        if(matchingApply != null) checkApply = true;
 
-        return new ResponseEntity<>(new BoardDetailResponseDto(board), HttpStatus.OK);
+        return new ResponseEntity<>(new BoardDetailResponseDto(board, checkApply), HttpStatus.OK);
     }
 
     @Transactional
