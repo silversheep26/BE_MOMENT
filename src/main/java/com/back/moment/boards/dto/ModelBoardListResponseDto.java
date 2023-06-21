@@ -23,6 +23,7 @@ public class ModelBoardListResponseDto {
     private String hostProfileUrl;
     private LocalDateTime createdTime;
     private List<TagResponseDto> tag_boardList;
+    private boolean checkMatched;
 
     public ModelBoardListResponseDto(Board board) {
         this.boardId = board.getId();
@@ -36,5 +37,6 @@ public class ModelBoardListResponseDto {
         this.hostProfileUrl = board.getUsers().getProfileImg();
         this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();
+        this.checkMatched = board.getMatching();
     }
 }

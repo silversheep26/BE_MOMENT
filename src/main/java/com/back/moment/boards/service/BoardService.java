@@ -49,7 +49,6 @@ public class BoardService {
     public ResponseEntity<Void> createBoard(BoardRequestDto boardRequestDto, Users users, MultipartFile boardImg){
         Board board = new Board();
         if(users.getRole() != null) {
-
             board.saveBoard(boardRequestDto, users);
             if (!boardImg.isEmpty()) {
                 try {
@@ -165,7 +164,7 @@ public class BoardService {
         MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, users.getId());
         if(matchingApply != null) checkApply = true;
 
-        return new ResponseEntity<>(new BoardDetailResponseDto(board, checkApply), HttpStatus.OK);
+        return new ResponseEntity<>(new BoardDetailResponseDto(board, checkApply, board.getMatching()), HttpStatus.OK);
     }
 
     @Transactional
