@@ -24,6 +24,7 @@ public class MyPageBoardListResponseDto {
     private String boardImgUrl;
     private LocalDateTime createdTime;
     private List<TagResponseDto> tag_boardList;
+    private boolean checkMatched;
 
     public MyPageBoardListResponseDto(Board board) {
         this.boardId = board.getId();
@@ -38,5 +39,6 @@ public class MyPageBoardListResponseDto {
         this.boardImgUrl = board.getBoardImgUrl();
         this.createdTime = board.getCreatedAt().plusHours(9);
         this.tag_boardList = board.getTagListWithWell();
+        this.checkMatched = board.getMatching();
     }
 }

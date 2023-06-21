@@ -28,8 +28,9 @@ public class BoardDetailResponseDto {
     private String boardImgUrl;
     private List<OnlyPhotoResponseDto> feedImgUrl;
     private boolean checkApply;
+    private boolean checkMatched;
 
-    public BoardDetailResponseDto(Board board, boolean checkApply){
+    public BoardDetailResponseDto(Board board, boolean checkApply, boolean checkMatched){
         this.hostId = board.getUsers().getId();
         this.boardId = board.getId();
         this.nickName = board.getUsers().getNickName();
@@ -49,5 +50,6 @@ public class BoardDetailResponseDto {
             .limit(6)
             .toList();
         this.checkApply = checkApply;
+        this.checkMatched = checkMatched;
     }
 }
