@@ -78,7 +78,12 @@ public class MatchingService {
 		matchingRepository.save(matching);
 		matchingApply.setMatchedCheck(true);
 		board.setMatching(true);
-		// 매칭 수락 알림
+
+		List<MatchingApply> RefusedMatchingApplyList = matchingApplyRepository.findAllByBoardId(boardId);
+		for(MatchingApply refusedMatchingApply : RefusedMatchingApplyList){
+			refusedMatchingApply.setApplyRefused(true);
+		}
+
 		notificationService.notify(applyUserId,new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(),MatchStatus.MATCH_ACCEPT));
 		return ResponseEntity.ok(new MatchAcceptResponseDto(boardId, applyUser.getNickName(), users.getNickName()));
 	}
