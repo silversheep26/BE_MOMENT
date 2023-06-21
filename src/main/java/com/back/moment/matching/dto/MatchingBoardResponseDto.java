@@ -24,9 +24,10 @@ public class MatchingBoardResponseDto {
 	private int totalApplicantCnt;
 	private Boolean matching;
 	private String whoMatch;
+	private Long whoMatchId;
 
 
-	public MatchingBoardResponseDto(Board board, int totalApplicantCnt, String whoMatch) {
+	public MatchingBoardResponseDto(Board board, int totalApplicantCnt, String whoMatch, Long whoMatchId) {
 		this.boardId = board.getId();
 		this.title = board.getTitle();
 		this.role = board.getUsers().getRole();
@@ -41,5 +42,6 @@ public class MatchingBoardResponseDto {
 		this.totalApplicantCnt = totalApplicantCnt;
 		this.matching = board.getMatching();
 		this.whoMatch = whoMatch;
+		this.whoMatchId = whoMatchId;
 	}
 }
