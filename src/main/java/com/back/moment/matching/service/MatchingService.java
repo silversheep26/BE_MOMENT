@@ -47,6 +47,7 @@ public class MatchingService {
 				if (matchingApplyCnt < 5) { // 5명보다 적게 매칭 신청된 경우
 					MatchingApply matchingApply = new MatchingApply(board, users);
 					matchingApplyRepository.save(matchingApply);
+					// 매칭 요청 알림
 					notificationService.notify(board.getUsers().getId(),new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(), MatchStatus.MATCH_APPLY));
 					if (matchingApplyCnt == 4) {
 						board.setMatchingFull(true); // 4명이 매칭 신청된 경우에만 matchingFull을 true로 변경
@@ -77,8 +78,8 @@ public class MatchingService {
 		matchingRepository.save(matching);
 		matchingApply.setMatchedCheck(true);
 		board.setMatching(true);
+		// 매칭 수락 알림
 		notificationService.notify(applyUserId,new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(),MatchStatus.MATCH_ACCEPT));
-
 		return ResponseEntity.ok(new MatchAcceptResponseDto(boardId, applyUser.getNickName(), users.getNickName()));
 	}
 
@@ -157,11 +158,13 @@ public class MatchingService {
 		checkAuthorized(board, users);
 
 		Matching matching = matchingRepository.findByBoardId(boardId);
-		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, matching.getApplicant().getId());
+		Users applicant = matching.getApplicant();
+		MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, applicant.getId());
 		matchingApplyRepository.delete(matchingApply);
 		matchingRepository.delete(matching);
 		board.setMatching(false);
-
+		// 매칭 삭제 알림
+		notificationService.notify(applicant.getId(),new MatchNotificationResponseDto(boardId,users.getId(),users.getNickName(),users.getProfileImg(),MatchStatus.MATCH_DELETE));
 		return ResponseEntity.ok(null);
 	}
 
