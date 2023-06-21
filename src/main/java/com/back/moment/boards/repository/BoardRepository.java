@@ -21,11 +21,11 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardSearch
     @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.users.id = :hostId order by b.createdAt desc")
     List<Board> getBoardListByHostIdWithFetch(@Param("hostId") Long hostId);
 
-    @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb LEFT JOIN FETCH tb.boardHashTag tbl WHERE b.users.role = :role AND (b.deadLine IS NULL OR b.deadLine <= CURRENT_DATE()) ORDER BY b.createdAt DESC")
+    @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.users.role = :role order by b.createdAt desc")
     List<Board> getModelBoardListByHostIdWithFetch(@Param("role") String role);
 
 
-    @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb LEFT JOIN FETCH tb.boardHashTag tbl WHERE b.users.role = :role AND (b.deadLine IS NULL OR b.deadLine <= CURRENT_DATE()) ORDER BY b.createdAt DESC")
+    @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.users.role = :role order by b.createdAt desc")
     List<Board> getPhotographerBoardListByHostIdWithFetch(@Param("role") String role);
 
     @Query("SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.tag_boardList tb left JOIN FETCH tb.boardHashTag tbl WHERE b.id = :boardId")
