@@ -134,7 +134,7 @@ public class BoardService {
                             .map(LocalDate::parse)
                             .orElse(currentDate);
 
-                    if (deadLineDate.isBefore(currentDate)) {
+                    if (deadLineDate.isBefore(currentDate) || deadLineDate == null) {
                         return Long.MAX_VALUE; // Assign maximum value to push it to the end
                     }
 
