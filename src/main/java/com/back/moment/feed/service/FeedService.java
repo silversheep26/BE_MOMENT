@@ -166,7 +166,7 @@ public class FeedService {
         boolean isFirstPage = startIndex == 0;
         boolean isLastPage = endIndex >= photos.size();
 
-        Pageable modifiedPageable = isLastPage ? pageable.withPage(totalPages - 1) : pageable;
+        Pageable modifiedPageable = totalPages > 0 && isLastPage ? pageable.withPage(totalPages - 1) : pageable;
 
         return new PageImpl<>(pageItems, modifiedPageable, photos.size());
     }
