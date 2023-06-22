@@ -10,8 +10,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    @GetMapping(value = "/chat/alarm/{userId}",produces = "text/event-stream")
-    public SseEmitter chatAlarm(@PathVariable Long userId, HttpServletResponse response){
+
+    @CrossOrigin(origins = "https://www.momentapp.site")
+    @GetMapping(value = "/chat/alarm/{userId}", produces = "text/event-stream")
+    public SseEmitter chatAlarm(@PathVariable Long userId, HttpServletResponse response) {
         return notificationService.subscribe(userId);
     }
 }
