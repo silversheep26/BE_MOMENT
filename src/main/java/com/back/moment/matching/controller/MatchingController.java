@@ -1,9 +1,6 @@
 package com.back.moment.matching.controller;
 
-import com.back.moment.matching.dto.MatchAcceptResponseDto;
-import com.back.moment.matching.dto.MatchApplyResponseDto;
-import com.back.moment.matching.dto.MatchingApplyBoardResponseDto;
-import com.back.moment.matching.dto.MatchingBoardResponseDto;
+import com.back.moment.matching.dto.*;
 import com.back.moment.matching.service.MatchingService;
 import com.back.moment.sse.NotificationService;
 import com.back.moment.users.security.UserDetailsImpl;
@@ -40,14 +37,14 @@ public class MatchingController {
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 받은 매칭 신청 게시글 보기
 	@GetMapping("/accept-list")
-	public ResponseEntity<List<MatchingBoardResponseDto>> getMatchedList(
+	public ResponseEntity<MatchingBoardListResponseDto> getMatchedList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.getMatchedList(userDetails.getUsers());
 	}
 
 	// 마이페이지에서 매칭 리스트 보기 : 내가 신청한 매칭 게시글 보기
 	@GetMapping("/apply-list")
-	public ResponseEntity<List<MatchingApplyBoardResponseDto>> getMatchingApplyList(
+	public ResponseEntity<MatchingApplyBoardListResponseDto> getMatchingApplyList(
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return matchingService.getMatchingApplyList(userDetails.getUsers());
 	}

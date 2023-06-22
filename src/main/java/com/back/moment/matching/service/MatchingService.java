@@ -122,9 +122,10 @@ public class MatchingService {
 
 	// 내가 받은 매칭 신청 리스트
 	@Transactional(readOnly = true)
-	public ResponseEntity<List<MatchingBoardResponseDto>> getMatchedList(Users users) {
+	public ResponseEntity<MatchingBoardListResponseDto> getMatchedList(Users users) {
 		List<Board> boardList = boardRepository.getBoardListByHostIdWithFetch(users.getId());
 		List<MatchingBoardResponseDto> matchingBoardResponseDtos = new ArrayList<>(boardList.size());
+		int totalCnt = 0;
 
 		for (Board board : boardList) {
 			Matching existMatching = matchingRepository.findByBoardId(board.getId());
@@ -133,17 +134,19 @@ public class MatchingService {
 			int totalApplicantCnt = matchingApplyRepository.countAllMatchingWithFalseAndRefusedTrue(board.getId());
 			MatchingBoardResponseDto matchingBoardResponseDto = new MatchingBoardResponseDto(board, totalApplicantCnt, whoMatch, whoMatchId);
 			matchingBoardResponseDtos.add(matchingBoardResponseDto);
+			totalCnt++;
 		}
 
-		return ResponseEntity.ok(matchingBoardResponseDtos);
+		return ResponseEntity.ok(new MatchingBoardListResponseDto(matchingBoardResponseDtos, totalCnt));
 	}
 
 	// 내가 신청한 매칭 게시글
 	// 매칭 중(isMatched = false)/ 매칭 완료
 	@Transactional(readOnly = true)
-	public ResponseEntity<List<MatchingApplyBoardResponseDto>> getMatchingApplyList(Users users) {
+	public ResponseEntity<MatchingApplyBoardListResponseDto> getMatchingApplyList(Users users) {
 		List<MatchingApply> matchingApplyList = matchingApplyRepository.findAllByApplicant(users);
 		List<MatchingApplyBoardResponseDto> matchingBoardResponseDtos = new ArrayList<>(matchingApplyList.size());
+		int totalCnt = 0;
 
 		for (MatchingApply matchingApply : matchingApplyList) {
 			Matching existMatching = matchingRepository.findByBoardId(matchingApply.getBoard().getId());
@@ -161,9 +164,10 @@ public class MatchingService {
 					matchingApply.isApplyRefused()
 			);
 			matchingBoardResponseDtos.add(matchingBoardResponseDto);
+			totalCnt++;
 		}
 
-		return ResponseEntity.ok(matchingBoardResponseDtos);
+		return ResponseEntity.ok(new MatchingApplyBoardListResponseDto(matchingBoardResponseDtos, totalCnt));
 	}
 
 	public ResponseEntity<Void> deleteMatchingApply(Long boardId, Long applyUserId, Users users){
