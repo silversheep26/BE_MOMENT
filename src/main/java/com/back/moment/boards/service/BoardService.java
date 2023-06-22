@@ -124,15 +124,22 @@ public class BoardService {
     }
 
     private List<Board> sortBoardList(List<Board> boardList) {
+        LocalDate currentDate = LocalDate.now();
+
         return boardList.stream()
                 .sorted(Comparator.comparing(board -> {
                     LocalDate deadLineDate = Optional.ofNullable(board)
                             .map(b -> (Board) b)
                             .map(Board::getDeadLine)
                             .map(LocalDate::parse)
-                            .orElse(LocalDate.now());
-                    return ChronoUnit.DAYS.between(deadLineDate, LocalDate.now());
-                }).reversed())
+                            .orElse(currentDate);
+
+                    if (deadLineDate.isBefore(currentDate)) {
+                        return Long.MAX_VALUE; // Assign maximum value to push it to the end
+                    }
+
+                    return -ChronoUnit.DAYS.between(deadLineDate, currentDate);
+                }))
                 .collect(Collectors.toList());
     }
 
