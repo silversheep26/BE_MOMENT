@@ -178,6 +178,10 @@ public class ChatService {
         redisService.setChatValues(chat,chat.getChatRoomId(),chat.getUuid());
         return ResponseEntity.ok("success");
     }
+    public ResponseEntity<Boolean> checkUnReadChat(Users users){
+        Boolean haveToRead = chatRepository.existsByReceiverIdAndReadStatus(users.getId(), false);
+        return ResponseEntity.ok(haveToRead);
+    }
     public ResponseEntity<String> saveChatList(Long chatRoomId){
         redisService.saveChatsToDB(chatRoomId);
         return ResponseEntity.ok("success");
