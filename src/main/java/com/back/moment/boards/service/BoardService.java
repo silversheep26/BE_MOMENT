@@ -168,6 +168,7 @@ public class BoardService {
     // 게시글 상세 조회
     @Transactional(readOnly = true)
     public ResponseEntity<BoardDetailResponseDto> getBoard(Long boardId, Users users){
+        checkUsers(users);
         Board board = existBoard(boardId);
         boolean checkApply = false;
         MatchingApply matchingApply = matchingApplyRepository.findByBoardIdAndApplicantId(boardId, users.getId());
@@ -219,16 +220,22 @@ public class BoardService {
     }
 
     // 유저 존재 확인
-    public void existUser(String email){
+    protected void existUser(String email){
         usersRepository.findByEmail(email).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
         );
     }
 
-    public Board existBoard(Long boardId){
+    protected Board existBoard(Long boardId){
         return boardRepository.findExistBoard(boardId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
+    }
+
+    protected void checkUsers(Users users){
+        if(users == null){
+            throw new ApiException(ExceptionEnum.LOGIN);
+        }
     }
 
 }

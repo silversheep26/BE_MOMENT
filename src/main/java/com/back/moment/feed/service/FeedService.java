@@ -177,6 +177,7 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<FeedDetailResponseDto> getFeed(Long photoId, Users users){
+        checkUsers(users);
         Photo photo = existPhoto(photoId);
 
         List<Photo> photoList = getPhoto.findPhotosByCreatedAtAndUsers(photo.getUploadCnt(), photo.getUsers());
@@ -241,5 +242,11 @@ public class FeedService {
     @Transactional(readOnly = true)
     public ResponseEntity<Void> forTest(){
         return ResponseEntity.ok().build();
+    }
+
+    protected void checkUsers(Users users){
+        if(users == null){
+            throw new ApiException(ExceptionEnum.LOGIN);
+        }
     }
 }

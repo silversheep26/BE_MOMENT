@@ -1,6 +1,7 @@
 package com.back.moment.users.config;
 
 import com.back.moment.users.jwt.JwtAuthFilter;
+import com.back.moment.users.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +23,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true) // 버전 3으로 오면서 @EnableGlobalMethodSecurity 대신 사용
-public class WebSecurityConfig {
+public class WebSecurityConfig{
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     private static final String[] PERMIT_URL_ARRAY = {
 /* swagger v2 */
@@ -73,6 +75,8 @@ public class WebSecurityConfig {
 
             .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
+                .and()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
