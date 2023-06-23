@@ -1,11 +1,16 @@
 package com.back.moment.users.service;
 
 import com.back.moment.exception.ApiException;
+import com.back.moment.global.service.RedisService;
 import com.back.moment.s3.S3Uploader;
+import com.back.moment.users.dto.LoginRequestDto;
 import com.back.moment.users.dto.SignupRequestDto;
+import com.back.moment.users.dto.TokenDto;
+import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.Users;
+import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;
-import org.assertj.core.api.Assertions;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +25,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,6 +52,17 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
+    @Mock
+    private RedisService redisService;
+
+//    @BeforeEach
+//    void setUp(){
+//        MockitoAnnotations.openMocks(this);
+//    }
+
 //    @AfterEach
 //    void tearDown() {
 //        usersRepository.deleteAllInBatch();
@@ -51,7 +70,7 @@ class UserServiceTest {
 
 
 
-    @DisplayName("이메일 신규 회원 가입")
+    @DisplayName("이메일 신규 회원 가입 성공")
     @Test
     void signupTest() throws IOException {
         // given
@@ -121,12 +140,24 @@ class UserServiceTest {
         // lenient().when 사용시 불필요한 스터빙을 무히하는 lenient 모드활성화
     }
 
-
-
-
+    @DisplayName("이메일 없이 회원 가입")
     @Test
-    void login() {
+    void signupWithoutEmailTest() throws IOException {
+        // given
+        SignupRequestDto signupRequestDto = new SignupRequestDto(null, "password123+", "nickname14", "FEMALE", "MODEL");
+        MockMultipartFile profileImg = new MockMultipartFile("image", "test.jpg", "image/jpeg", "Test Image".getBytes());
+
+        // when
+        ResponseEntity<Void> response = userService.signup(signupRequestDto, profileImg);
+
+        // then
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(response.getStatusCode());
+
     }
+
+
+
+
 
     @Test
     void deleteUsersHard() {
