@@ -30,7 +30,7 @@ public class BoardController {
     @GetMapping("")
     public ResponseEntity<BoardListResponseDto> getBoardsByPage(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return boardService.getAllBoards(pageable);
     }
