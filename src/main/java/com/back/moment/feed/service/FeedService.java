@@ -137,60 +137,60 @@ public class FeedService {
 
 
 
-//    @Transactional(readOnly = true)
-//    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
-//        List<Photo> allPhoto = getAllPhoto.getAllPhoto();
-//        List<Photo> allPhotoByLove = getAllPhotoByLove.getAllPhotoWithTagByLove();
-//
-//        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, allPhoto, users);
-//        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, allPhotoByLove, users);
-//
-//        FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2);
-//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-//    }
-//
-//    private Page<PhotoFeedResponseDto> createResponsePhotoPage(Pageable pageable, List<Photo> photos, Users users) {
-//        List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
-//        Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
-//
-//        List<PhotoFeedResponseDto> responsePhotoList = photos.stream()
-//                .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
-//                .collect(Collectors.toList());
-//
-//        int startIndex = (int) pageable.getOffset();
-//        int endIndex = Math.min(startIndex + pageable.getPageSize(), photos.size());
-//        List<PhotoFeedResponseDto> pageItems = responsePhotoList.subList(startIndex, endIndex);
-//
-//        int totalPages = (int) Math.ceil((double) photos.size() / pageable.getPageSize());
-//
-//        boolean isFirstPage = startIndex == 0;
-//        boolean isLastPage = endIndex >= photos.size();
-//
-//        Pageable modifiedPageable = totalPages > 0 && isLastPage ? pageable.withPage(totalPages - 1) : pageable;
-//
-//        return new PageImpl<>(pageItems, modifiedPageable, photos.size());
-//    }
     @Transactional(readOnly = true)
     public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
-        Page<Photo> allPhotoPage = getAllPhoto.getAllPhoto(pageable);
-        Page<Photo> allPhotoByLovePage = getAllPhotoByLove.getAllPhotoWithTagByLove(pageable);
+        List<Photo> allPhoto = getAllPhoto.getAllPhoto();
+        List<Photo> allPhotoByLove = getAllPhotoByLove.getAllPhotoWithTagByLove();
 
-        List<PhotoFeedResponseDto> page1 = createResponsePhotoList(allPhotoPage.getContent(), users);
-        List<PhotoFeedResponseDto> page2 = createResponsePhotoList(allPhotoByLovePage.getContent(), users);
+        Page<PhotoFeedResponseDto> page1 = createResponsePhotoPage(pageable, allPhoto, users);
+        Page<PhotoFeedResponseDto> page2 = createResponsePhotoPage(pageable, allPhotoByLove, users);
 
-        FeedListResponseDto responseDto = new FeedListResponseDto(new PageImpl<>(page1, pageable, allPhotoPage.getTotalElements()),
-                new PageImpl<>(page2, pageable, allPhotoByLovePage.getTotalElements()));
+        FeedListResponseDto responseDto = new FeedListResponseDto(page1, page2);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-        private List<PhotoFeedResponseDto> createResponsePhotoList(List<Photo> photos, Users users) {
-            List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
-            Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
+    private Page<PhotoFeedResponseDto> createResponsePhotoPage(Pageable pageable, List<Photo> photos, Users users) {
+        List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
+        Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
 
-            return photos.stream()
-                    .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
-                    .collect(Collectors.toList());
-        }
+        List<PhotoFeedResponseDto> responsePhotoList = photos.stream()
+                .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
+                .collect(Collectors.toList());
+
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = Math.min(startIndex + pageable.getPageSize(), photos.size());
+        List<PhotoFeedResponseDto> pageItems = responsePhotoList.subList(startIndex, endIndex);
+
+        int totalPages = (int) Math.ceil((double) photos.size() / pageable.getPageSize());
+
+        boolean isFirstPage = startIndex == 0;
+        boolean isLastPage = endIndex >= photos.size();
+
+        Pageable modifiedPageable = totalPages > 0 && isLastPage ? pageable.withPage(totalPages - 1) : pageable;
+
+        return new PageImpl<>(pageItems, modifiedPageable, photos.size());
+    }
+//    @Transactional(readOnly = true)
+//    public ResponseEntity<FeedListResponseDto> getAllFeeds(Pageable pageable, Users users) {
+//        Page<Photo> allPhotoPage = getAllPhoto.getAllPhoto(pageable);
+//        Page<Photo> allPhotoByLovePage = getAllPhotoByLove.getAllPhotoWithTagByLove(pageable);
+//
+//        List<PhotoFeedResponseDto> page1 = createResponsePhotoList(allPhotoPage.getContent(), users);
+//        List<PhotoFeedResponseDto> page2 = createResponsePhotoList(allPhotoByLovePage.getContent(), users);
+//
+//        FeedListResponseDto responseDto = new FeedListResponseDto(new PageImpl<>(page1, pageable, allPhotoPage.getTotalElements()),
+//                new PageImpl<>(page2, pageable, allPhotoByLovePage.getTotalElements()));
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//    }
+//
+//        private List<PhotoFeedResponseDto> createResponsePhotoList(List<Photo> photos, Users users) {
+//            List<Long> photoIdList = photos.stream().map(Photo::getId).collect(Collectors.toList());
+//            Map<Long, Boolean> photoLoveMap = getPhotoWhoLove.findPhotoLoveMap(photoIdList, users != null ? users.getId() : null);
+//
+//            return photos.stream()
+//                    .map(photo -> new PhotoFeedResponseDto(photo, photoLoveMap.getOrDefault(photo.getId(), false)))
+//                    .collect(Collectors.toList());
+//        }
 
 
 
