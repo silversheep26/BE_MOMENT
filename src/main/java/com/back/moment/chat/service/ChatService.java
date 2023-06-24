@@ -33,7 +33,6 @@ public class ChatService {
     private final UsersRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private final RedisService redisService;
-    private final NotificationService notificationService;
     /*
     방에 입장하는 메서드. 우선 채팅을 했던 내역이 있으면,
     내역들을 보내주어야 한다. 그리고 읽지않음을 모두 읽음으로 변경한다.
@@ -181,6 +180,10 @@ public class ChatService {
         return ResponseEntity.ok("success");
     }
     public ResponseEntity<Boolean> checkUnReadChat(Users users){
+        List<ChatRoom> findAllChatRoom = chatRoomRepository.findAllByHostOrGuest(users, users);
+        for (ChatRoom chatRoom : findAllChatRoom) {
+            redisService.saveChatsToDB(chatRoom.getId());
+        }
         Boolean haveToRead = chatRepository.existsByReceiverIdAndReadStatus(users.getId(), false);
         return ResponseEntity.ok(haveToRead);
     }
