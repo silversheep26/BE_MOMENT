@@ -36,6 +36,10 @@ public class ChatController {
     public ResponseEntity<Queue<ChatRoomInfoResponseDto>> findAllChatRoomByUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return chatService.findAllChatRoom(userDetails.getUsers());
     }
+    @GetMapping("chat/unread")
+    public ResponseEntity<Boolean> existUnReadChat(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return chatService.checkUnReadChat(userDetails.getUsers());
+    }
     /*
     채팅방 삭제하는 컨트롤러, 사실 삭제를 하지않는다.
     서비스 단에서 삭제를 요청한 유저에게만 채팅방이
