@@ -13,6 +13,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Primary;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ public class GetAllPhotoByLoveImpl implements GetAllPhotoByLove{
     }
 
     @Override
-    public List<Photo> getAllPhotoWithTagByLove() {
+    public Page<Photo> getAllPhotoWithTagByLove(Pageable pageable) {
         QPhoto photo = QPhoto.photo;
         QTag_Photo tag_photo = QTag_Photo.tag_Photo;
         QPhotoHashTag photoHashTag = QPhotoHashTag.photoHashTag;
@@ -49,8 +52,13 @@ public class GetAllPhotoByLoveImpl implements GetAllPhotoByLove{
                 .leftJoin(photoWithTags.tag_photoList, tag_photoWithTags)
                 .leftJoin(tag_photoWithTags.photoHashTag, photoHashTagWithTags)
                 .groupBy(photo.users, photo.uploadCnt) // 그룹화 추가
-                .orderBy(photo.loveCnt.desc());
+                .orderBy(photo.loveCnt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
-        return query.fetch();
+        List<Photo> photoList = query.fetch();
+        long total = query.fetchCount();
+
+        return new PageImpl<>(photoList, pageable, total);
     }
 }
