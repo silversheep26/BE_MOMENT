@@ -37,7 +37,7 @@ public class GetAllPhotoImpl implements GetAllPhoto{
     }
 
     @Override
-    public Page<Photo> getAllPhoto(Pageable pageable) {
+    public List<Photo> getAllPhoto() {
         QPhoto photo = QPhoto.photo;
         QTag_Photo tag_photo = QTag_Photo.tag_Photo;
         QPhotoHashTag photoHashTag = QPhotoHashTag.photoHashTag;
@@ -55,13 +55,14 @@ public class GetAllPhotoImpl implements GetAllPhoto{
                 .leftJoin(photoWithTags.tag_photoList, tag_photoWithTags)
                 .leftJoin(tag_photoWithTags.photoHashTag, photoHashTagWithTags)
                 .groupBy(photo.users, photo.uploadCnt) // 그룹화 추가
-                .orderBy(photo.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .orderBy(photo.createdAt.desc());
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
 
-        List<Photo> photoList = query.fetch();
-        long total = query.fetchCount();
-
-        return new PageImpl<>(photoList, pageable, total);
+//        List<Photo> photoList = query.fetch();
+//        long total = query.fetchCount();
+//
+//        return new PageImpl<>(photoList, pageable, total);
+        return query.fetch();
     }
 }

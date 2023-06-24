@@ -34,7 +34,7 @@ public class GetAllPhotoByLoveImpl implements GetAllPhotoByLove{
     }
 
     @Override
-    public Page<Photo> getAllPhotoWithTagByLove(Pageable pageable) {
+    public List<Photo> getAllPhotoWithTagByLove() {
         QPhoto photo = QPhoto.photo;
         QTag_Photo tag_photo = QTag_Photo.tag_Photo;
         QPhotoHashTag photoHashTag = QPhotoHashTag.photoHashTag;
@@ -52,13 +52,14 @@ public class GetAllPhotoByLoveImpl implements GetAllPhotoByLove{
                 .leftJoin(photoWithTags.tag_photoList, tag_photoWithTags)
                 .leftJoin(tag_photoWithTags.photoHashTag, photoHashTagWithTags)
                 .groupBy(photo.users, photo.uploadCnt) // 그룹화 추가
-                .orderBy(photo.loveCnt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .orderBy(photo.loveCnt.desc());
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
 
-        List<Photo> photoList = query.fetch();
-        long total = query.fetchCount();
+//        List<Photo> photoList = query.fetch();
+//        long total = query.fetchCount();
 
-        return new PageImpl<>(photoList, pageable, total);
+//        return new PageImpl<>(photoList, pageable, total);
+        return query.fetch();
     }
 }
