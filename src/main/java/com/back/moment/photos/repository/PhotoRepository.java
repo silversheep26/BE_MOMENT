@@ -50,4 +50,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto
     Optional<Photo> findExistPhoto(@Param("photoId") Long photoId);
 
     int countByUsers(Users users);
+
+    List<Photo> findAllByUploadCnt(int uploadCnt);
 }

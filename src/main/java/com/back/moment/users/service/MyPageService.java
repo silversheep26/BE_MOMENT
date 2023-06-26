@@ -108,21 +108,22 @@ public class MyPageService {
                     () -> new ApiException(ExceptionEnum.NOT_FOUND_PHOTO)
             );
 
+            List<Photo> photoList = photoRepository.findAllByUploadCnt(photo.getUploadCnt());
+
             if (!Objects.equals(users.getId(), photo.getUsers().getId())) {
                 return new ResponseEntity<>("작성자만 삭제 가능", HttpStatus.BAD_REQUEST);
             }
-
-            List<Tag_Photo> tag_photoList = tag_photoRepository.findByPhotoId(photo.getId());
-            if(tag_photoList != null && !tag_photoList.isEmpty()){
-                tag_photoList.clear();
-                tag_photoRepository.deleteAll(tag_photoList);
+            for(Photo eachPhoto : photoList) {
+                List<Tag_Photo> tag_photoList = tag_photoRepository.findByPhotoId(eachPhoto.getId());
+                if (tag_photoList != null && !tag_photoList.isEmpty()) {
+                    tag_photoList.clear();
+                    tag_photoRepository.deleteAll(tag_photoList);
+                }
+                users.setTotalLoveCnt(users.getTotalLoveCnt() - photo.getLoveCnt());
+                usersRepository.save(users);
+                photoRepository.deleteById(photoId);
+                s3Uploader.delete(photo.getImagUrl());
             }
-
-            users.setTotalLoveCnt(users.getTotalLoveCnt() - photo.getLoveCnt());
-            usersRepository.save(users);
-            photoRepository.deleteById(photoId);
-            s3Uploader.delete(photo.getImagUrl());
-
 
             return ResponseEntity.ok(null);
         } catch (Exception e) {
