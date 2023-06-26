@@ -121,7 +121,7 @@ public class MyPageService {
                 }
                 users.setTotalLoveCnt(users.getTotalLoveCnt() - eachPhoto.getLoveCnt());
                 usersRepository.save(users);
-                photoRepository.deleteById(photoId);
+                photoRepository.deleteById(eachPhoto.getId());
                 s3Uploader.delete(eachPhoto.getImagUrl());
             }
 
