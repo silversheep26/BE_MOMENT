@@ -50,8 +50,6 @@ public class Users {
     //@Enumerated(value = EnumType.STRING)
     private String role;  // 모델 또는 작가
 
-//    @Column(nullable = false)
-//    private boolean userDelete = false;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Photo> photoList = new ArrayList<>();
@@ -62,14 +60,6 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Board> boardList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "recommender", cascade = CascadeType.ALL)
-//    private List<Recommend> recommenderList = new ArrayList<>();  // 추천 하는 사람
-//
-//    @OneToMany(mappedBy = "recommended", cascade = CascadeType.ALL)
-//    private List<Recommend> recommendedList = new ArrayList<>();  // 추천 받은 사람
-//
-//    @ColumnDefault("0")
-//    private int recommendCnt;
 
     private Users(String email, String nickName, String password, String gender, String profileImg, String role){
         this.email = email;
