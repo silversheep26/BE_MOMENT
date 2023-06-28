@@ -37,7 +37,7 @@ public class MatchingBoardResponseDto {
 		this.pay = board.getPay();
 		this.deadLine = board.getDeadLine();
 		this.boardImgUrl = board.getBoardImgUrl();
-		this.createdTime = board.getCreatedAt();
+		this.createdTime = board.getCreatedAt().plusHours(9);
 		this.tag_boardList = board.getTagListWithWell();
 		this.totalApplicantCnt = totalApplicantCnt;
 		this.matching = board.getMatching();
