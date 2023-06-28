@@ -52,4 +52,7 @@ public interface PhotoRepository extends JpaRepository<Photo, Long>, GetAllPhoto
     int countByUsers(Users users);
 
     List<Photo> findAllByUploadCnt(int uploadCnt);
+
+    @Query("select sum(p.loveCnt) from Photo p where p.users.id = :userId")
+    int allLoveCntForSum(@Param("userId") Long userId);
 }
