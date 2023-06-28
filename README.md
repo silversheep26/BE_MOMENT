@@ -91,8 +91,8 @@ https://github.com/minyoungnam/kimchi-recipe/assets/128782170/7310e96d-6203-4e85
 
 
 ## 트러블슈팅
-> [보러가기](https://github.com/moment-project/FE_MOMENT/wiki/Troubleshooting)
-- 
+> [보러가기](https://github.com/moment-project/BE_MOMENT/wiki)
+- 작성 예정 
 
 ## 기술스택
 
