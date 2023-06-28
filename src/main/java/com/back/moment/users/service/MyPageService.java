@@ -119,7 +119,7 @@ public class MyPageService {
                     tag_photoList.clear();
                     tag_photoRepository.deleteAll(tag_photoList);
                 }
-                users.setTotalLoveCnt(users.getTotalLoveCnt() - eachPhoto.getLoveCnt());
+                users.setTotalLoveCnt(photoRepository.allLoveCntForSum(users.getId()));
                 usersRepository.save(users);
                 photoRepository.deleteById(eachPhoto.getId());
                 s3Uploader.delete(eachPhoto.getImagUrl());
