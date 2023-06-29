@@ -121,14 +121,15 @@ public class UserService {
                 redisService.setRefreshValues(users.getEmail(),redisKey);
             }
 
-            Claims claim = Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
-            Long userId = claim.get("userId", Long.class);
-            String nickName = claim.get("nickName", String.class);
-            String profileImg = claim.get("profileImg", String.class);
-            String role = claim.get("role", String.class);
-            UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(userId, nickName,
-                profileImg, role);
+//            Claims claim = Jwts.parser().setSigningKey(secretKey)
+//                .parseClaimsJws(tokenDto.getAccessToken().substring(7)).getBody();
+//            Long userId = claim.get("userId", Long.class);
+//            String nickName = claim.get("nickName", String.class);
+//            String profileImg = claim.get("profileImg", String.class);
+//            String role = claim.get("role", String.class);
+
+            UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(users.getId(),
+                users.getNickName(), users.getProfileImg(), users.getRole());
             //응답 헤더에 토큰 추가
             setHeader(response, tokenDto);
 
