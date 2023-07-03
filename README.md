@@ -92,7 +92,7 @@ https://github.com/minyoungnam/kimchi-recipe/assets/128782170/7310e96d-6203-4e85
 
 ## 트러블슈팅
 > [보러가기](https://github.com/moment-project/BE_MOMENT/wiki)
-- API 보낼 시 많은 쿼리 요청으로 인한 서버 과부하
+- API 보낼 시 많은 쿼리 요청으로 인한 서버 과부하
 - TimeStamped 적용 후 날짜와 시간 응답에 대한 트러블 발생
 - AWS 로드밸런서 사용으로 인한 TimeOut 에러
 - 회원 탈퇴시 연관관계에 의하여 게시글 및 포트폴리오 삭제 불가 
