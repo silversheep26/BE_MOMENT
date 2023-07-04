@@ -202,8 +202,6 @@ class UserServiceTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
     }
-
-
     @Test
     void deleteUsersHard() {
     }
