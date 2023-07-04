@@ -43,12 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ExtendWith({MockitoExtension.class})
-//@RunWith(PowerMockRunner.class)
 @ActiveProfiles("test")
-//@PrepareForTest(Jwts.class)
 class UserServiceTest {
 
     @InjectMocks
@@ -77,17 +73,6 @@ class UserServiceTest {
 
     @Value("${jwt.secret.key}")
     private String secretKey; // 암호화/복호화에 필요
-
-//    @BeforeEach
-//    void setUp(){
-//        MockitoAnnotations.openMocks(this);
-//    }
-
-//    @AfterEach
-//    void tearDown() {
-//        usersRepository.deleteAllInBatch();
-//    }
-
 
 
     @DisplayName("이메일 신규 회원 가입 성공")
