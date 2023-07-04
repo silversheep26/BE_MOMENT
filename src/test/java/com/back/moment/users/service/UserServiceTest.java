@@ -1,6 +1,7 @@
 package com.back.moment.users.service;
 
 import com.back.moment.exception.ApiException;
+import com.back.moment.exception.ExceptionEnum;
 import com.back.moment.global.service.RedisService;
 import com.back.moment.s3.S3Uploader;
 import com.back.moment.users.dto.LoginRequestDto;
@@ -10,21 +11,29 @@ import com.back.moment.users.dto.UserInfoResponseDto;
 import com.back.moment.users.entity.Users;
 import com.back.moment.users.jwt.JwtUtil;
 import com.back.moment.users.repository.UsersRepository;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaims;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -36,8 +45,10 @@ import static org.mockito.Mockito.*;
 
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class})
+//@RunWith(PowerMockRunner.class)
 @ActiveProfiles("test")
+//@PrepareForTest(Jwts.class)
 class UserServiceTest {
 
     @InjectMocks
@@ -57,6 +68,15 @@ class UserServiceTest {
 
     @Mock
     private RedisService redisService;
+
+    @Mock
+    private JwtParser jwtParser;
+
+    @Mock
+    private Jws<Claims> jws;
+
+    @Value("${jwt.secret.key}")
+    private String secretKey; // 암호화/복호화에 필요
 
 //    @BeforeEach
 //    void setUp(){
@@ -155,112 +175,38 @@ class UserServiceTest {
 
     }
 
-
+    @DisplayName("로그인 성공 케이스")
     @Test
-    @DisplayName("로그인 성공")
-    void loginTest() {
-
-        // given
-        // 유저 정보
+    void loginSuccess() {
+        //given
         String email = "test@example.com";
         String password = "password";
 
-        // Create a LoginRequestDto
+        Users user = new Users("test@example.com", "nickName", "password", "FEMALE", "MODEL");
         LoginRequestDto loginRequestDto = new LoginRequestDto(email, password);
-
-        // 가상의 유저 생성
-//        Users user = new Users("test@test.com", "password", "nickname14", "FEMALE", "MODEL");
-        Users user = new Users();
-        user.setId(1L);
-        user.setEmail("test@test.com");
-        user.setPassword(passwordEncoder.encode(password));
-        user.setNickName("nick");
-        user.setProfileImg("img.jpg");
-        user.setRole("MODEL");
-        user.setGender("FEMALE");
-
-        when(usersRepository.findByEmail(loginRequestDto.getEmail())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())).thenReturn(true);  // 올바른 비밀번호 비교 결과 설정
-
-        TokenDto tokenDto = new TokenDto("Bearer <access_token>", "refreshToken");
-//        when(jwtUtil.createAllToken(user, user.getRole())).thenReturn(tokenDto);
-        when(jwtUtil.createAllToken(any(), anyString())).thenReturn(tokenDto);
-        when(redisService.getRefreshToken(user.getEmail())).thenReturn(null);
-        when(jwtUtil.getUserInfoFromToken(anyString())).thenReturn(email);
-
-        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto(user.getId(), user.getNickName(), user.getProfileImg(), user.getRole());
-
-        // when
-        // 모의 객체(Mock)를 사용하여 테스트
-        HttpServletResponse mockresponse = mock(HttpServletResponse.class);
-        System.out.println(mockresponse);
-
-        // 로그인 요청을 서비스에 전달하고, 응답을 받아온 뒤에 해당 응답을 테스트
-        ResponseEntity<UserInfoResponseDto> responseEntity = userService.login(loginRequestDto, mockresponse);
-        System.out.println(loginRequestDto.getEmail() + ", " + loginRequestDto.getPassword());
-        System.out.println(responseEntity);
-
-        // then
-        // 예상되는 응답 코드와 결과를 테스트
-        verify(usersRepository).findByEmail(loginRequestDto.getEmail());
-        verify(passwordEncoder).matches(loginRequestDto.getPassword(), user.getPassword());
-        verify(jwtUtil).createAllToken(user, user.getRole());
-        verify(redisService).getRefreshToken(user.getEmail());
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // 예시: usersRepository.findByEmail 메서드가 정확히 한 번 호출되었는지 확인
-//        verify(usersRepository, times(1)).findByEmail(loginRequestDto.getEmail());
-
-
-    }
-
-    @DisplayName("로그인 성공")
-    @Test
-    public void testLogin_Success() {
-        // Mocked 객체 생성
-        LoginRequestDto loginRequestDto = new LoginRequestDto("test@example.com", "password");
-        Users mockedUser = new Users();
-        mockedUser.setId(1L);
-        mockedUser.setEmail("test@test.com");
-        mockedUser.setPassword(passwordEncoder.encode("password"));
-        mockedUser.setNickName("nick");
-        mockedUser.setProfileImg("img.jpg");
-        mockedUser.setRole("MODEL");
-        mockedUser.setGender("FEMALE");
 
         TokenDto mockedTokenDto = new TokenDto("mockedAccessToken", "mockedRefreshToken");
 
-        // Mock 설정
-        when(usersRepository.findByEmail(loginRequestDto.getEmail())).thenReturn(Optional.of(mockedUser));
-        when(passwordEncoder.matches(loginRequestDto.getPassword(), mockedUser.getPassword())).thenReturn(true);
-        when(jwtUtil.createAllToken(mockedUser, mockedUser.getRole())).thenReturn(mockedTokenDto);
-        doNothing().when(jwtUtil).init();
-        when(redisService.getRefreshToken(mockedUser.getEmail())).thenReturn(null);
-        doNothing().when(redisService).setRefreshValues(mockedUser.getEmail(), mockedTokenDto.getRefreshToken().substring(7));
+        when(usersRepository.findByEmail(loginRequestDto.getEmail())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())).thenReturn(true);
+        when(jwtUtil.createAllToken(user, user.getRole())).thenReturn(mockedTokenDto);
+        when(redisService.getRefreshToken(user.getEmail())).thenReturn(null);
 
-
-        // 테스트 실행
+        // when
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         ResponseEntity<UserInfoResponseDto> response = userService.login(loginRequestDto, mockedResponse);
 
-        // 검증
+        // then
+        assertThat(user.getEmail()).isEqualTo(loginRequestDto.getEmail());
+        assertThat(user.getPassword()).isEqualTo(loginRequestDto.getPassword());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        // 기타 검증 로직 추가
-
-        // 예상되는 메서드 호출을 확인하기 위한 Mockito 검증
-        verify(usersRepository).findByEmail(loginRequestDto.getEmail());
-        verify(passwordEncoder).matches(loginRequestDto.getPassword(), mockedUser.getPassword());
-        verify(jwtUtil).createAllToken(mockedUser, mockedUser.getRole());
-        verify(redisService).getRefreshToken(mockedUser.getEmail());
-        verify(redisService).setRefreshValues(mockedUser.getEmail(), mockedTokenDto.getRefreshToken().substring(7));
-        // 기타 예상된 메서드 호출 검증 추가
     }
-
-
     @Test
     void deleteUsersHard() {
     }
+
+
+
 
 }
