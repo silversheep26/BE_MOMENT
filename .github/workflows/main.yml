@@ -55,10 +55,3 @@ jobs:
 
       - name: Code Deploy
         run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
-      - name: Notify Slack
-        uses: rtCamp/action-slack-notify@v2.0.0
-        env:
-          SLACK_COLOR: '#00FF00'
-          SLACK_TITLE: 'Build and Deploy'
-          SLACK_TEXT: 'The build and deployment process has been completed successfully.'
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
